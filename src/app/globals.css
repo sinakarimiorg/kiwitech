@@ -7,6 +7,12 @@
 
   /* Font Imports */
   @font-face {
+    font-family: "Gotham";
+    src: local("gotham"),
+      url("/fonts/Homepagebaukasten Bold.ttf") format("truetype");
+    font-display: swap;
+  }
+  @font-face {
     font-family: "Iran Yekan";
     src: local("IranYekan"),
       url("/fonts/IranYekan/IRANYekanXFaNum-Regular.ttf") format("truetype");
@@ -41,12 +47,13 @@
 }
 
 @theme {
-  --color-primary: #EF4444;
-  --color-secondary: #1E40AF;
+  --color-primary: #9FBE23;
+  --color-secondary: #0C2912;
   --font-IranYekan: 'Iran Yekan';
   --font-IranYekanBold: 'Iran Yekan Bold';
   --font-Morabba: 'Morabba';
   --font-MorabbaBold: 'Morabba Bold';
+  --font-gotham: 'Gotham';
   --breakpoint-xs: 480px;
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
