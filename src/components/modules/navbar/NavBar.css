@@ -1,0 +1,38 @@
+.navbar-submenu {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: start;
+    position: absolute;
+    top: 0;
+    right: 12rem;
+    background-color: #343B46;
+    color: #E5E7EB;
+    height: 100%;
+    padding: 24px;
+    font-size: 12px;
+    letter-spacing: -0.025em;
+    border-top-left-radius: 1rem;
+    border-bottom-left-radius: 1rem;
+    transition-delay: 75ms;
+    box-shadow: -8px 0 25px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+
+.submenu-category-all-btn {
+    display: inline-flex;
+    align-items: center;
+    color: #008eb2;
+    letter-spacing: -0.025em;
+    font-size: 12px;
+}
+
+a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    column-gap: 6px;
+}

@@ -12,6 +12,7 @@
       url("/fonts/Homepagebaukasten Bold.ttf") format("truetype");
     font-display: swap;
   }
+
   @font-face {
     font-family: "Iran Yekan";
     src: local("IranYekan"),
@@ -41,14 +42,42 @@
   /* /////////////////  */
 
   html {
-    background-color: rgba(104, 255, 17, 0.096);
+    background-color: #F7FAF0;
     @apply text-zinc-700 font-IranYekan
   }
 }
 
 @theme {
+  /* Brand */
   --color-primary: #9FBE23;
-  --color-secondary: #0C2912;
+  --color-primary-hover: #B4D52B;
+  --color-primary-dark: #7D971B;
+  /* Accent */
+  --color-neon: #D7FF5C;
+
+  /* Backgrounds */
+  --color-dark: #0F1115;
+  --color-dark-secondary: #222831;
+  --color-surface: #1D2128;
+
+  /* Borders */
+  --color-border: #353C46;
+  --color-border-light: #3A414C;
+
+  /* Text */
+  --color-text: #F5F7FA;
+  --color-text-muted: #9CA3AF;
+
+  /* Extra */
+  --color-danger: #EF4444;
+  --color-success: #22C55E;
+
+  /* Navbar Colors  */
+  --color-navbar: #181D24;
+  --color-navbar-hover: #222831;
+  --color-navbar-menu: #2B313A;
+  --color-navbar-border: #313843;
+
   --font-IranYekan: 'Iran Yekan';
   --font-IranYekanBold: 'Iran Yekan Bold';
   --font-Morabba: 'Morabba';
