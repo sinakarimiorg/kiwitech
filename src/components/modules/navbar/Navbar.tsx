@@ -54,29 +54,30 @@ export default function NavBar() {
                 <div className='flex gap-x-5 md:gap-x-8 py-3 pr-5 lg:pr-24 text-xs md:text-sm lg:text-base'>
                     {/* onMouseOver={() => openCategoryFunc()} onMouseOut={() => closeCategoryFunc()} */}
                     <div className='relative group flex-center'>
+
                         <span className='flex-center gap-x-1.5 md:gap-x-2 transition-colors cursor-pointer hover:text-neon'>
                             <TbCategory />
                             دسته بندی ها
                         </span>
                         {/* <!-- Main Menu --> */}
                         <div
-                            className="navbar-menu inline-flex flex-col absolute opacity-0 invisible top-full right-0 group-hover:opacity-100 group-hover:visible w-xl md:w-205 h-72 px-6 py-8 space-y-6 border-t-[3px] 
+                            className="inline-flex flex-col absolute opacity-0 invisible top-full right-0 group-hover:opacity-100 group-hover:visible w-xl md:w-205 h-72 px-6 py-8 space-y-6 border-t-[3px] 
                                 shadow-custom border-t-primary bg-navbar-menu text-sm md:text-base tracking-tight text-text border border-navbar-border rounded-2xl transition-all delay-75
                                 *:inline-flex [&>*:hover]:text-neon *:transition-colors *:w-36"
                             onMouseLeave={e => { setMenuNavbarList('mobile') }}>
 
                             <div>
-                                <Link href={'/'} className='flex-center gap-1.5' onMouseEnter={e => { setMenuNavbarList('mobile') }}>
+                                <Link href={'/'} className='flex-center gap-1.5 text-sm' onMouseEnter={e => { setMenuNavbarList('mobile') }}>
                                     <FiSmartphone />
                                     لوازم جانبی موبایل
                                 </Link>
                                 <div
-                                    className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'mobile' && 'opacity-100! visible! pointer-events-auto!'}`}>
+                                    className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'mobile' ? 'flex' : 'hidden'}`}>
                                     <Link href={'/'} className='submenu-category-all-btn md:text-sm'>
                                         همه لوازم جانبی موبایل
                                         <HiMiniChevronLeft />
                                     </Link>
-                                    <div className='flex flex-wrap gap-y-1.5 gap-x-8 *:inline-flex *:h-8 *:w-30 [&>*:hover]:text-neon dark:[&>*:hover]:text-neon transition-all'>
+                                    <div className='flex flex-wrap gap-y-1.5 gap-x-8 *:inline-flex *:h-8 *:w-30 [&>*:hover]:text-neon transition-all'>
                                         <Link href={'/'}>شارژر گوشی</Link>
                                         <Link href={'/'}>قاب و کاور گوشی</Link>
                                         <Link href={'/'}>گلس گوشی</Link>
@@ -88,16 +89,16 @@ export default function NavBar() {
                             </div>
 
                             <div>
-                                <Link href={'/'} className='flex-center gap-1.5' onMouseEnter={e => { setMenuNavbarList('computer') }}>
+                                <Link href={'/'} className='flex-center gap-1.5 text-sm' onMouseEnter={e => { setMenuNavbarList('computer') }}>
                                     <FaComputer />
                                     لوازم جانبی کامپیوتر
                                 </Link>
-                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'computer' && 'opacity-100! visible! pointer-events-auto!'}`}>
+                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'computer'  ? 'flex' : 'hidden'}`}>
                                     <Link href={'/'} className='submenu-category-all-btn md:text-sm'>
                                         همه لوازم جانبی کامپیوتر
                                         <HiMiniChevronLeft />
                                     </Link>
-                                    <div className='flex flex-wrap gap-y-1.5 gap-x-8 *:inline-flex *:h-8 *:w-30 [&>*:hover]:text-neon dark:[&>*:hover]:text-neon'>
+                                    <div className='flex flex-wrap gap-y-1.5 gap-x-8 *:inline-flex *:h-8 *:w-30 [&>*:hover]:text-neon'>
                                         <Link href={'/'}>رم</Link>
                                         <Link href={'/'}>مانیتور</Link>
                                         <Link href={'/'}>کیبوورد</Link>
@@ -109,16 +110,16 @@ export default function NavBar() {
                             </div>
 
                             <div>
-                                <Link href={'/'} className='flex-center gap-1.5' onMouseEnter={e => { setMenuNavbarList('appliances') }}>
+                                <Link href={'/'} className='flex-center gap-1.5 text-sm' onMouseEnter={e => { setMenuNavbarList('appliances') }}>
                                     <FaKitchenSet />
                                     لوازم خانگی
                                 </Link>
-                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'appliances' && 'opacity-100! visible! pointer-events-auto!'}`}>
+                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'appliances'  ? 'flex' : 'hidden'}`}>
                                     <Link href={'/'} className='submenu-category-all-btn md:text-sm'>
                                         همه لوازم خانگی
                                         <HiMiniChevronLeft />
                                     </Link>
-                                    <div className='flex flex-wrap gap-y-1.5 gap-x-8 *:inline-flex *:h-8 *:w-30 [&>*:hover]:text-neon dark:[&>*:hover]:text-neon'>
+                                    <div className='flex flex-wrap gap-y-1.5 gap-x-8 *:inline-flex *:h-8 *:w-30 [&>*:hover]:text-neon'>
                                         <Link href={'/'}>جارو هوشمند</Link>
                                         <Link href={'/'}>استریو باند</Link>
                                         <Link href={'/'}>تلوزیون هوشمند</Link>
@@ -131,16 +132,16 @@ export default function NavBar() {
                             </div>
 
                             <div>
-                                <Link href={'/'} className='flex-center gap-1.5' onMouseEnter={e => { setMenuNavbarList('stuff') }}>
+                                <Link href={'/'} className='flex-center gap-1.5 text-sm' onMouseEnter={e => { setMenuNavbarList('stuff') }}>
                                     <VscPackage />
                                     لوازم جانبی متفرقه
                                 </Link>
-                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'stuff' && 'opacity-100! visible! pointer-events-auto!'}`}>
+                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'stuff'  ? 'flex' : 'hidden'}`}>
                                     <Link href={'/'} className='submenu-category-all-btn md:text-sm'>
                                         همه لوازم جانبی متفرقه
                                         <HiMiniChevronLeft />
                                     </Link>
-                                    <div className='flex flex-wrap gap-y-1.5 gap-x-8 *:inline-flex *:h-8 *:w-30 [&>*:hover]:text-neon dark:[&>*:hover]:text-neon'>
+                                    <div className='flex flex-wrap gap-y-1.5 gap-x-8 *:inline-flex *:h-8 *:w-30 [&>*:hover]:text-neon'>
                                         <Link href={'/'}>شارژر گوشی</Link>
                                         <Link href={'/'}>قاب و کاور گوشی</Link>
                                         <Link href={'/'}>گلس گوشی</Link>

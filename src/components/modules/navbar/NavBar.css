@@ -1,5 +1,4 @@
 .navbar-submenu {
-    display: flex;
     flex-direction: column;
     align-items: start;
     justify-content: start;
@@ -16,9 +15,6 @@
     border-bottom-left-radius: 1rem;
     transition-delay: 75ms;
     box-shadow: -8px 0 25px rgba(0, 0, 0, 0.25);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
 }
 
 
@@ -33,6 +29,5 @@
 a {
     display: flex;
     align-items: center;
-    justify-content: center;
     column-gap: 6px;
 }

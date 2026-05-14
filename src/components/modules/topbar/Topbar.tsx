@@ -72,7 +72,7 @@ const Topbar = () => {
                 <Link href={'/'} className='flex items-center gap-1 cursor-pointer'>
                     <img src='/images/logo/logo1.png' className='w-10 md:w-14 h-10 md:h-14 lg:w-16 xl:h-16' />
                     <h5 className='text-neon font-MorabbaBold text-xl md:text-2xl xl:text-3xl'>
-                       کیـــوی  تِــــک
+                        کیـــوی تِــــک
                     </h5>
                 </Link>
 
@@ -100,7 +100,7 @@ const Topbar = () => {
                                 {/* <!-- Cart Box Header --> */}
                                 <div className="flex items-center justify-between font-IranYekan text-xs tracking-tighter">
                                     <span className="text-text-muted">1 مورد</span>
-                                    <a href="#" className="flex items-center text-purple-custom">
+                                    <a href="#" className="flex items-center text-primary">
                                         مشاهده سبد خرید
                                         <HiMiniChevronLeft className='w-5 h-5' />
                                     </a>
@@ -167,17 +167,16 @@ const Topbar = () => {
             {/* <!-- TopBar for Mobile --> */}
             < div className='w-full block sm:hidden' >
                 {/* TopBar Content */}
-                < div className='w-full flex items-center justify-between px-4 h-16 bg-custom-dark text-text' >
+                < div className='w-full flex items-center justify-between px-4 h-16 bg-dark text-text' >
                     <button className='text-white' onClick={() => openMenuBar()}>
-                        <HiBars3 className='w-6 h-6' />
+                        <HiBars3 className='w-6 h-6 cursor-pointer' />
                     </button>
 
                     {/* Topbar Logo */}
                     <div className='flex items-center gap-1 cursor-pointer text-white'>
-                        <img src='/images/logo/logo-lg.png' className='w-8 h-8' />
-                        <h5 className='text-shadow-topbar font-MorabbaBold text-xl'>
-                            مـوبـو
-                            لــــــند
+                        <img src='/images/logo/logo1.png' className='w-12 h-12' />
+                        <h5 className='text-neon font-MorabbaBold text-xl'>
+                            کیـــوی  تِــــک
                         </h5>
                     </div>
 
@@ -185,39 +184,38 @@ const Topbar = () => {
                         <IoCartOutline className='w-6 h-6' />
                     </button>
 
-                    {/* <!-- Mobile Nav(menu) --> */}
-                    <div className={`mobile-nav fixed ${navClass} top-0 bottom-0 w-64 px-4 pt-4 bg-white z-20 transition-all overflow-y-auto`}>
+                    {/* <!-- Mobile Nav(menu) -------> */}
+                    <div className={`mobile-nav fixed ${navClass} top-0 bottom-0 w-64 px-4 pt-4 bg-dark-secondary border-l border-border z-20 transition-all overflow-y-auto`}>
 
                         {/* <!-- Nav Header --> */}
-                        <div className="flex items-center justify-between pb-5 mb-6 border-b border-b-gray-100 ">
+                        <div className="flex items-center justify-between pb-3 mb-6 border-b border-border-light ">
 
                             {/* Nav Logo */}
                             <Link href={'/'} className='flex items-center gap-1 cursor-pointer'>
-                                <img src='/images/logo/logo-lg.png' className='w-8 h-8' />
-                                <h5 className='font-MorabbaBold text-xl text-neutral-700'>
-                                    مـوبـو
-                                    لــــــند
+                                <img src='/images/logo/logo1.png' className='w-12 h-12' />
+                                <h5 className='font-MorabbaBold text-xl text-neon'>
+                                    کیـــوی تِــــک
                                 </h5>
                             </Link>
 
                             {/* <!-- Close Nav Icon --> */}
                             <div onClick={() => closeNavBar()}>
-                                <HiMiniXMark className="w-5 h-5" />
+                                <HiMiniXMark className="w-5 h-5 cursor-pointer" />
                             </div>
                         </div>
 
                         {/* <!-- Nav Menu --> */}
                         <div className="flex flex-col mb-8 text-text">
-                            <Link href={'/'} className="flex gap-x-2 py-2.5 pr-2.5 bg-purple-300/20 text-purple-custom rounded-md">
+                            <Link href={'/'} className="flex items-center gap-x-2 py-2.5 pr-2.5 bg-neon/5 text-primary rounded-md">
                                 <AiOutlineHome className='w-5 h-5' />
                                 <span>صفحه اصلی</span>
                             </Link>
 
                             {/* <!-- menu --> */}
-                            <ul className="flex flex-col gap-y-6 mt-4 pr-2.5">
+                            <ul className="flex flex-col gap-y-6 mt-4 pr-2.5 [&>*:hover]:text-neon">
 
                                 <li>
-                                    <div className={`flex justify-between items-center ${isSubmenuOpen && 'text-purple-custom'}`}>
+                                    <div className={`flex justify-between items-center ${isSubmenuOpen && 'text-primary'}`}>
                                         <div className="flex gap-2">
                                             <MdOutlineShoppingBag className='w-5 h-5' />
                                             <span>فروشگاه</span>
@@ -225,7 +223,7 @@ const Topbar = () => {
                                         {/* <!-- Submenu Open/Close Btn --> */}
                                         <div>
                                             {
-                                                isSubmenuOpen ? <HiMiniChevronUp className="w-4 h-4" onClick={() => setIsSubmenuOpen(false)} /> : <HiMiniChevronDown className="w-4 h-4" onClick={() => setIsSubmenuOpen(true)} />
+                                                isSubmenuOpen ? <HiMiniChevronUp className="w-4 h-4 cursor-pointer" onClick={() => setIsSubmenuOpen(false)} /> : <HiMiniChevronDown className="w-4 h-4" onClick={() => setIsSubmenuOpen(true)} />
                                             }
                                         </div>
                                     </div>
@@ -233,7 +231,7 @@ const Topbar = () => {
                                     {/* <!-- Submenu --> */}
                                     {
                                         isSubmenuOpen &&
-                                        <div className="flex flex-col items-start mt-3 pr-7 gap-y-3 text-sm text-zinc-600">
+                                        <div className="flex flex-col items-start mt-3 pr-7 gap-y-3 text-sm text-text-muted [&>*:hover]:text-neon">
                                             <Link href={'/'}>شارژر گوشی</Link>
                                             <Link href={'/'}>قاب و کاور گوشی</Link>
                                             <Link href={'/'}>گلس گوشی</Link>
@@ -270,7 +268,7 @@ const Topbar = () => {
 
                         {/* <!-- Nav Footer --> */}
                         <div
-                            className="inline-flex flex-col gap-y-6 w-full pr-2.5 py-8 border-t border-t-gray-100 text-purple-custom">
+                            className="inline-flex flex-col gap-y-6 w-full pr-2.5 py-8 border-t border-t-border-light text-primary [&>*:hover]:text-neon [&>*:hover]:cursor-pointer">
                             {/* <!-- Login Link --> */}
                             {/* {
                                 localStorage.getItem('username') ? localStorage.getItem('username') :
@@ -293,7 +291,7 @@ const Topbar = () => {
                     </div>
 
                     {/* <!-- Mobile Cart --> */}
-                    <div className={`mobile-cart fixed ${cartClass} top-0 bottom-0 flex flex-col w-64 px-4 pt-5 bg-white z-20 text-text font-IranYekan transition-all`}>
+                    <div className={`mobile-cart fixed ${cartClass} top-0 bottom-0 flex flex-col w-64 px-4 pt-5 bg-navbar-menu z-20 text-text font-IranYekan transition-all`}>
 
                         {/* <!-- Cart Header --> */}
                         <div className="flex items-center justify-between pb-5 border-b border-b-gray-300 ">
