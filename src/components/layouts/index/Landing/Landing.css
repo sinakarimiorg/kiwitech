@@ -1,7 +1,7 @@
-
-
-
+.swiper{
+    overflow: visible;
+}
 
 .swiper-pagination-bullet-active {
-    background-color: rgb(147 51 234) !important;
-}
+    background-color: greenyellow !important;
+} 

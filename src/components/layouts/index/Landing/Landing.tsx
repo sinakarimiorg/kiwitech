@@ -14,7 +14,7 @@ import './Landing.css'
 export default function Landing() {
     return (
         <>
-            <div className='relative sm:mt-72 '>
+            <div className='relative sm:mt-72'>
                 <button className='prev absolute top-1/2 right-6 md:right-10 p-2 md:p-3 bg-white/15 hover:bg-white/50 rounded-full shadow-black shadow-custom z-10'>
                     <FaChevronLeft className='w-3 md:w-4 xl:w-5 h-3 md:h-4 xl:h-5 rotate-180 text-zinc-800' />
                 </button>
@@ -36,7 +36,7 @@ export default function Landing() {
                     }}
                     grabCursor={true}
                     modules={[Autoplay, Pagination, Navigation]}
-                    className='mySwiper overflow-visible!'
+                    className='mySwiper'
                 >
                     <SwiperSlide>
                         <div className='relative w-full h-50 custom-sc:h-60 xl:h-80 bg-linear-to-r from-orange-300 to-orange-600'>

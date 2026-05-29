@@ -43,8 +43,11 @@
 
   html {
     background-color: #F7FAF0;
-    @apply text-zinc-700 font-IranYekan
+    overflow: hidden;
+    font-family: var(--font-IranYekan);
+    color: #3f3f46;
   }
+
 }
 
 @theme {

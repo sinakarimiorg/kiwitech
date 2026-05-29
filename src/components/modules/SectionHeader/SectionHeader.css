@@ -1,0 +1,44 @@
+.title::before {
+  content: "";
+  position: absolute;
+  top: 5px;
+  width: 0.3rem;
+  border-radius: 5rem;
+  transform: rotate(8deg);
+  right: -0.75rem;
+  width: 0.125rem;
+  height: 2.5rem;
+  background-color: #9FBE23;
+}
+
+.underline-style {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 30%;
+  background-color: #D7FF5C;
+  z-index: 0;
+}
+
+@media (width >=768px) {
+  title::before {
+    right: -1rem;
+    width: 0.25rem;
+    height: 3.5rem;
+  }
+}
+
+@media (width >=640px) {
+  title::before {
+    height: 3rem;
+  }
+}
+
+@media (width >=480px) {
+  title::before {
+    width: 0.1875rem;
+    height: 2.75rem;
+  }
+}
