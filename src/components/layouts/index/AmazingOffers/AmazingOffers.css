@@ -1,0 +1,8 @@
+.bg-image {
+    object-fit: cover;
+    width: 100%;
+}
+
+/* .amazing-offers__item{
+@apply w-37.5 xs:w-44 h-64 xs:h-72 px-2 py-3 bg-white dark:bg-zinc-600 shadow-lg rounded-lg
+} */

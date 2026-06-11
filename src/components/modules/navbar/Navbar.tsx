@@ -50,7 +50,7 @@ export default function NavBar() {
 
     return (
         <>
-            <div className={`hidden sm:block fixed ${visible ? 'top-22 xl:top-24' : 'top-0'} w-full bg-navbar text-text border-t border-border shadow-lg shadow-black/20 transition-all z-40`}>
+            <div className={`Navbar hidden sm:block fixed ${visible ? 'top-22 xl:top-24' : 'top-0'} w-full bg-navbar text-text border-t border-border shadow-lg shadow-black/20 transition-all z-40`}>
                 <div className='flex gap-x-5 md:gap-x-8 py-3 pr-5 lg:pr-24 text-xs md:text-sm lg:text-base'>
                     {/* onMouseOver={() => openCategoryFunc()} onMouseOut={() => closeCategoryFunc()} */}
                     <div className='relative group flex-center'>

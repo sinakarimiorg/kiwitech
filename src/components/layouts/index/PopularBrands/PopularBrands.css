@@ -1,0 +1,12 @@
+.brand-item {
+    width: 100%;
+    height: 100%;
+    border-left: 1px solid rgb(156 163 175); /* gray-400 */
+}
+
+.brand-item img {
+    width: 9rem;      /* w-36 */
+    height: 6.25rem; /* h-25 */
+    margin: auto;
+    cursor: pointer;
+}

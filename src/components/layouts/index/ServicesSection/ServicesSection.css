@@ -1,0 +1,84 @@
+.services-section {
+    position: relative;
+    background: url('/images/banners/services-banner3.jpg')center/cover fixed no-repeat;
+}
+
+.services-section::after {
+    position: absolute;
+    content: '';
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.219);
+}
+
+.service-box {
+    position: relative;
+    width: 9.5rem;
+    height: 10rem;
+    background-color: rgb(243 244 246 / 0.85);
+    box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    border-radius: 0.75rem;
+    cursor: pointer;
+    overflow: hidden;
+    z-index: 10;
+}
+
+.service-box-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+}
+
+/* xs */
+@media (min-width: 475px) {
+    .service-box {
+        width: 12rem;
+    }
+}
+
+/* sm */
+@media (min-width: 640px) {
+    .service-box {
+        width: 12.5rem;
+        height: 11rem;
+    }
+}
+
+/* md */
+@media (min-width: 768px) {
+    .service-box {
+        width: 15rem;
+    }
+
+    .service-box-icon {
+        width: 1.75rem;
+        height: 1.75rem;
+    }
+}
+
+/* lg */
+@media (min-width: 1024px) {
+    .service-box {
+        height: 13rem;
+    }
+
+    .service-box-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+/* xl */
+@media (min-width: 1280px) {
+    .service-box {
+        width: 14rem;
+    }
+}
+
+/* 2xl */
+@media (min-width: 1536px) {
+    .service-box {
+        width: 18rem;
+        height: 15rem;
+    }
+}

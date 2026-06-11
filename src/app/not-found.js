@@ -32,7 +32,7 @@ const page = () => {
         </div>
 
         {/* Logo */}
-        <img className="absolute left-20 md:bottom-10 w-50" src='/images/logo/logo 2.png' />
+        <img className="absolute left-20 md:bottom-10 w-50" src='/images/logo/logo2.png' />
 
       </div>
     </div>

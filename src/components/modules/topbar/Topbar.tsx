@@ -4,8 +4,6 @@ import React, { useState } from 'react'
 import { RiSearch2Line } from "react-icons/ri";
 import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
 import { HiOutlineShoppingCart } from "react-icons/hi2";
-import { IoMoonOutline } from "react-icons/io5";
-import { FiSun } from "react-icons/fi";
 import { HiBars3 } from "react-icons/hi2";
 import { IoCartOutline } from "react-icons/io5";
 import { HiMiniXMark } from "react-icons/hi2";
