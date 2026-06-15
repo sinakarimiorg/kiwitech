@@ -1,5 +1,5 @@
 import React from 'react'
-import SectionHeader from '@root/src/components/modules/SectionHeader/SectionHeader'
+import SectionHeader from '@root/src/components/modules/sectionHeader/SectionHeader'
 import ProductBox from '../ProductBox/ProductBox';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation } from 'swiper/modules';

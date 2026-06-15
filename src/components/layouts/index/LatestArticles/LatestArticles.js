@@ -1,6 +1,6 @@
 import React from 'react'
 import ArticleBox from '../ArticleBox/ArticleBox'
-import SectionHeader from '@root/src/components/modules/SectionHeader/SectionHeader'
+import SectionHeader from '@root/src/components/modules/sectionHeader/SectionHeader'
 
 export default function LatestArticles() {
     return (

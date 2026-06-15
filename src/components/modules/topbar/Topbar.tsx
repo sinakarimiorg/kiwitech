@@ -76,7 +76,7 @@ const Topbar = () => {
 
                 {/* Search Box */}
                 <div className='flex items-center w-75 md:w-87.5 lg:w-125 xl:w-175 2xl:mr-24 bg-dark-secondary border border-border rounded-2xl overflow-hidden'>
-                    <Link href={`/search/${searchedValue}`} className='flex-center p-2 md:p-3 text-black bg-primary hover:bg-primary-hover cursor-pointer'>
+                    <Link href={`/search/${searchedValue}`} className='flex-center p-2 md:p-3 text-black bg-primary-500 hover:bg-primary-400  cursor-pointer'>
                         <RiSearch2Line className='w-5 md:w-6 h-5 md:h-6' />
                     </Link>
                     <input value={searchedValue} onChange={event => { setSearchedValue(event.target.value) }} onKeyDown={event => enterInInput(event)} type='text' className='w-full text-sm md:text-base text-text text-center bg-transparent focus:outline-none placeholder-text-muted' placeholder='جستجو در مـوبـولـــند' />
@@ -92,13 +92,13 @@ const Topbar = () => {
                             <HiOutlineShoppingCart className='w-5 custom-sc:w-8 h-5 custom-sc:h-8' />
 
                             {/* <!-- Cart Box --> */}
-                            <div className="absolute top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible w-100 p-5 border border-border border-t-[3px] shadow-custom border-t-primary rounded-2xl
+                            <div className="absolute top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible w-100 p-5 border border-border border-t-[3px] shadow-custom border-t-primary-500 rounded-2xl
                         bg-dark-secondary text-text transition-all delay-75 overflow-hidden z-30">
 
                                 {/* <!-- Cart Box Header --> */}
                                 <div className="flex items-center justify-between font-IranYekan text-xs tracking-tighter">
                                     <span className="text-text-muted">1 مورد</span>
-                                    <a href="#" className="flex items-center text-primary">
+                                    <a href="#" className="flex items-center text-primary-500 ">
                                         مشاهده سبد خرید
                                         <HiMiniChevronLeft className='w-5 h-5' />
                                     </a>
@@ -127,7 +127,7 @@ const Topbar = () => {
                                         </div>
                                     </div>
 
-                                    <a className="w-26 h-12 flex items-center justify-center font-IranYekan text-base bg-primary hover:bg-primary-hover text-black rounded-xl tracking-tightest"
+                                    <a className="w-26 h-12 flex items-center justify-center font-IranYekan text-base bg-primary-500 hover:bg-primary-400  text-black rounded-xl tracking-tightest"
                                         href="#">ثبت سفارش</a>
                                 </div>
 
@@ -204,7 +204,7 @@ const Topbar = () => {
 
                         {/* <!-- Nav Menu --> */}
                         <div className="flex flex-col mb-8 text-text">
-                            <Link href={'/'} className="flex items-center gap-x-2 py-2.5 pr-2.5 bg-neon/5 text-primary rounded-md">
+                            <Link href={'/'} className="flex items-center gap-x-2 py-2.5 pr-2.5 bg-neon/5 text-primary-500 rounded-md">
                                 <AiOutlineHome className='w-5 h-5' />
                                 <span>صفحه اصلی</span>
                             </Link>
@@ -213,7 +213,7 @@ const Topbar = () => {
                             <ul className="flex flex-col gap-y-6 mt-4 pr-2.5 [&>*:hover]:text-neon">
 
                                 <li>
-                                    <div className={`flex justify-between items-center ${isSubmenuOpen && 'text-primary'}`}>
+                                    <div className={`flex justify-between items-center ${isSubmenuOpen && 'text-primary-500 '}`}>
                                         <div className="flex gap-2">
                                             <MdOutlineShoppingBag className='w-5 h-5' />
                                             <span>فروشگاه</span>
@@ -266,7 +266,7 @@ const Topbar = () => {
 
                         {/* <!-- Nav Footer --> */}
                         <div
-                            className="inline-flex flex-col gap-y-6 w-full pr-2.5 py-8 border-t border-t-border-light text-primary [&>*:hover]:text-neon [&>*:hover]:cursor-pointer">
+                            className="inline-flex flex-col gap-y-6 w-full pr-2.5 py-8 border-t border-t-border-light text-primary-500 [&>*:hover]:text-neon [&>*:hover]:cursor-pointer">
                             {/* <!-- Login Link --> */}
                             {/* {
                                 localStorage.getItem('username') ? localStorage.getItem('username') :
@@ -319,7 +319,7 @@ const Topbar = () => {
                         <div
                             className="flex items-end justify-start gap-x-4 pt-4 pb-8 mt-auto border-t border-t-gray-100 ">
 
-                            <a className="w-28 h-11 flex items-center justify-center font-IranYekan text-base bg-primary hover:bg-primary-hover text-black rounded-xl"
+                            <a className="w-28 h-11 flex items-center justify-center font-IranYekan text-base bg-primary-500 hover:bg-primary-400  text-black rounded-xl"
                                 href="#">ثبت سفارش</a>
 
                             <div>
@@ -337,11 +337,11 @@ const Topbar = () => {
                 </div >
                 {/* Search Input For Mobile*/}
                 < div className='flex items-center m-6 bg-transparent rounded-xl border border-custom-dark/80 overflow-hidden' >
-                    <Link href={`/search/${searchedValue}`} className='flex-center p-3 bg-primarybg-primary cursor-pointer'>
+                    <Link href={`/search/${searchedValue}`} className='flex-center p-3 bg-primarybg-primary-500 cursor-pointer'>
                         <RiSearch2Line className='w-5 h-5 text-white' />
                     </Link>
                     <input value={searchedValue} onChange={event => { setSearchedValue(event.target.value) }} onKeyDown={event => enterInInput(event)} type='text' placeholder='جستجو در مـوبـولـــند'
-                        className='w-full text-neutral-600 text-center text-sm bg-transparent focus:outline-none placeholder:bg-primarybg-primary' />
+                        className='w-full text-neutral-600 text-center text-sm bg-transparent focus:outline-none placeholder:bg-primarybg-primary-500 ' />
                 </div >
             </div >
             {/* <Overlay isOpen={visibleOverlay} isClose={() => closeOverlayFunc()} /> */}

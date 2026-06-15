@@ -16,7 +16,7 @@ export default function PopularBrands() {
             <div className='container'>
                 <div className='flex items-center w-full  text-white border border-gray-400 rounded-2xl'>
                     {/* Brands Section Title */}
-                    <div className='w-3/12 2xl:w-1/6 h-full p-3 md:p-5 text-center bg-linear-to-r from-primary to-primary-dark rounded-r-xl'>
+                    <div className='w-3/12 2xl:w-1/6 h-full p-3 md:p-5 text-center bg-linear-to-r from-primary-500 to-primary-600  rounded-r-xl'>
                         <BsPatchCheck className='mx-auto w-10 lg:w-12 h-10 lg:h-12' />
                         <h2 className='pt-3 lg:pt-5 font-DanaMedium lg:font-DanaDemiBold md:text-lg lg:text-2xl'>بـرنــدهای محـبوب</h2>
                     </div>

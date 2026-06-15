@@ -13,7 +13,7 @@ const page = () => {
           <div className="flex-center flex-col ">
             <div className="flex-center space-x-1 font-bold font-gotham text-[10rem] leading-40">
               <h1 className="text-secondary">4</h1>
-              <h1 className="text-primary">0</h1>
+              <h1 className="text-primary-500 ">0</h1>
               <h1 className="text-secondary">4</h1>
             </div>
             <span className="font-Morabba text-secondary text-5xl">صفحه مورد نظر پیدا نشد!</span>
@@ -21,7 +21,7 @@ const page = () => {
               متاسفانه صفحه ای که به دنبال آن هستید وجود ندارد یا منتقل شده است.
             </p>
             {/* Button  */}
-            <div className="flex items-center justify-between w-2/5 h-10 mt-6 text-secondary bg-primary cursor-pointer hover:shadow-2xl hover:bg-primary/70 rounded-xl">
+            <div className="flex items-center justify-between w-2/5 h-10 mt-6 text-secondary bg-primary-500 cursor-pointer hover:shadow-2xl hover:bg-primary/70 rounded-xl">
               <Link href="/"
                 className='px-4 pr-4 text-lg tracking-tighter'>
                 بازگشت به خانـه

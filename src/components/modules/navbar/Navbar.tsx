@@ -62,7 +62,7 @@ export default function NavBar() {
                         {/* <!-- Main Menu --> */}
                         <div
                             className="inline-flex flex-col absolute opacity-0 invisible top-full right-0 group-hover:opacity-100 group-hover:visible w-xl md:w-205 h-72 px-6 py-8 space-y-6 border-t-[3px] 
-                                shadow-custom border-t-primary bg-navbar-menu text-sm md:text-base tracking-tight text-text border border-navbar-border rounded-2xl transition-all delay-75
+                                shadow-custom border-t-primary-500 bg-navbar-menu text-sm md:text-base tracking-tight text-text border border-navbar-border rounded-2xl transition-all delay-75
                                 *:inline-flex [&>*:hover]:text-neon *:transition-colors *:w-36"
                             onMouseLeave={e => { setMenuNavbarList('mobile') }}>
 

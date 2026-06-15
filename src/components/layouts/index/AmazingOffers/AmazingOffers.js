@@ -16,7 +16,7 @@ export default function AmazingOffers() {
         <div className='lg:h-82.5 my-14 sm:my-20 md:my-24'>
             <div className='xl:container m-auto h-full'>
                 <div className='flex-center flex-col lg:flex-row gap-2 lg:gap-8 xl:gap-10 w-full h-full px-5'>
-                    <div className='w-full lg:w-2/12 lg:h-full bg-neon/10 border-4 border-primary rounded-xl overflow-hidden'>
+                    <div className='w-full lg:w-2/12 lg:h-full bg-neon/10 border-4 border-primary-500 rounded-xl overflow-hidden'>
                         <img src='/images/percentage.png' className='w-full object-cover h-10 lg:h-16 opacity-50 lg:opacity-95' />
                         <div className='flex-center lg:flex-col sm:pr-4 lg:pr-0 gap-x-3'>
                         <img src='/images/discount.png' className='hidden sm:block w-12 h-12 lg:w-auto lg:h-auto lg:mx-auto -mt-2 lg:-mt-11 z-10' />
@@ -39,7 +39,7 @@ export default function AmazingOffers() {
                     </div>
 
                     {/* Products */}
-                    <div className='relative w-full lg:w-10/12 h-full py-5 pr-3 bg-neon/10 border-4 border-primary rounded-2xl overflow-hidden'>
+                    <div className='relative w-full lg:w-10/12 h-full py-5 pr-3 bg-neon/10 border-4 border-primary-500 rounded-2xl overflow-hidden'>
                         <button className='prev absolute top-1/2 right-6 md:right-5 p-2 bg-white/95 rounded-full shadow-black shadow-custom z-10'>
                             <FaChevronLeft className='w-3 md:w-4 h-3 md:h-4 rotate-180 text-zinc-800' />
                         </button>

@@ -1,5 +1,5 @@
 import React from 'react'
-import SectionHeader from '@root/src/components/modules/SectionHeader/SectionHeader'
+import SectionHeader from '@root/src/components/modules/sectionHeader/SectionHeader'
 import PopularCategoryBox from '../PopularCategoryBox/PopularCategoryBox'
 
 export default function PopularCategories() {

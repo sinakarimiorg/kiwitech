@@ -60,9 +60,9 @@ export default function ProductBox(props) {
                     </div>
                     {/* Box Body */}
                     <div>
-                        <p className='text-sm leading-6 hover:text-primary cursor-pointer'>{props.title}</p>
+                        <p className='text-sm leading-6 hover:text-primary-500 cursor-pointer'>{props.title}</p>
                         <div className='flex justify-between items-center px-2 pt-2 pb-1'>
-                            {props.discount && <span className='px-2 xs:px-2.5 pt-0.5 font-DanaMedium xs:font-DanaDemiBold text-xs text-white bg-primary-dark rounded-lg'>{props.discount}%</span>}
+                            {props.discount && <span className='px-2 xs:px-2.5 pt-0.5 font-DanaMedium xs:font-DanaDemiBold text-xs text-white bg-primary-600  rounded-lg'>{props.discount}%</span>}
                             <p className='flex justify-end items-center xs:gap-1 w-full text-zinc-800'>
                                 <span className='font-DanaDemiBold text-sm sm:text-base md:text-lg'>{props.price.toLocaleString()}</span>
                                 <span><svg className='w-3 xs:w-4 h-3 xs:h-4 pb-0.5'><use href="#toman"></use></svg></span>

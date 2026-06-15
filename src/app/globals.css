@@ -45,20 +45,37 @@
     color: #3f3f46;
   }
 
+  button {
+    cursor: pointer;
+  }
+
 }
 
 @theme {
+
   /* Brand */
-  --color-primary: #9FBE23;
-  --color-primary-hover: #B4D52B;
-  --color-primary-dark: #7D971B;
+  --color-primary-50: #F4FBE0;
+  --color-primary-100: #E7F5B8;
+  --color-primary-200: #D7EE85;
+  --color-primary-300: #C3E34F;
+  --color-primary-400: #B4D52B;
+  /* hover base */
+  --color-primary-500: #9FBE23;
+  /* main */
+  --color-primary-600: #7D971B;
+  /* dark */
+  --color-primary-700: #5F7314;
   /* Accent */
   --color-neon: #D7FF5C;
+  --color-neon-soft: #E9FF9A;
 
   /* Backgrounds */
   --color-dark: #0F1115;
   --color-dark-secondary: #222831;
   --color-surface: #1D2128;
+  --color-surface-2: #252B33;
+  --color-surface-3: #2E3642;
+  --color-surface-soft: #1A1F26;
 
   /* Borders */
   --color-border: #353C46;
