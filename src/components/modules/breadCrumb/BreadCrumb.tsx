@@ -17,7 +17,7 @@ export default function BreadCrumb({ links }: { links: BreadCrumbLink[] }) {
                 <div className='flex items-center gap-2 text-sm sm:text-base'>
                     {
                         links.map((link) => (
-                            <Link key={link.id} href={link.to} className='flex-center'>
+                            <Link key={link.id} href={link.to} className='flex-center hover:text-primary-500'>
                                 {link.title}
                                 {
                                     link.id !== links.length &&

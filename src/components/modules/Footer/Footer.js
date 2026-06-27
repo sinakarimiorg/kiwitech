@@ -126,7 +126,7 @@ export default function Footer({ marginClasses }) {
                         {/* Social Media Links */}
                         <div>
                             <h2 className='footer-title'>شبکه های اجتماعی</h2>
-                            <div className='flex-center gap-x-2 pt-1 text-center'>
+                            <div className='flex-center gap-x-2 pt-1 text-center text-text'>
                                 <a className='social-button bg-black hover:bg-white hover:text-black hover:border-2 hover:border-black' href='https://twitter.com/'><RiTwitterXFill className='social-button__icon' /></a>
                                 <a className='social-button bg-green-600 hover:bg-white hover:text-green-600 hover:border-2 hover:border-green-600' href='https://web.whatsapp.com/'><MdOutlineWhatsapp className='social-button__icon' /></a>
                                 <a className='social-button bg-red-600 hover:bg-white hover:text-red-600 hover:border-2 hover:border-red-600' href='https://www.youtube.com/'><FaYoutube className='social-button__icon' /></a>

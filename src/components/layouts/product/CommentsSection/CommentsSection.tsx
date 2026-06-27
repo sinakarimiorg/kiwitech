@@ -60,7 +60,7 @@ export default function CommentsSection() {
                             <AiOutlineComment className='w-5 xl:w-6 h-5 xl:h-6' />
                             <p className='xl:font-DanaMedium text-sm lg:text-xs xl:text-sm tracking-tight'>نظر خود را در مورد این <span>محصول</span> بنویسید ...</p>
                         </div>
-                        <div className='flex-center gap-2 mt-3 py-3 lg:py-2 px-2 xl:px-4 text-sm xl:text-base text-white bg-navbar-menu cursor-pointer rounded-lg'>
+                        <div className='flex-center gap-2 mt-3 py-3 lg:py-2 px-2 xl:px-4 text-sm xl:text-base bg-linear-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-text cursor-pointer rounded-lg'>
                             <span>افزودن نظر</span>
                             <FaPlus className='w-3 xl:w-auto h-3 xl:h-auto'/>
                         </div>

@@ -90,8 +90,8 @@ export default function ProductInfo() {
             <div className='hidden md:block'>
                 <div className='container'>
                     {/* Off timer */}
-                    <div className='xl:hidden flex items-center justify-between py-4 px-3 w-full bg-linear-to-r from-lime-900 to-lime-800 border-b border-border-light text-text rounded-t-xl'>
-                        <span className='font-Morabba'>تخفـیف شگفـت انـگـیز</span>
+                    <div className='xl:hidden flex items-center justify-between py-4 px-3 w-full text-text bg-linear-to-r from-lime-900 to-lime-800 border-b border-border-light rounded-t-xl'>
+                        <span className='font-Morabba '>تخفـیف شگفـت انـگـیز</span>
                         <div className='flex h-full gap-2'>
                             <div className='flex-center gap-1'>
                                 <span>48</span>:
@@ -105,11 +105,11 @@ export default function ProductInfo() {
                     {/* First & Main Section (Pics, purchase cart, features) */}
                     <div className='flex flex-col xl:flex-row gap-x-12 gap-y-5'>
                         {/* Right Section &  Product Features */}
-                        <div className='flex gap-x-5 py-8 px-5 lg:px-7 border border-gray-300 rounded-b-xl xl:rounded-xl bg-surface'>
+                        <div className='flex gap-x-5 py-8 px-5 lg:px-7 border border-gray-300 rounded-b-xl xl:rounded-xl bg-white'>
 
                             {/* Rate & Color & Features Col */}
                             <div>
-                                <h1 className='font-MorabbaBold lg:text-xl text-text  tracking-wide leading-8'>
+                                <h1 className='font-MorabbaBold lg:text-xl  tracking-wide leading-8'>
                                     هندزفری بلوتوثی کربی مدل - CR-T107
                                 </h1>
 
@@ -126,7 +126,7 @@ export default function ProductInfo() {
                                 <div className='mt-5 pb-4 border-b border-gray-300'>
                                     <p className='flex gap-1 pb-4'>
                                         <span className='text-text-muted /90'>رنگ:</span>
-                                        <span className='font-IranYekanBold text-text '>مشکی</span>
+                                        <span className='font-IranYekanBold '>مشکی</span>
                                     </p>
                                     <div className='flex items-center gap-3'>
                                         <div className={`${styles.product__colorItem} bg-black`}></div>
@@ -138,8 +138,8 @@ export default function ProductInfo() {
 
                                 {/* Product's Features */}
                                 <div className='mt-6'>
-                                    <h3 className='font-IranYekanBold text-text pb-6 '>ویژگی‌ها</h3>
-                                    <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3 gap-x-5 gap-y-6 h-52 lg:h-auto overflow-hidden'>
+                                    <h3 className='font-IranYekanBold pb-6 '>ویژگی‌ها</h3>
+                                    <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3 gap-x-5 gap-y-6 h-52 lg:h-auto  pb-4 overflow-hidden'>
                                         <ProductFeatureBox name={'قابلیت نویز کنسلینگ'} status={'نویز کنسلینگ میکروفون'} />
                                         <ProductFeatureBox name={'نوع گوشی'} status={'دو گوشی'} />
                                         <ProductFeatureBox name={'درگاه‌های ارتباطی'} status={'بلوتوث'} />
@@ -170,8 +170,8 @@ export default function ProductInfo() {
                                     <Swiper
                                         style={
                                             {
-                                                '--swiper-navigation-color': '#fff',
-                                                '--swiper-pagination-color': '#fff',
+                                                '--swiper-navigation-color': '#2E3642',
+                                                '--swiper-pagination-color': '#2E3642',
                                             } as React.CSSProperties
                                         }
                                         loop={true}
@@ -183,7 +183,7 @@ export default function ProductInfo() {
                                             swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
                                         }}
                                         modules={[FreeMode, Navigation, Thumbs]}
-                                        className="mySwiper2 w-100 bg-white/10 backdrop-blur-2xl border border-white/10 shadow-md m-6 rounded-xl"
+                                        className="mySwiper2 w-100 bg-background backdrop-blur-2xl border border-white/10 shadow-md m-6 rounded-xl"
                                     >
                                         <SwiperSlide>
                                             <img className='h-72 lg:h-80 2xl:h-96 scale-125 lg:scale-100 cursor-pointer' src='/images/products/airpods.png' onClick={(event: React.MouseEvent<HTMLImageElement>) =>
@@ -206,31 +206,30 @@ export default function ProductInfo() {
                                             } />
                                         </SwiperSlide>
                                     </Swiper>
-                                    <Swiper
-                                        onSwiper={setThumbsSwiper}
-                                        loop={false}
-                                        spaceBetween={1}
-                                        slidesPerView={4}
-                                        width={384}
-                                        freeMode={true}
-                                        watchSlidesProgress={true}
-                                        modules={[FreeMode, Navigation, Thumbs]}
-                                        className="mySwiper"
-                                    >
-                                        <SwiperSlide>
-                                            <img className={styles.product__albumImg} src='/images/products/airpods.png' />
-                                        </SwiperSlide>
-                                        <SwiperSlide>
-                                            <img className={styles.product__albumImg} src='/images/products/airpods3.png' />
-                                        </SwiperSlide>
-                                        <SwiperSlide>
-                                            <img className={styles.product__albumImg} src='/images/products/airpod2.png' />
-                                        </SwiperSlide>
-                                        <SwiperSlide>
-                                            <img className={styles.product__albumImg} src='/images/products/airpods4.png' />
-                                        </SwiperSlide>
-                                    </Swiper>
-
+                                        <Swiper
+                                            onSwiper={setThumbsSwiper}
+                                            loop={false}
+                                            spaceBetween={1}
+                                            slidesPerView={4}
+                                            width={384}
+                                            freeMode={true}
+                                            watchSlidesProgress={true}
+                                            modules={[FreeMode, Navigation, Thumbs]}
+                                            className={styles.albume_swiper}
+                                        >
+                                            <SwiperSlide>
+                                                <img className={styles.product__albumImg} src='/images/products/airpods.png' />
+                                            </SwiperSlide>
+                                            <SwiperSlide>
+                                                <img className={styles.product__albumImg} src='/images/products/airpods3.png' />
+                                            </SwiperSlide>
+                                            <SwiperSlide>
+                                                <img className={styles.product__albumImg} src='/images/products/airpod2.png' />
+                                            </SwiperSlide>
+                                            <SwiperSlide>
+                                                <img className={styles.product__albumImg} src='/images/products/airpods4.png' />
+                                            </SwiperSlide>
+                                        </Swiper>
                                     {/* Modal for full-size image */}
                                     {isModalOpen && (
                                         <div
@@ -296,7 +295,7 @@ export default function ProductInfo() {
                             {/* Top section of Cart */}
                             <div className='h-fit w-4/6 xl:w-full bg-white shadow-xl rounded-xl'>
                                 {/* Off timer */}
-                                <div className='hidden xl:flex items-center justify-between py-4 px-3 w-full bg-linear-to-r from-lime-900 to-lime-800 border-b border-border-light text-text rounded-t-xl'>
+                                <div className='hidden xl:flex items-center justify-between py-4 px-3 w-full text-text bg-linear-to-r from-lime-900 to-lime-800 border-b border-border-light rounded-t-xl'>
                                     <span className='font-Morabba'>تخفـیف شگفـت انـگـیز</span>
                                     <div className='flex h-full gap-2'>
                                         <div className='flex-center gap-1'>
@@ -308,11 +307,11 @@ export default function ProductInfo() {
                                     </div>
                                 </div>
                                 {/* Cart Body */}
-                                <div className='py-4 xl:py-6 px-5 bg-surface rounded-b-xl'>
+                                <div className='py-4 xl:py-6 px-5 bg-white rounded-b-xl'>
                                     {/* Purchase Details */}
                                     <div className='hidden xl:block'>
 
-                                        <div className='flex gap-1.5 mb-2.5 py-4 px-3 bg-white/5 backdrop-blur-2xl border border-white/10 shadow-md text-text rounded-md'>
+                                        <div className='flex gap-1.5 mb-2.5 py-4 px-3 glass-card rounded-md'>
                                             <div>
                                                 <div className='flex items-center gap-2 text-sm'>
                                                     <PiStorefront className='w-5 h-5' />
@@ -325,7 +324,7 @@ export default function ProductInfo() {
                                             </div>
                                         </div>
 
-                                        <div className='flex gap-1.5 mb-2.5 py-4 px-3 bg-white/5 backdrop-blur-2xl border border-white/10 shadow-md text-text rounded-md'>
+                                        <div className='flex gap-1.5 mb-2.5 py-4 px-3 glass-card rounded-md'>
                                             <IoSettingsOutline className='w-4 h-4' />
                                             <div className='flex gap-2'>
                                                 <span className='text-sm'>ارزیابی عملکرد :</span>
@@ -333,7 +332,7 @@ export default function ProductInfo() {
                                             </div>
                                         </div>
 
-                                        <div className='flex gap-1.5 py-4 px-3 bg-white/5 backdrop-blur-2xl border border-white/10 shadow-md text-text rounded-md'>
+                                        <div className='flex gap-1.5 py-4 px-3 glass-card rounded-md'>
                                             <BsPatchCheck className='w-4 h-4' />
                                             <div className='flex gap-2'>
                                                 <span className='text-sm'>سرویس موبولند :</span>
@@ -348,8 +347,8 @@ export default function ProductInfo() {
                                         <div className='flex items-center justify-center xl:justify-end gap-4 pt-2 pl-2'>
                                             <span className={styles.cart__exPrice}>2,200,000</span>
                                             <div className='inline-flex gap-1'>
-                                                <span className='font-IranYekanBold text-xl text-text'>1,500,000</span>
-                                                <span><svg className='w-4 h-4 text-text'><use href="#toman"></use></svg></span>
+                                                <span className='font-IranYekanBold text-xl '>1,500,000</span>
+                                                <span><svg className='w-4 h-4 '><use href="#toman"></use></svg></span>
                                             </div>
                                         </div>
                                     </div>
@@ -360,7 +359,7 @@ export default function ProductInfo() {
                             </div>
 
                             {/* bottom section of Cart */}
-                            <div className='h-fit w-2/6 xl:w-full xl:mt-5 p-3 bg-surface text-text shadow-xl rounded-xl'>
+                            <div className='h-fit w-2/6 xl:w-full xl:mt-5 py-6 px-3 bg-white shadow-xl rounded-xl'>
                                 <div className='flex items-center gap-1.5 pb-2 border-b border-dotted border-gray-300 cursor-pointer'>
                                     <PiWarningOctagonThin className='w-5 h-5 text-amber-500' />
                                     <span className='text-sm text-text-muted'>گزارش نادرستی مشخصات</span>
@@ -381,7 +380,7 @@ export default function ProductInfo() {
                     <div className='mt-14 lg:mt-20'>
                         {/* Header Of This Section */}
                         <div className={`sticky ${visible ? 'top-41' : 'top-24'} z-10`}>
-                            <ul className='flex gap-8 px-4 border border-border-light rounded-t-md bg-white/5 backdrop-blur-2xl shadow-md text-text'>
+                            <ul className='flex gap-8 px-4 rounded-t-md bg-surface-3 text-text'>
                                 <li className={styles.productInfo__menuTitle}>
                                     <a href='#product__description-section'>معرفی</a>
                                     <div className={styles.productInfo__underlineBorder}></div>
@@ -464,7 +463,7 @@ export default function ProductInfo() {
                             {/* Left col & Product Purchase Cart */}
                             <div className={`sticky ${visible ? 'top-60' : 'top-44'} h-fit w-4/12 xl:w-3/12 bg-white shadow-xl rounded-xl`}>
                                 {/* Off timer */}
-                                <div className='flex items-center justify-between flex-col lg:flex-row gap-y-2 py-2 lg:py-4 lg:px-3 w-full bg-linear-to-r from-lime-900 to-lime-800 border-b border-border-light text-text rounded-t-xl'>
+                                <div className='flex items-center justify-between flex-col lg:flex-row gap-y-2 py-2 lg:py-4 lg:px-3 w-full text-text bg-linear-to-r from-lime-900 to-lime-800 border-b border-border-light rounded-t-xl'>
                                     <span className='font-Morabba'>تخفـیف شگفـت انـگـیز</span>
                                     <div className='flex h-full gap-2'>
                                         <div className='flex-center gap-1'>
@@ -488,16 +487,16 @@ export default function ProductInfo() {
                                     </div>
                                 </div>
                                 {/* Cart Body */}
-                                <div className='pb-6 px-5 bg-surface'>
+                                <div className='pb-6 px-5 bg-white'>
                                     {/* Purchase Details */}
                                     <div className='py-1 lg:py-3 px-1 lg:px-3 border-y border-dotted border-gray-300'>
                                         <div className='flex items-center gap-1.5 mb-2.5 py-1'>
                                             <CiBoxes className='w-5 h-5' />
-                                            <span className='font-IranYekanMedium text-xs lg:text-sm text-white tracking-tight'>موجود در انبار موبولند (ارسال فوری)</span>
+                                            <span className='font-IranYekanMedium text-xs lg:text-sm tracking-tight'>موجود در انبار موبولند (ارسال فوری)</span>
                                         </div>
                                         <div className='flex items-center gap-1.5 py-1'>
                                             <BsPatchCheck className='w-4 h-4' />
-                                            <span className='font-IranYekanMedium text-xs lg:text-sm text-white'>۷ روز تضمین بازگشت کالا</span>
+                                            <span className='font-IranYekanMedium text-xs lg:text-sm'>۷ روز تضمین بازگشت کالا</span>
                                         </div>
                                     </div>
 
@@ -507,8 +506,8 @@ export default function ProductInfo() {
                                         <div className='flex items-center justify-end gap-x-2 lg:gap-x-4 pt-2 pl-2'>
                                             <span className={styles.cart__exPrice}>2,200,000</span>
                                             <div className='inline-flex gap-1'>
-                                                <span className='font-IranYekanBold text-lg lg:text-xl  text-text'>1,500,000</span>
-                                                <span><svg className='w-3.5 lg:w-4 h-3.5 lg:h-4 text-text'><use href="#toman"></use></svg></span>
+                                                <span className='font-IranYekanBold text-lg lg:text-xl  '>1,500,000</span>
+                                                <span><svg className='w-3.5 lg:w-4 h-3.5 lg:h-4 '><use href="#toman"></use></svg></span>
                                             </div>
                                         </div>
                                     </div>
@@ -536,8 +535,8 @@ export default function ProductInfo() {
                                 <div className='inline-flex justify-center items-end ml-3 h-5 w-11 text-center text-[10px] bg-linear-to-r from-primary-400 to-neon text-surface rounded-md'><span className='text-xs'>33</span>%</div>
                                 <span className={styles.cart__exPrice}>2,200,000</span>
                                 <div className='inline-flex gap-1'>
-                                    <span className='font-IranYekanBold text-xl  text-text'>1,500,000</span>
-                                    <span><svg className='w-4 h-4 text-text'><use href="#toman"></use></svg></span>
+                                    <span className='font-IranYekanBold text-xl  '>1,500,000</span>
+                                    <span><svg className='w-4 h-4 '><use href="#toman"></use></svg></span>
                                 </div>
                             </div>
                         </div>
@@ -549,7 +548,7 @@ export default function ProductInfo() {
                 {/* //////////////////////////////////////////// */}
                 <div className='container'>
                     {/* Off timer */}
-                    <div className='flex items-center justify-between py-3 px-3 w-full bg-linear-to-r from-lime-900 to-lime-800 border-b border-border-light text-text rounded-t-xl'>
+                    <div className='flex items-center justify-between py-3 px-3 w-full text-text bg-linear-to-r from-lime-900 to-lime-800 border-b border-border-light rounded-t-xl'>
                         <span className='font-Morabba'>تخفـیف شگفـت انـگـیز</span>
                         <div className='flex h-full gap-2'>
                             <div className='flex-center gap-1 text-sm'>
@@ -588,7 +587,7 @@ export default function ProductInfo() {
                         <div className='px-3 py-3'>
                             {/* Rate & Color & Features Col */}
                             <div>
-                                <h1 className='font-MorabbaBold text-text  tracking-wide'>
+                                <h1 className='font-MorabbaBold  tracking-wide'>
                                     هندزفری بلوتوثی کربی مدل - CR-T107
                                 </h1>
 
@@ -605,7 +604,7 @@ export default function ProductInfo() {
                                 <div className='mt-4 pb-4 border-b border-gray-300'>
                                     <p className='flex gap-1 pb-1'>
                                         <span className='text-text-muted /90'>رنگ:</span>
-                                        <span className='font-IranYekanBold text-sm text-text '>مشکی</span>
+                                        <span className='font-IranYekanBold text-sm '>مشکی</span>
                                     </p>
                                     <div className='flex items-center gap-2'>
                                         <div className={`${styles.product__colorItem} bg-black`}></div>
@@ -617,7 +616,7 @@ export default function ProductInfo() {
 
                                 {/* Product's Features */}
                                 <div className='mt-6'>
-                                    <h3 className='font-IranYekanBold text-text pb-6 '>ویژگی‌ها</h3>
+                                    <h3 className='font-IranYekanBold pb-6 '>ویژگی‌ها</h3>
                                     <div className='grid grid-cols-2 gap-x-5 gap-y-6 max-h-52 overflow-hidden'>
                                         <ProductFeatureBox name={'قابلیت نویز کنسلینگ'} status={'نویز کنسلینگ میکروفون'} />
                                         <ProductFeatureBox name={'نوع گوشی'} status={'دو گوشی'} />
@@ -641,7 +640,7 @@ export default function ProductInfo() {
                     <div className='mt-10'>
                         {/* Header Of This Section */}
                         <div className='sticky top-0 z-10'>
-                            <ul className='flex justify-between px-10 border border-border-light rounded-t-md bg-white/5 backdrop-blur-2xl shadow-md text-text'>
+                            <ul className='flex justify-between px-10 border border-border-light rounded-t-md glass-card '>
                                 <li className={styles.productInfo__menuTitle}>
                                     <a href='#product__description-section'>معرفی</a>
                                     <div className={styles.productInfo__underlineBorder}></div>
