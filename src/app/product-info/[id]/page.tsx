@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import Header from '@root/src/components/modules/header/Header';
 import Footer from '@root/src/components/modules/footer/Footer';
 import BreadCrumb from '../../../components/modules/breadCrumb/BreadCrumb'
-import CommentsSection from '../../../components/layouts/product/CommentsSection/CommentsSection'
+import CommentsSection from '../../../components/templates/product/CommentsSection/CommentsSection'
 import { RiStarFill } from "react-icons/ri";
 import { GoShareAndroid } from "react-icons/go";
 import { LiaComments } from "react-icons/lia";
@@ -22,8 +22,8 @@ import { FaXmark } from 'react-icons/fa6'
 import { PiPhoneCallLight } from "react-icons/pi";
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import ProductFeatureBox from '../../../components/layouts/product/ProductFeatureBox/ProductFeatureBox';
-import ProductFeatureBoxLarge from '../../../components/layouts/product/ProductFeatureBoxLarge/ProductFeatureBoxLarge';
+import ProductFeatureBox from '../../../components/templates/product/ProductFeatureBox/ProductFeatureBox';
+import ProductFeatureBoxLarge from '../../../components/templates/product/ProductFeatureBoxLarge/ProductFeatureBoxLarge';
 import type { Swiper as SwiperType } from 'swiper';
 
 // Import Swiper styles
@@ -148,7 +148,7 @@ export default function ProductInfo() {
                                         <ProductFeatureBox name={'قابلیت‌های مقاومتی'} status={'مقاومت در برابر رطوبت و عرق'} />
                                     </div>
                                     <p className='pt-2 lg:pt-7 text-center text-white'>
-                                        <a href='#' className='inline-flex py-2 px-4 text-sm bg-linear-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 rounded-lg'>
+                                        <a href='#' className='inline-flex py-2 px-4 text-sm linear_btn'>
                                             مشاهده همه ویژگی‌ها
                                             <HiMiniChevronLeft className='h-4 w-4' />
                                         </a>
@@ -354,7 +354,7 @@ export default function ProductInfo() {
                                     </div>
 
                                     {/* Cart Actions  */}
-                                    <div className='w-full h-10 xl:h-12 font-IranYekanMedium text-center text-white xl:text-lg leading-10 xl:leading-12 bg-linear-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 rounded-lg cursor-pointer'>افزودن به سبد خرید</div>
+                                    <div className='w-full h-10 xl:h-12 font-IranYekanMedium text-center xl:text-lg leading-10 xl:leading-12 linear_btn'>افزودن به سبد خرید</div>
                                 </div>
                             </div>
 
@@ -513,7 +513,7 @@ export default function ProductInfo() {
                                     </div>
 
                                     {/* Cart Add Basket Button  */}
-                                    <div className='w-full h-10 lg:h-12 font-IranYekanMedium text-center text-white lg:text-lg leading-10 lg:leading-12 bg-linear-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 rounded-lg cursor-pointer'>افزودن به سبد خرید</div>
+                                    <div className='w-full h-10 lg:h-12 font-IranYekanMedium text-center lg:text-lg leading-10 lg:leading-12 linear_btn'>افزودن به سبد خرید</div>
                                 </div>
                             </div>
                         </div>
@@ -542,7 +542,7 @@ export default function ProductInfo() {
                         </div>
 
                         {/* Cart Actions  */}
-                        <div className='w-full h-10 font-IranYekanMedium text-center text-white leading-10 bg-linear-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 rounded-lg cursor-pointer'>افزودن به سبد خرید</div>
+                        <div className='w-full h-10 font-IranYekanMedium text-center leading-10 linear_btn'>افزودن به سبد خرید</div>
                     </div>
                 </div>
                 {/* //////////////////////////////////////////// */}
@@ -626,7 +626,7 @@ export default function ProductInfo() {
                                         <ProductFeatureBox name={'قابلیت‌های مقاومتی'} status={'مقاومت در برابر رطوبت و عرق'} />
                                     </div>
                                     <p className='pt-4 text-center text-white'>
-                                        <a href='#' className='inline-flex py-2 px-4 text-sm bg-linear-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 rounded-lg'>
+                                        <a href='#' className='inline-flex py-2 px-4 text-sm linear_btn'>
                                             مشاهده همه ویژگی‌ها
                                             <HiMiniChevronLeft className='h-4 w-4' />
                                         </a>

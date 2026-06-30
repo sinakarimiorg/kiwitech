@@ -60,6 +60,10 @@
     0 4px 6px -1px rgb(0 0 0 / 0.1),
     0 2px 4px -2px rgb(0 0 0 / 0.1);
   }
+
+  .linear_btn{
+    @apply bg-linear-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 rounded-lg cursor-pointer text-text
+  }
 }
 
 @theme {

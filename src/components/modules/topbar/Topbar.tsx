@@ -150,12 +150,12 @@ const Topbar = () => {
                             </div>
                         </span>
                             :
-                            < Link href={'/register'} className="flex items-center gap-x-2.5 tracking-tightest">
+                            < Link href={'/login-register'} className="flex items-center gap-x-2.5 tracking-tightest">
                                 <HiArrowRightEndOnRectangle className='w-6 md:w-8 h-6 md:h-8 hover:text-neon transition-colors' />
                                 <span className="hidden xl:inline-block">ورود | ثبت‌‌نام</span>
                             </Link>
                     } */}
-                    < Link href={'/register'} className="flex items-center gap-x-2.5 tracking-tightest hover:text-neon transition-colors">
+                    < Link href={'/login-register'} className="flex items-center gap-x-2.5 tracking-tightest hover:text-neon transition-colors">
                         <HiArrowRightEndOnRectangle className='w-6 md:w-8 h-6 md:h-8' />
                         <span className="hidden xl:inline-block">ورود | ثبت‌‌نام</span>
                     </Link>

@@ -24,7 +24,7 @@
 }
 
 .footer-col__list a:hover {
-    color: rgb(216 180 254);
+    color: var(--color-neon);
     transition: all 0.15s ease;
 }
 
