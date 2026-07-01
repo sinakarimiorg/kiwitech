@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useEffect, useState } from 'react'
 import { TbCategory } from "react-icons/tb";
 import { CiDiscount1 } from "react-icons/ci";

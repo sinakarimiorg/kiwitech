@@ -1,4 +1,4 @@
-import React from 'react'
+"use client";
 
 import Link from 'next/link';
 import { HiMiniChevronUp } from "react-icons/hi2";
@@ -10,49 +10,92 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 
 import 'swiper/css';
-import 'swiper/css/effect-fade';
 
 import './Footer.css'
 
-export default function Footer({ marginClasses }) {
+export default function Footer({ marginClasses }: { marginClasses: string }) {
     return (
-        <div className={`footer bg-linear-to-b from-gray-500/5 to-gray-600 ${marginClasses}`}>
-            <div className='px-5 xs:px-7 sm:px-8 xl:px-10 2xl:px-16 py-7'>
-                {/* Footer Header  */}
-                <div className='pb-4 border-b border-zinc-400'>
-                    <div className='flex items-center justify-between'>
+        <div className={`footer bg-linear-to-br from-primary-50 via-white to-primary-100 ${marginClasses}`}>
+            {/* Footer Header  */}
+
+            <div className="relative overflow-hidden rounded-t-3xl border border-primary-100/20 bg-linear-to-br from-primary-100 via-white to-primary-200 px-8 py-6 mx-10 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
+
+                <div className="absolute -top-20 left-0 w-60 h-60 bg-primary-300/60 blur-3xl rounded-full" />
+                <div className="absolute -right-10 bottom-0 w-52 h-52 bg-primary-200/50 blur-3xl rounded-full" />
+
+                <div className="relative z-10 flex items-center justify-between">
+                    <Link href="/" className="flex items-center gap-2">
+                        <img
+                            src="/images/logo/logo.png"
+                            className="w-10 h-10 md:w-12 md:h-12"
+                        />
+
                         <div>
-                            <Link href={'/'} className='flex items-center gap-1 cursor-pointer'>
-                                <img src='/images/logo/logo.png' className='w-8 md:w-12 h-8 md:h-12 lg:w-14 xl:h-12' />
-                                <h5 className='text-shadow-topbar font-MorabbaBold text-xl md:text-2xl xl:text-3xl'>
-                                    کیـــوی تــــک
-                                </h5>
-                            </Link>
+                            <h5 className="font-MorabbaBold text-2xl md:text-3xl text-zinc-800">
+                                کیـــوی تــــک
+                            </h5>
+                            <p className="text-xs text-zinc-500">
+                                تکنولوژی، ساده‌تر از همیشه
+                            </p>
                         </div>
-                        <a href='#' className='flex-center gap-0.5 md:gap-2 px-1 md:px-3 pb-0.5 md:pb-1.5 pt-1 md:pt-2 text-zinc-600 tracking-tight border border-zinc-500/70 rounded-lg cursor-pointer hover:bg-gray-500 hover:text-white'>
-                            <span className='text-xs md:text-base md:leading-5'>بازگشت به بالا</span>
-                            <span><HiMiniChevronUp className='w-3 md:w-5 h-3 md:h-5' /></span>
+                    </Link>
+
+                    <a
+                        href="#"
+                        className="
+                group flex items-center gap-2
+                rounded-xl border border-primary-300/50
+                bg-white/70 backdrop-blur-sm
+                px-4 py-2
+                transition-all duration-300
+                hover:-translate-y-1
+                hover:bg-primary-500
+                hover:text-white
+                hover:shadow-lg
+                hover:shadow-primary-500/30
+            "
+                    >
+                        <span className="text-sm md:text-base">
+                            بازگشت به بالا
+                        </span>
+
+                        <HiMiniChevronUp className="w-5 h-5 transition-transform group-hover:-translate-y-1" />
+                    </a>
+                </div>
+
+                <div className="relative z-10 mt-6 h-px bg-linear-to-r from-transparent via-primary-300 to-transparent" />
+
+                <div className="relative z-10 mt-5 flex flex-col gap-y-3 text-sm text-zinc-600 custom-sc:flex-row custom-sc:items-center custom-sc:justify-between">
+
+                    <div className="flex flex-wrap items-center gap-4">
+
+                        <a
+                            href="tel:0211111000"
+                            className="transition-colors hover:text-primary-600"
+                        >
+                            📞 1111000 - 021
                         </a>
+
+                        <span className="hidden md:block text-zinc-300">|</span>
+
+                        <a
+                            href="mailto:info@kiwitech.ir"
+                            className="transition-colors hover:text-primary-600"
+                        >
+                            ✉️ info@kiwitech.ir
+                        </a>
+
                     </div>
 
-                    <div className='flex flex-col custom-sc:flex-row custom-sc:items-center gap-x-8 gap-y-2  mt-7 text-xs md:text-sm'>
-                        <div className='flex items-center gap-x-2 md:gap-x-4 h-4'>
-                            <p className='flex items-center gap-x-1 md:gap-x-2'>
-                                <span>تلفن پشتیبانی :</span>
-                                <a href='tel:1111000 - 021'>1111000 - 021</a>
-                            </p>
-                            <div className='w-px h-full bg-gray-400'></div>
-                            <p className='flex items-center gap-x-1 md:gap-x-2'>
-                                <span>آدرس ایمیل :</span>
-                                <a href="mailto:info@kiwitech.ir">info@kiwitech.ir</a>
-                            </p>
-                            <div className='hidden custom-sc:block w-px h-full bg-gray-400'></div>
-                        </div>
-                        <p className='flex items-center gap-x-2'>
-                            شنبه الی پنجشنبه، از 8 صبح الی 18 عصر پاسخگوی شما هستیم.
-                        </p>
-                    </div>
+                    <p>
+                        شنبه الی پنجشنبه، از ۸ صبح الی ۱۸ عصر پاسخگوی شما هستیم.
+                    </p>
+
                 </div>
+            </div>
+
+            {/* ////////////////contents of footer  */}
+            <div className='px-5 xs:px-7 sm:px-8 xl:px-10 2xl:px-16 py-7'>
 
                 {/* Footer Content  */}
                 <div className='flex flex-wrap items-start 2xl:justify-between gap-y-7 gap-x-16 sm:gap-x-28 custom-sc:gap-x-24 lg:gap-x-28 xl:gap-x-44 2xl:gap-x-0 pt-6 md:pt-10'>
@@ -153,7 +196,6 @@ export default function Footer({ marginClasses }) {
                     x="0px"
                     y="0px"
                     viewBox="0 2900 9000 800"
-                    style={{ enableBackground: "new 0 0 9000 4000" }}
                     xmlSpace="preserve"
                 >
                     <g>

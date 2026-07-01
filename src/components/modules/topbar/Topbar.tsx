@@ -1,3 +1,5 @@
+"use client"
+
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
@@ -16,6 +18,8 @@ import { BiPhone } from "react-icons/bi";
 import { RiGroupLine } from "react-icons/ri";
 import { HiMiniChevronLeft } from "react-icons/hi2";
 // import Overlay from '../overlay/Overlay';
+import { useEffect } from "react";
+
 
 const Topbar = () => {
     const [searchedValue, setSearchedValue] = useState('')
@@ -25,7 +29,10 @@ const Topbar = () => {
     const [isSubmenuOpen, setIsSubmenuOpen] = useState(false)
 
 
-
+    useEffect(() => {
+        window.history.scrollRestoration = "manual";
+        window.scrollTo(0, 0);
+    }, []);
     const openMenuBar = () => {
         setNavClass('right-0')
         setVisibleOverlay(!visibleOverlay)
