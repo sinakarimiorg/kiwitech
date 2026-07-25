@@ -1,6 +1,6 @@
 "use client"
 
-import Header from "../components/modules/header/Header";
+import Header from "../components/modules/header/header";
 import Landing from "../components/templates/index/Landing/Landing";
 import PopularCategories from "../components/templates/index/PopularCategories/PopularCategories";
 import AmazingOffers from "../components/templates/index/AmazingOffers/AmazingOffers";
@@ -10,7 +10,7 @@ import ServicesSection from "../components/templates/index/ServicesSection/Servi
 import PopularProducts from "../components/templates/index/PopularProducts/PopularProducts";
 import PopularBrands from "../components/templates/index/PopularBrands/PopularBrands";
 import LatestArticles from "../components/templates/index/LatestArticles/LatestArticles";
-import Footer from "../components/modules/footer/Footer"; 
+import Footer from "../components/modules/footer/footer"; 
 
 export default function Home() {
   return (

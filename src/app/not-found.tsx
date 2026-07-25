@@ -1,8 +1,8 @@
 
 import Link from "next/link";
 import { FaArrowLeftLong } from "react-icons/fa6";
-import Header from "../components/modules/header/Header";
-import Footer from "../components/modules/footer/Footer";
+import Header from "../components/modules/header/header";
+import Footer from "../components/modules/footer/footer";
 
 
 const page = () => {

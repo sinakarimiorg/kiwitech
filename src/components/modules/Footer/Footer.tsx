@@ -27,7 +27,7 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                     <Link href="/" className="flex items-center gap-2">
                         <img
                             src="/images/logo/logo.png"
-                            className="w-10 h-10 md:w-12 md:h-12"
+                            className="w-10 h-10 md:w-16 md:h-16"
                         />
 
                         <div>

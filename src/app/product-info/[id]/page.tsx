@@ -2,9 +2,9 @@
 
 import React, { useCallback } from 'react'
 import { useEffect, useState } from 'react'
-import Header from '@root/src/components/modules/header/Header';
-import Footer from '@root/src/components/modules/footer/Footer';
-import BreadCrumb from '../../../components/modules/breadCrumb/BreadCrumb'
+import Header from '@root/src/components/modules/header/header';
+import Footer from '@root/src/components/modules/footer/footer';
+import BreadCrumb from '@root/src/components/modules/breadCrumb/breadCrumb';
 import CommentsSection from '../../../components/templates/product/CommentsSection/CommentsSection'
 import { RiStarFill } from "react-icons/ri";
 import { GoShareAndroid } from "react-icons/go";

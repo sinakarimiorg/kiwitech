@@ -12,7 +12,7 @@ type BreadCrumbLink = {
 export default function BreadCrumb({ links }: { links: BreadCrumbLink[] }) {
     return (
 
-        <section className='pt-4 sm:pt-48 pb-3'>
+        <section className='pt-4 sm:pt-48 pb-3 pr-4'>
             <div className='container'>
                 <div className='flex items-center gap-2 text-sm sm:text-base'>
                     {
