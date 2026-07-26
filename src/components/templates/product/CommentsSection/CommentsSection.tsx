@@ -94,7 +94,7 @@ export default function CommentsSection() {
 
                         {/* Comment Body */}
                         <div className='my-5 xl:my-7'>
-                            <p className='max-w-[730px] font-DanaMedium text-sm xl:text-base text-indigo-950 /85 leading-8 tracking-tight'>
+                            <p className='max-w-182.5 font-DanaMedium text-sm xl:text-base text-indigo-950 /85 leading-8 tracking-tight'>
                                 درود دوستان
                                 کاملا این محصول رو پیشنهاد میکنم بسیار کیفیت خوبی داره و برند شناخته شده ای هست و در این بازه قیمتی در خریدش شک نکنید
                             </p>
@@ -142,7 +142,7 @@ export default function CommentsSection() {
 
                         {/* Comment Body */}
                         <div className='my-5 xl:my-7'>
-                            <p className='max-w-[730px] font-DanaMedium text-sm xl:text-base text-indigo-950 /85 leading-8 tracking-tight'>
+                            <p className='max-w-182.5 font-DanaMedium text-sm xl:text-base text-indigo-950 /85 leading-8 tracking-tight'>
                                 درود دوستان
                                 کاملا این محصول رو پیشنهاد میکنم بسیار کیفیت خوبی داره و برند شناخته شده ای هست و در این بازه قیمتی در خریدش شک نکنید
                             </p>
@@ -190,7 +190,7 @@ export default function CommentsSection() {
 
                         {/* Comment Body */}
                         <div className='my-5 xl:my-7'>
-                            <p className='max-w-[730px] font-DanaMedium text-sm xl:text-base text-indigo-950 /85 leading-8 tracking-tight'>
+                            <p className='max-w-182.5 font-DanaMedium text-sm xl:text-base text-indigo-950 /85 leading-8 tracking-tight'>
                                 درود دوستان
                                 کاملا این محصول رو پیشنهاد میکنم بسیار کیفیت خوبی داره و برند شناخته شده ای هست و در این بازه قیمتی در خریدش شک نکنید
                             </p>
@@ -238,7 +238,7 @@ export default function CommentsSection() {
 
                         {/* Comment Body */}
                         <div className='my-5 xl:my-7'>
-                            <p className='max-w-[730px] font-DanaMedium text-sm xl:text-base text-indigo-950 /85 leading-8 tracking-tight'>
+                            <p className='max-w-182.5 font-DanaMedium text-sm xl:text-base text-indigo-950 /85 leading-8 tracking-tight'>
                                 درود دوستان
                                 کاملا این محصول رو پیشنهاد میکنم بسیار کیفیت خوبی داره و برند شناخته شده ای هست و در این بازه قیمتی در خریدش شک نکنید
                             </p>
@@ -286,7 +286,7 @@ export default function CommentsSection() {
 
                         {/* Comment Body */}
                         <div className='my-5 xl:my-7'>
-                            <p className='max-w-[730px] font-DanaMedium text-sm xl:text-base text-indigo-950 /85 leading-8 tracking-tight'>
+                            <p className='max-w-182.5 font-DanaMedium text-sm xl:text-base text-indigo-950 /85 leading-8 tracking-tight'>
                                 درود دوستان
                                 کاملا این محصول رو پیشنهاد میکنم بسیار کیفیت خوبی داره و برند شناخته شده ای هست و در این بازه قیمتی در خریدش شک نکنید
                             </p>

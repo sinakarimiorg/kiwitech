@@ -96,8 +96,9 @@ const Topbar = () => {
                     <div className="flex items-center gap-x-2 md:gap-x-4 lg:gap-x-5">
 
                         <div className="relative group cursor-pointer hover:text-neon transition-colors">
-                            <HiOutlineShoppingCart className='w-5 custom-sc:w-8 h-5 custom-sc:h-8' />
-
+                            <Link href={'/checkout/cart'}>
+                                <HiOutlineShoppingCart className='w-5 custom-sc:w-8 h-5 custom-sc:h-8' />
+                            </Link>
                             {/* <!-- Cart Box --> */}
                             <div className="absolute top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible w-100 p-5 border border-border border-t-[3px] shadow-custom border-t-primary-500 rounded-2xl
                         bg-dark-secondary text-text transition-all delay-75 overflow-hidden z-30">
@@ -105,7 +106,7 @@ const Topbar = () => {
                                 {/* <!-- Cart Box Header --> */}
                                 <div className="flex items-center justify-between font-IranYekan text-xs tracking-tighter">
                                     <span className="text-text-muted">1 مورد</span>
-                                    <a href="#" className="flex items-center text-primary-500 ">
+                                    <a href="/checkout/cart" className="flex items-center text-primary-500 ">
                                         مشاهده سبد خرید
                                         <HiMiniChevronLeft className='w-5 h-5' />
                                     </a>

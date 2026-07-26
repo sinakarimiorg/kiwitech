@@ -49,7 +49,7 @@ export default function ProfileSidebar({ active = 'personal-info' }: { active?: 
 
                 {/* Nav List — horizontal scroll on mobile, vertical list on desktop */}
                 <div className='flex lg:flex-col gap-1.5 lg:gap-1 p-3 overflow-x-auto lg:overflow-visible
-                    [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+                    [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none'>
                     {navItems.map(item => {
                         const isActive = item.key === active
                         const Icon = item.icon
