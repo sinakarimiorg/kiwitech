@@ -12,7 +12,7 @@ import { FaPlus, FaMinus } from 'react-icons/fa6'
 import { MdDeleteOutline } from 'react-icons/md'
 import { HiOutlineShoppingCart, HiMiniChevronLeft } from 'react-icons/hi2'
 import TomanIcon from '@root/src/components/modules/icons/TomanIcon'
-import AsideBox from '@root/src/components/templates/checkout/AsideBox/AsideBox'
+import AsideBox from '@root/src/components/templates/p-user/AsideBox/AsideBox'
 
 type CartItem = {
     id: number

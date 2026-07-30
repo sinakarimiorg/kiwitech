@@ -12,7 +12,7 @@ import allProducts from '@root/Products'
 import { HiMiniChevronLeft } from 'react-icons/hi2'
 import { PiMapPinLight, PiCreditCardLight, PiMoneyLight, PiCheckCircleFill } from 'react-icons/pi'
 import TomanIcon from '@root/src/components/modules/icons/TomanIcon'
-import AsideBox from '@root/src/components/templates/checkout/AsideBox/AsideBox'
+import AsideBox from '@root/src/components/templates/p-user/AsideBox/AsideBox'
 
 // آدرس انتخاب‌شده در مرحله‌ی قبل - در پروژه‌ی واقعی از state مشترک (context/ردوکس) خوانده می‌شود
 const selectedAddress = {

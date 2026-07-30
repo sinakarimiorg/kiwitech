@@ -12,7 +12,7 @@ import allProducts from '@root/Products'
 import { HiMiniChevronLeft } from 'react-icons/hi2'
 import { PiMapPinLight, PiPlusCircleLight, PiCheckCircleFill } from 'react-icons/pi'
 import TomanIcon from '@root/src/components/modules/icons/TomanIcon'
-import AsideBox from '@root/src/components/templates/checkout/AsideBox/AsideBox'
+import AsideBox from '@root/src/components/templates/p-user/AsideBox/AsideBox'
 
 type Address = {
     id: number
