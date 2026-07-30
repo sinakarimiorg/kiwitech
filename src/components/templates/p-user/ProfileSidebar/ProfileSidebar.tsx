@@ -21,13 +21,13 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-    { key: 'orders', label: 'سفارش‌های من', href: '#', icon: PiPackageLight },
+    { key: 'orders', label: 'سفارش‌های من', href: 'p-user/userOrders', icon: PiPackageLight },
     { key: 'favorites', label: 'کالاهای مورد علاقه', href: '#', icon: PiHeartLight },
     { key: 'comments', label: 'نظرات', href: '#', icon: PiChatCircleTextLight },
     { key: 'addresses', label: 'نشانی‌ها', href: '#', icon: PiMapPinLight },
     { key: 'messages', label: 'پیام‌ها', href: '#', icon: PiEnvelopeSimpleLight },
     { key: 'recently-viewed', label: 'آخرین کالاهای دیده‌شده', href: '#', icon: PiEyeLight },
-    { key: 'personal-info', label: 'مشخصات فردی', href: '/profile', icon: PiUserCircleLight },
+    { key: 'personal-info', label: 'مشخصات فردی', href: 'profile', icon: PiUserCircleLight },
     { key: 'wallet', label: 'کیف پول', href: '#', icon: PiWalletLight },
 ]
 
