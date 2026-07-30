@@ -34,6 +34,7 @@ import 'swiper/css/thumbs';
 
 
 import styles from '@/styles/product.module.css'
+import TomanIcon from '@root/src/components/modules/icons/TomanIcon';
 
 
 
@@ -348,7 +349,7 @@ export default function ProductInfo() {
                                             <span className={styles.cart__exPrice}>2,200,000</span>
                                             <div className='inline-flex gap-1'>
                                                 <span className='font-IranYekanBold text-xl '>1,500,000</span>
-                                                <span><svg className='w-4 h-4 '><use href="#toman"></use></svg></span>
+                                                <span><TomanIcon/></span>
                                             </div>
                                         </div>
                                     </div>
@@ -507,7 +508,7 @@ export default function ProductInfo() {
                                             <span className={styles.cart__exPrice}>2,200,000</span>
                                             <div className='inline-flex gap-1'>
                                                 <span className='font-IranYekanBold text-lg lg:text-xl  '>1,500,000</span>
-                                                <span><svg className='w-3.5 lg:w-4 h-3.5 lg:h-4 '><use href="#toman"></use></svg></span>
+                                                <span><TomanIcon/></span>
                                             </div>
                                         </div>
                                     </div>
@@ -536,7 +537,7 @@ export default function ProductInfo() {
                                 <span className={styles.cart__exPrice}>2,200,000</span>
                                 <div className='inline-flex gap-1'>
                                     <span className='font-IranYekanBold text-xl  '>1,500,000</span>
-                                    <span><svg className='w-4 h-4 '><use href="#toman"></use></svg></span>
+                                    <span><TomanIcon/></span>
                                 </div>
                             </div>
                         </div>
