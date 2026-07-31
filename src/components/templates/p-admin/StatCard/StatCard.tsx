@@ -16,7 +16,9 @@ const accentMap: Record<StatCardProps['accent'], string> = {
 
 export default function StatCard({ label, value, icon: Icon, trend, accent }: StatCardProps) {
     return (
-        <div className="bg-white shadow-lg rounded-2xl p-5">
+        <div className="bg-white shadow-lg rounded-2xl p-5 transition-all duration-300
+         ease-out hover:-translate-y-2 hover:rotate-2 hover:scale-105 hover:shadow-2xl
+         hover:shadow-zinc-300/60 cursor-pointer">
             <div className="flex items-start justify-between">
                 <span className={`flex-center w-11 h-11 rounded-xl ${accentMap[accent]}`}>
                     <Icon className="w-6 h-6" />

@@ -46,7 +46,7 @@ function page() {
             <main className='flex-1 min-w-0'>
                 <div className="p-5 sm:p-6 flex flex-col gap-6">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                        <StatCard label="فروش امروز" value="۳۲,۴۰۰,۰۰۰ تومان" icon={PiWalletLight} accent="primary" trend={{ value: '۱۲٪', positive: true }} />
+                        <StatCard label="فروش امروز" value="۳۲,۴۰۰,۰۰۰ تومان"  icon={PiWalletLight} accent="primary" trend={{ value: '۱۲٪', positive: true }} />
                         <StatCard label="سفارش‌های جدید" value="۱۲" icon={PiShoppingBagOpenLight} accent="neon" trend={{ value: '۴٪', positive: true }} />
                         <StatCard label="مشتریان فعال" value="۸۷۶" icon={PiUsersLight} accent="primary" trend={{ value: '۲٪', positive: false }} />
                         <StatCard label="نظرات در انتظار تایید" value="۵" icon={PiChatCircleTextLight} accent="danger" />

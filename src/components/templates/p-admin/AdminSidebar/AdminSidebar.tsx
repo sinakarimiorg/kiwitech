@@ -42,13 +42,13 @@ export default function AdminSidebar() {
     const [collapsed, setCollapsed] = useState(false)
 
     return (
-        <aside className={`sticky top-0 h-screen shrink-0 bg-navbar text-text transition-all duration-700 ${collapsed ? 'w-20' : 'w-64'}`}>
+        <aside className={`sticky top-0 h-screen shrink-0 bg-navbar text-text transition-all duration-1000 overflow-hidden ${collapsed ? 'w-20' : 'w-64'}`}>
             {/* Logo */}
             <div className="flex items-center justify-between px-5 py-6 border-b border-navbar-border">
                 {!collapsed && (
                     <Link href="/p-admin" className="flex items-center gap-2">
                         <img src="/images/logo/logo1.png" className="w-9 h-9" alt="کیوی‌تک" />
-                        <span className="font-MorabbaBold text-neon text-lg">پنل مدیریت</span>
+                        <span className="font-MorabbaBold text-neon text-lg line-clamp-1">پنل مدیریت</span>
                     </Link>
                 )}
                 <button
@@ -60,7 +60,7 @@ export default function AdminSidebar() {
             </div>
 
             {/* Nav */}
-            <nav className="flex flex-col gap-1 px-3 py-5 overflow-y-auto">
+            <nav className="flex flex-col gap-1 px-3 py-5 overflow-x-hidden overflow-y-auto">
                 {navItems.map(item => {
                     const isActive = pathname === item.href
                     const Icon = item.icon
@@ -69,10 +69,11 @@ export default function AdminSidebar() {
                             key={item.key}
                             href={item.href}
                             title={collapsed ? item.label : undefined}
-                            className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-colors
+                            className={`relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-colors line-clamp-1
                                 ${isActive
                                     ? 'bg-primary-600/90 text-white font-IranYekanMedium'
-                                    : 'text-text-muted hover:bg-navbar-hover hover:text-text'}`}
+                                    : 'text-text-muted hover:bg-navbar-hover hover:text-text'}`
+                                }
                         >
                             <Icon className="w-5 h-5 shrink-0" />
                             {!collapsed && <span className="whitespace-nowrap">{item.label}</span>}
@@ -103,7 +104,7 @@ export default function AdminSidebar() {
                     className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-danger/90 hover:bg-danger/10 transition-colors"
                 >
                     <PiSignOutLight className="w-5 h-5 shrink-0" />
-                    {!collapsed && <span>خروج به فروشگاه</span>}
+                    {!collapsed && <span className='line-clamp-1'>خروج به فروشگاه</span>}
                 </Link>
             </div>
         </aside>
