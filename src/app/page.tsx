@@ -1,15 +1,15 @@
 "use client"
 
 import Header from "../components/modules/header/header";
-import Landing from "../components/templates/index/Landing/Landing";
-import PopularCategories from "../components/templates/index/PopularCategories/PopularCategories";
-import AmazingOffers from "../components/templates/index/AmazingOffers/AmazingOffers";
-import CategoriesByPhone from "../components/templates/index/CategoriesByPhone/CategoriesByPhone";
-import LatestProducts from "../components/templates/index/LatestProducts/LatestProducts";
-import ServicesSection from "../components/templates/index/ServicesSection/ServicesSection";
-import PopularProducts from "../components/templates/index/PopularProducts/PopularProducts";
-import PopularBrands from "../components/templates/index/PopularBrands/PopularBrands";
-import LatestArticles from "../components/templates/index/LatestArticles/LatestArticles";
+import Landing from "../components/templates/Index/Landing/Landing";
+import PopularCategories from "../components/templates/Index/PopularCategories/PopularCategories";
+import AmazingOffers from "../components/templates/Index/AmazingOffers/AmazingOffers";
+import CategoriesByPhone from "../components/templates/Index/CategoriesByPhone/CategoriesByPhone";
+import LatestProducts from "../components/templates/Index/LatestProducts/LatestProducts";
+import ServicesSection from "../components/templates/Index/ServicesSection/ServicesSection";
+import PopularProducts from "../components/templates/Index/PopularProducts/PopularProducts";
+import PopularBrands from "../components/templates/Index/PopularBrands/PopularBrands";
+import LatestArticles from "../components/templates/Index/LatestArticles/LatestArticles";
 import Footer from "../components/modules/footer/footer"; 
 
 export default function Home() {

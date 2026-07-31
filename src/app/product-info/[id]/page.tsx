@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import Header from '@root/src/components/modules/header/header';
 import Footer from '@root/src/components/modules/footer/footer';
 import BreadCrumb from '@root/src/components/modules/breadCrumb/breadCrumb';
-import CommentsSection from '../../../components/templates/product/CommentsSection/CommentsSection'
+import CommentsSection from '../../../components/templates/Product/CommentsSection/CommentsSection'
 import { RiStarFill } from "react-icons/ri";
 import { GoShareAndroid } from "react-icons/go";
 import { LiaComments } from "react-icons/lia";
@@ -22,8 +22,8 @@ import { FaXmark } from 'react-icons/fa6'
 import { PiPhoneCallLight } from "react-icons/pi";
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import ProductFeatureBox from '../../../components/templates/product/ProductFeatureBox/ProductFeatureBox';
-import ProductFeatureBoxLarge from '../../../components/templates/product/ProductFeatureBoxLarge/ProductFeatureBoxLarge';
+import ProductFeatureBox from '../../../components/templates/Product/ProductFeatureBox/ProductFeatureBox';
+import ProductFeatureBoxLarge from '../../../components/templates/Product/ProductFeatureBoxLarge/ProductFeatureBoxLarge';
 import type { Swiper as SwiperType } from 'swiper';
 
 // Import Swiper styles

@@ -48,7 +48,7 @@ export default function AdminSidebar() {
                 {!collapsed && (
                     <Link href="/p-admin" className="flex items-center gap-2">
                         <img src="/images/logo/logo1.png" className="w-9 h-9" alt="کیوی‌تک" />
-                        <span className="font-MorabbaBold text-neon text-lg line-clamp-1">پنل مدیریت</span>
+                        <span className="font-MorabbaBold text-neon text-lg line-clamp-1">کیــــوی تـــک</span>
                     </Link>
                 )}
                 <button

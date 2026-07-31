@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import Header from '@root/src/components/modules/header/header'
 import BreadCrumb from '@root/src/components/modules/breadCrumb/breadCrumb'
 import Footer from '@root/src/components/modules/footer/footer'
-import CheckoutSteps from '@root/src/components/templates/checkout/CheckoutSteps/CheckoutSteps'
+import CheckoutSteps from '@root/src/components/templates/Checkout/CheckoutSteps/CheckoutSteps'
 import allProducts from '@root/Products'
 
 import { HiMiniChevronLeft } from 'react-icons/hi2'
