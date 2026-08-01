@@ -16,6 +16,9 @@ import {
     PiSignOutLight,
     PiCaretRightLight,
     PiArticle,
+    PiWallet,
+    PiWalletLight,
+    PiArticleLight,
 } from 'react-icons/pi'
 import type { IconType } from 'react-icons'
 
@@ -29,13 +32,14 @@ type NavItem = {
 
 const navItems: NavItem[] = [
     { key: 'dashboard', label: 'داشبورد', href: '/p-admin', icon: PiSquaresFourLight },
+    { key: 'dashboard', label: 'کیف پول و تراکنش‌ها', href: '/p-admin/wallet', icon: PiWalletLight },
     { key: 'orders', label: 'سفارش‌ها', href: '/p-admin/orders', icon: PiShoppingBagOpenLight, badge: 12 },
     { key: 'products', label: 'محصولات', href: '/p-admin/products', icon: PiPackageLight },
     { key: 'categories', label: 'دسته‌بندی‌ها', href: '/p-admin/categories', icon: PiTagLight },
     { key: 'customers', label: 'کاربران', href: '/p-admin/users', icon: PiUsersLight },
     { key: 'comments', label: 'نظرات کاربران', href: '/p-admin/comments', icon: PiChatCircleTextLight, badge: 5 },
     { key: 'discounts', label: 'کدهای تخفیف', href: '/p-admin/discounts', icon: PiPercentLight },
-    { key: 'discounts', label: 'مقالات', href: '/p-admin/articles', icon: PiArticle },
+    { key: 'discounts', label: 'مقالات', href: '/p-admin/articles', icon: PiArticleLight },
     { key: 'banners', label: 'بنرها و اسلایدر', href: '/p-admin/banners', icon: PiImagesLight },
 ]
 
