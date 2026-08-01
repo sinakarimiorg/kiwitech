@@ -15,6 +15,7 @@ import {
     PiGearLight,
     PiSignOutLight,
     PiCaretRightLight,
+    PiArticle,
 } from 'react-icons/pi'
 import type { IconType } from 'react-icons'
 
@@ -34,6 +35,7 @@ const navItems: NavItem[] = [
     { key: 'customers', label: 'کاربران', href: '/p-admin/users', icon: PiUsersLight },
     { key: 'comments', label: 'نظرات کاربران', href: '/p-admin/comments', icon: PiChatCircleTextLight, badge: 5 },
     { key: 'discounts', label: 'کدهای تخفیف', href: '/p-admin/discounts', icon: PiPercentLight },
+    { key: 'discounts', label: 'مقالات', href: '/p-admin/articles', icon: PiArticle },
     { key: 'banners', label: 'بنرها و اسلایدر', href: '/p-admin/banners', icon: PiImagesLight },
 ]
 
