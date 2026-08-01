@@ -129,7 +129,7 @@ export default function AddArticle() {
                             className={`relative w-10 h-5.5 rounded-full transition-colors cursor-pointer shrink-0
                                 ${form.publish ? "bg-primary-500" : "bg-gray-300"}`}>
                             <span className={`absolute top-0.5 w-4.5 h-4.5 bg-white rounded-full transition-all
-                                ${form.publish ? "right-0.5" : "right-[1.125rem]"}`} />
+                                ${form.publish ? "right-0.5" : "right-4.5"}`} />
                         </button>
                     </div>
                     <p className='mt-1.5 text-xs text-zinc-400'>{form.publish ? "پس از ذخیره منتشر می‌شود" : "به عنوان پیش‌نویس ذخیره می‌شود"}</p>
