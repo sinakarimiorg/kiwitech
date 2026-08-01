@@ -4,7 +4,7 @@ import { PiMagnifyingGlassLight, PiBellLight, PiUserCircleLight } from 'react-ic
 
 export default function AdminTopbar() {
     return (
-        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-6 py-4 mb-8 bg-white shadow-sm">
+        <div className="sticky top-0 z-10 flex items-center justify-between gap-4 px-6 py-4 mb-4 bg-white shadow-sm">
             <h1 className="font-MorabbaBold text-lg sm:text-xl text-zinc-800">پـنل مـدیـریـت</h1>
 
             <div className="flex items-center gap-3 sm:gap-5">
