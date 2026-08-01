@@ -31,7 +31,7 @@ const navItems: NavItem[] = [
     { key: 'orders', label: 'سفارش‌ها', href: '/p-admin/orders', icon: PiShoppingBagOpenLight, badge: 12 },
     { key: 'products', label: 'محصولات', href: '/p-admin/products', icon: PiPackageLight },
     { key: 'categories', label: 'دسته‌بندی‌ها', href: '/p-admin/categories', icon: PiTagLight },
-    { key: 'customers', label: 'مشتریان', href: '/p-admin/customers', icon: PiUsersLight },
+    { key: 'customers', label: 'کاربران', href: '/p-admin/users', icon: PiUsersLight },
     { key: 'comments', label: 'نظرات کاربران', href: '/p-admin/comments', icon: PiChatCircleTextLight, badge: 5 },
     { key: 'discounts', label: 'کدهای تخفیف', href: '/p-admin/discounts', icon: PiPercentLight },
     { key: 'banners', label: 'بنرها و اسلایدر', href: '/p-admin/banners', icon: PiImagesLight },
