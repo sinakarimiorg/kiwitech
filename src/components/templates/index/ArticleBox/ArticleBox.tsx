@@ -3,7 +3,21 @@ import React from 'react'
 import { FaChevronLeft } from "react-icons/fa6";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
-export default function ArticleBox({ shortName, img, title, date }) {
+type ArticleDate = {
+    day: string
+    month: string
+    year: string
+}
+
+type ArticleCardProps = {
+    shortName: string
+    img: string
+    title: string
+    date: ArticleDate[]
+    category?: string
+}
+
+export default function ArticleBox({ shortName, img, title, date }: ArticleCardProps) {
 
     return (
         <Link href={`/article-info/${shortName}`}
@@ -11,11 +25,11 @@ export default function ArticleBox({ shortName, img, title, date }) {
             <div className="relative rounded-2xl rounded-bl-4xl overflow-hidden shrink-0">
                 <div className="w-32 h-32 object-cover object-top sm:w-84.5 sm:h-46.75">
                     <LazyLoadImage
-                    src={img}
-                    alt="blog"
-                    height={'100%'}
-                    width={'100%'}
-                    effect='blur'
+                        src={img}
+                        alt="blog"
+                        height={'100%'}
+                        width={'100%'}
+                        effect='blur'
                     />
                 </div>
                 <div

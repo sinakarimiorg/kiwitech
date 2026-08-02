@@ -1,6 +1,15 @@
 import React from 'react'
 
-export default function ServiceBox({ icon, title, desc, gradiant, transitionFrontClass, transitionBackClass }) {
+type serviceBoxProps = {
+  icon: React.ReactNode,
+  title: string,
+  desc: string,
+  gradiant: string,
+  transitionFrontClass: string,
+  transitionBackClass: string
+}
+
+export default function ServiceBox({ icon, title, desc, gradiant, transitionFrontClass, transitionBackClass }: serviceBoxProps) {
   return (
     <div className='service-box group'>
 

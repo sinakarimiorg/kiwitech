@@ -6,7 +6,7 @@ export default function LatestArticles() {
     return (
         <div>
             <div className='container'>
-                <SectionHeader title={'مطالب خواندنی'} desc={'موبولــند مــگ'} btnTitle={'همه مطالب'} btnHref={'/articles/:page'} />
+                <SectionHeader title={'مطالب خواندنی'} desc={'موبولــند مــگ'} btnTitle={'همه مطالب'} btnHref={'/articles/1'} />
                 {/* <!-- Blogs --> */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 lg:gap-x-5 gap-y-3.5 sm:gap-y-4">
                 <ArticleBox shortName={'best-phone'} img={'/images/articles/phone.jpg'} title={'بهترین گوشی تا پنج میلیون'} date={[{day:'21', month:'تیر', year:'1404'}]}/>
