@@ -1,4 +1,4 @@
-import TomanIcon from "@root/src/components/modules/icons/TomanIcon";
+import TomanIcon from "@root/src/components/modules/Icons/TomanIcon";
 import { log } from "console";
 import Link from "next/link";
 import { PiShieldCheckLight, PiTruckLight } from "react-icons/pi";

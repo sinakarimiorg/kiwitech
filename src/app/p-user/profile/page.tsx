@@ -1,7 +1,7 @@
 import Layout from '@root/src/components/layouts/UserPanelLayout'
-import WalletBar from '@root/src/components/templates/p-user/WalletBar/WalletBar'
-import PersonalInfoCard from '@root/src/components/templates/p-user/PersonalInfoCard/PersonalInfoCard'
-import RecentOrders from '@root/src/components/templates/p-user/RecentOrders/RecentOrders'
+import WalletBar from '@root/src/components/templates/P-user/WalletBar/WalletBar'
+import PersonalInfoCard from '@root/src/components/templates/P-user/PersonalInfoCard/PersonalInfoCard'
+import RecentOrders from '@root/src/components/templates/P-user/RecentOrders/RecentOrders'
 
 export default function ProfilePage() {
     return (

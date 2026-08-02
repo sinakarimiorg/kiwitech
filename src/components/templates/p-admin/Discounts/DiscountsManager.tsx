@@ -12,9 +12,9 @@ import {
     PiMagnifyingGlassLight,
 } from 'react-icons/pi'
 
-import StatCard from '@root/src/components/templates/p-admin/Index/StatCard'
+import StatCard from '@root/src/components/templates/P-admin/Index/StatCard'
 import DiscountModal from './DiscountModal'
-import TomanIcon from '@root/src/components/modules/icons/TomanIcon'
+import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 
 export type DiscountType = 'percent' | 'fixed'
 export type DiscountStatus = 'active' | 'disabled' | 'expired'

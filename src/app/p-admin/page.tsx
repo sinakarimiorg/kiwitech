@@ -1,7 +1,7 @@
 import Layout from '@root/src/components/layouts/AdminPanelLayout'
-import TomanIcon from '@root/src/components/modules/icons/TomanIcon'
-import SalesPulse from '@root/src/components/templates/p-admin/Index/SalesPulse'
-import StatCard from '@root/src/components/templates/p-admin/Index/StatCard'
+import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
+import SalesPulse from '@root/src/components/templates/P-admin/Index/SalesPulse'
+import StatCard from '@root/src/components/templates/P-admin/Index/StatCard'
 import Link from 'next/link'
 
 import {

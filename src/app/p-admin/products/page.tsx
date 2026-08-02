@@ -1,6 +1,6 @@
 import Layout from "@root/src/components/layouts/AdminPanelLayout";
-import AddProduct from "@root/src/components/templates/p-admin/Products/AddProduct";
-import ProductsList from "@root/src/components/templates/p-admin/Products/ProductsList";
+import AddProduct from "@root/src/components/templates/P-admin/Products/AddProduct";
+import ProductsList from "@root/src/components/templates/P-admin/Products/ProductsList";
 
 const page = async () => {
     return (

@@ -1,8 +1,8 @@
 import Layout from "@root/src/components/layouts/AdminPanelLayout";
-import StatCard from "@root/src/components/templates/p-admin/Index/StatCard";
-import TransactionsChart from "@root/src/components/templates/p-admin/Wallet/TransactionsChart";
-import TransactionsList from "@root/src/components/templates/p-admin/Wallet/TransactionsList";
-import WalletOverview from "@root/src/components/templates/p-admin/Wallet/WalletOverview";
+import StatCard from "@root/src/components/templates/P-admin/Index/StatCard";
+import TransactionsChart from "@root/src/components/templates/P-admin/Wallet/TransactionsChart";
+import TransactionsList from "@root/src/components/templates/P-admin/Wallet/TransactionsList";
+import WalletOverview from "@root/src/components/templates/P-admin/Wallet/WalletOverview";
 
 import {
     PiWalletLight,

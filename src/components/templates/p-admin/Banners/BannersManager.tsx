@@ -13,7 +13,7 @@ import {
     PiArrowDownLight,
 } from 'react-icons/pi'
 
-import StatCard from '@root/src/components/templates/p-admin/Index/StatCard'
+import StatCard from '@root/src/components/templates/P-admin/Index/StatCard'
 import BannerModal from './BannerModal'
 
 export type BannerPosition = 'landing' | 'amazingOffers' | 'categoriesByPhone'

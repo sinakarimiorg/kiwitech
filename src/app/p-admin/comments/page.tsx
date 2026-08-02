@@ -1,6 +1,6 @@
 import Layout from "@root/src/components/layouts/AdminPanelLayout";
-import CommentsList from "@root/src/components/templates/p-admin/Comments/CommentsList";
-import StatCard from "@root/src/components/templates/p-admin/Index/StatCard";
+import CommentsList from "@root/src/components/templates/P-admin/Comments/CommentsList";
+import StatCard from "@root/src/components/templates/P-admin/Index/StatCard";
 
 import {
     PiChatCircleTextLight,

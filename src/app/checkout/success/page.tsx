@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import Header from '@root/src/components/modules/header/header'
-import Footer from '@root/src/components/modules/footer/footer'
+import Header from '@root/src/components/modules/Header/Header'
+import Footer from '@root/src/components/modules/Footer/Footer'
 
 import { PiCheckCircleFill, PiPackageLight, PiPhoneCallLight } from 'react-icons/pi'
 import { HiMiniChevronLeft } from 'react-icons/hi2'

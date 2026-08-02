@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { RiSearch2Line } from "react-icons/ri";
 import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
 import { HiOutlineShoppingCart } from "react-icons/hi2";

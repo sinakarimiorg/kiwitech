@@ -1,6 +1,6 @@
 import Layout from "@root/src/components/layouts/AdminPanelLayout";
-import StatCard from "@root/src/components/templates/p-admin/Index/StatCard";
-import UsersList from "@root/src/components/templates/p-admin/Users/UsersList";
+import StatCard from "@root/src/components/templates/P-admin/Index/StatCard";
+import UsersList from "@root/src/components/templates/P-admin/Users/UsersList";
 
 import {
     PiUsersLight,

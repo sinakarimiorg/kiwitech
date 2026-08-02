@@ -2,17 +2,17 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import Header from '@root/src/components/modules/header/header'
-import BreadCrumb from '@root/src/components/modules/breadCrumb/breadCrumb'
-import Footer from '@root/src/components/modules/footer/footer'
+import Header from '@root/src/components/modules/Header/Header'
+import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
+import Footer from '@root/src/components/modules/Footer/Footer'
 import CheckoutSteps from '@root/src/components/templates/Checkout/CheckoutSteps/CheckoutSteps'
 import allProducts from '@root/Products'
 
 import { FaPlus, FaMinus } from 'react-icons/fa6'
 import { MdDeleteOutline } from 'react-icons/md'
 import { HiOutlineShoppingCart, HiMiniChevronLeft } from 'react-icons/hi2'
-import TomanIcon from '@root/src/components/modules/icons/TomanIcon'
-import AsideBox from '@root/src/components/templates/p-user/AsideBox/AsideBox'
+import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
+import AsideBox from '@root/src/components/templates/P-user/AsideBox/AsideBox'
 
 type CartItem = {
     id: number

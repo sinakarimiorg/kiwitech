@@ -2,9 +2,9 @@
 
 import React, { useCallback } from 'react'
 import { useEffect, useState } from 'react'
-import Header from '@root/src/components/modules/header/header';
-import Footer from '@root/src/components/modules/footer/footer';
-import BreadCrumb from '@root/src/components/modules/breadCrumb/breadCrumb';
+import Header from '@root/src/components/modules/Header/Header';
+import Footer from '@root/src/components/modules/Footer/Footer';
+import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb';
 import CommentsSection from '../../../components/templates/Product/CommentsSection/CommentsSection'
 import { RiStarFill } from "react-icons/ri";
 import { GoShareAndroid } from "react-icons/go";
@@ -34,7 +34,7 @@ import 'swiper/css/thumbs';
 
 
 import styles from '@/styles/product.module.css'
-import TomanIcon from '@root/src/components/modules/icons/TomanIcon';
+import TomanIcon from '@root/src/components/modules/Icons/TomanIcon';
 
 
 

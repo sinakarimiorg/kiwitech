@@ -1,5 +1,5 @@
 import Layout from "@root/src/components/layouts/AdminPanelLayout";
-import DiscountsManager from "@root/src/components/templates/p-admin/Discounts/DiscountsManager";
+import DiscountsManager from "@root/src/components/templates/P-admin/Discounts/DiscountsManager";
 
 const page = () => {
     return (

@@ -1,7 +1,7 @@
-import BreadCrumb from '../modules/breadCrumb/breadCrumb'
-import Header from '../modules/header/header'
-import Footer from '../modules/footer/footer'
-import ProfileSidebar from '../templates/p-user/ProfileSidebar/ProfileSidebar'
+import BreadCrumb from '../modules/BreadCrumb/BreadCrumb'
+import Header from '../modules/Header/Header'
+import Footer from '../modules/Footer/Footer'
+import ProfileSidebar from '../templates/P-user/ProfileSidebar/ProfileSidebar'
 
 
 

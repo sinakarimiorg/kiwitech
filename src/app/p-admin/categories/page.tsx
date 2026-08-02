@@ -1,5 +1,5 @@
 import Layout from "@root/src/components/layouts/AdminPanelLayout";
-import MenusManager from "@root/src/components/templates/p-admin/Categories/MenusManager";
+import MenusManager from "@root/src/components/templates/P-admin/Categories/MenusManager";
 
 const page = async () => {
     return (

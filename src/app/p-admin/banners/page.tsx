@@ -1,5 +1,5 @@
 import Layout from "@root/src/components/layouts/AdminPanelLayout";
-import BannersManager from "@root/src/components/templates/p-admin/Banners/BannersManager";
+import BannersManager from "@root/src/components/templates/P-admin/Banners/BannersManager";
 
 const page = () => {
     return (

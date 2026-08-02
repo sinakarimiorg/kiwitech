@@ -1,5 +1,5 @@
-import AdminSidebar from "../templates/p-admin/AdminSidebar/AdminSidebar";
-import Header from "../templates/p-admin/Header/Header";
+import AdminSidebar from "../templates/P-admin/AdminSidebar/AdminSidebar";
+import Header from "../templates/P-admin/Header/Header";
 
 
 
