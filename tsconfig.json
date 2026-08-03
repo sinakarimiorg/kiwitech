@@ -29,11 +29,11 @@
       "@/*": [
         "./src/*"
       ],
-      "@configs/*": [
-        "./configs/*"
+      "@lib/*": [
+        "./src/lib/*"
       ],
       "@models/*": [
-        "./models/*"
+        "./src/models/*"
       ]
     }
   },

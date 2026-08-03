@@ -17,7 +17,7 @@ export default function SectionHeader({ title, desc, btnTitle, btnHref }: { titl
                 <div className="courses-header__left">
                     <Link
                         href={btnHref ? btnHref : ''}
-                        className="flex-center text-white text-xs xs:text-sm md:text-base tracking-tight bg-primary-600
+                        className="flex-center text-white text-xs xs:text-sm md:text-base tracking-tight bg-primary-400
                          py-1 xs:py-1.5 md:py-2 pl-1 xs:pl-1.5 md:pl-2 pr-1.5 xs:pr-2 md:pr-3 rounded-lg hover:bg-primary-500  transition-colors">
                         {btnTitle}
                         <HiArrowSmLeft className='mr-1 mb-0.5 md:mb-0 w-4 xs:w-5 md:w-6 h-4 xs:h-5 md:h-6' />
