@@ -52,7 +52,7 @@ export default function AdminSidebar() {
             {/* Logo */}
             <div className="flex items-center justify-between px-5 py-6 border-b border-navbar-border">
                 {!collapsed && (
-                    <Link href="/p-admin" className="flex items-center gap-2">
+                    <Link href="/" className="flex items-center gap-2">
                         <img src="/images/logo/logo1.png" className="w-9 h-9" alt="کیوی‌تک" />
                         <span className="font-MorabbaBold text-neon text-lg line-clamp-1">کیــــوی تـــک</span>
                     </Link>

@@ -12,18 +12,29 @@ import {
 } from "react-icons/pi"
 
 const categories = [
+    "انتخاب کنید",
     "لوازم جانبی موبایل",
     "لوازم جانبی کامپیوتر",
     "لوازم خانگی",
     "لوازم جانبی متفرقه",
 ]
 
+const subCategories = [
+    "انتخاب کنید",
+    "شارژر و کابل",
+    "هندزفری و هدفون",
+    "کیس و کاور",
+    "پایه نگهدارنده",
+]
+
 type ProductFormState = {
     name: string
+    linkName: string
     price: string
     exPrice: string
     stock: string
     category: string
+    subCategory: string
     shortDescription: string
     longDescription: string
     tags: string
@@ -31,10 +42,12 @@ type ProductFormState = {
 
 const initialState: ProductFormState = {
     name: "",
+    linkName: "",
     price: "",
     exPrice: "",
     stock: "",
     category: categories[0],
+    subCategory: subCategories[0],
     shortDescription: "",
     longDescription: "",
     tags: "",
@@ -69,11 +82,21 @@ export default function AddProduct() {
     }
 
     const handleSubmit = async () => {
-        // TODO: اتصال به API افزودن محصول (فعلاً فقط UI آماده است)
         setIsSubmitting(true)
+
+        const res = await fetch("/api/products", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(form),
+        })
+
         setTimeout(() => {
             setIsSubmitting(false)
         }, 1200)
+
+        return res
     }
 
     return (
@@ -114,12 +137,21 @@ export default function AddProduct() {
 
                 {/* Fields */}
                 <div className='flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5'>
-                    <div className='sm:col-span-2'>
+                    <div>
                         <label className='block mb-1.5 text-xs text-zinc-500'>نام محصول</label>
                         <input
                             value={form.name}
                             onChange={e => updateField("name", e.target.value)}
                             placeholder='مثال: هندزفری بلوتوثی کربی مدل CR-T107'
+                            className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                        />
+                    </div>
+                    <div>
+                        <label className='block mb-1.5 text-xs text-zinc-500'>نام لینک</label>
+                        <input
+                            value={form.linkName}
+                            onChange={e => updateField("linkName", e.target.value)}
+                            placeholder='مثال: cerby-890'
                             className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
                         />
                     </div>
@@ -134,6 +166,15 @@ export default function AddProduct() {
                         />
                     </div>
 
+                    <div>
+                        <label className='block mb-1.5 text-xs text-zinc-500'>درصد تخفیف (اختیاری)</label>
+                        <input
+                            value={form.exPrice}
+                            onChange={e => updateField("exPrice", e.target.value.replace(/[^0-9]/g, ""))}
+                            placeholder='30'
+                            className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                        />
+                    </div>
                     <div>
                         <label className='block mb-1.5 text-xs text-zinc-500'>قیمت قبل از تخفیف (اختیاری)</label>
                         <input
@@ -172,33 +213,34 @@ export default function AddProduct() {
                             ))}
                         </select>
                     </div>
+                    <div>
+                        <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
+                            <PiTagLight className='w-3.5 h-3.5' />
+                            زیر مجموعه
+                        </label>
+                        <select
+                            value={form.subCategory}
+                            onChange={e => updateField("subCategory", e.target.value)}
+                            className='w-full px-3.5 py-2.5 text-sm bg-white border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                        >
+                            {subCategories.map(subCat => (
+                                <option key={subCat} value={subCat}>{subCat}</option>
+                            ))}
+                        </select>
+                    </div>
 
-                    <div className='sm:col-span-2'>
-                        <label className='block mb-1.5 text-xs text-zinc-500'>توضیحات کوتاه</label>
-                        <input
-                            value={form.shortDescription}
-                            onChange={e => updateField("shortDescription", e.target.value)}
-                            placeholder='یک خط معرفی کوتاه برای نمایش در کارت محصول'
+                    <div>
+                        <label className='block mb-1.5 text-xs text-zinc-500'>رنگ ها (اختیاری)</label>
+                                                <input
+                            value={form.tags}
+                            onChange={e => updateField("tags", e.target.value)}
+                            placeholder='قرمز، آبی، مشکی'
                             className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
                         />
                     </div>
 
-                    <div className='sm:col-span-2'>
-                        <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
-                            <PiTextAlignRightLight className='w-3.5 h-3.5' />
-                            توضیحات کامل
-                        </label>
-                        <textarea
-                            value={form.longDescription}
-                            onChange={e => updateField("longDescription", e.target.value)}
-                            rows={4}
-                            placeholder='مشخصات فنی، ویژگی‌ها و توضیحات کامل محصول را وارد کنید'
-                            className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors resize-none'
-                        />
-                    </div>
-
-                    <div className='sm:col-span-2'>
-                        <label className='block mb-1.5 text-xs text-zinc-500'>تگ‌ها (با کاما جدا کنید)</label>
+                    <div>
+                        <label className='block mb-1.5 text-xs text-zinc-500'>تگ‌ها (اختیاری)</label>
                         <input
                             value={form.tags}
                             onChange={e => updateField("tags", e.target.value)}
@@ -206,6 +248,21 @@ export default function AddProduct() {
                             className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
                         />
                     </div>
+
+                    <div className='sm:col-span-2'>
+                        <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
+                            <PiTextAlignRightLight className='w-3.5 h-3.5' />
+                            توضیحات (اختیاری)
+                        </label>
+                        <textarea
+                            value={form.longDescription}
+                            onChange={e => updateField("longDescription", e.target.value)}
+                            rows={7}
+                            placeholder='مشخصات فنی، ویژگی‌ها و توضیحات محصول را وارد کنید'
+                            className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors resize-none'
+                        />
+                    </div>
+
                 </div>
             </div>
 
