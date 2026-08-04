@@ -32,11 +32,12 @@ type ProductFormState = {
     linkName: string
     price: string
     exPrice: string
+    discount: string
     stock: string
     category: string
     subCategory: string
-    shortDescription: string
-    longDescription: string
+    description: string
+    colors: string
     tags: string
 }
 
@@ -45,17 +46,19 @@ const initialState: ProductFormState = {
     linkName: "",
     price: "",
     exPrice: "",
+    discount: "",
     stock: "",
     category: categories[0],
     subCategory: subCategories[0],
-    shortDescription: "",
-    longDescription: "",
+    description: "",
+    colors: "",
     tags: "",
 }
 
 export default function AddProduct() {
     const [form, setForm] = useState<ProductFormState>(initialState)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
+    const [imageFile, setImageFile] = useState<File | null>(null)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -66,6 +69,7 @@ export default function AddProduct() {
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (!file) return
+        setImageFile(file)
         const reader = new FileReader()
         reader.onload = () => setImagePreview(reader.result as string)
         reader.readAsDataURL(file)
@@ -73,6 +77,7 @@ export default function AddProduct() {
 
     const removeImage = () => {
         setImagePreview(null)
+        setImageFile(null)
         if (fileInputRef.current) fileInputRef.current.value = ""
     }
 
@@ -82,21 +87,43 @@ export default function AddProduct() {
     }
 
     const handleSubmit = async () => {
+        if (!imageFile) {
+            console.error("تصویر محصول الزامی است")
+            return
+        }
+
         setIsSubmitting(true)
+        try {
+            const payload = new FormData()
+            payload.append("img", imageFile)
+            payload.append("name", form.name)
+            payload.append("linkName", form.linkName)
+            payload.append("price", form.price)
+            if (form.exPrice) payload.append("exPrice", form.exPrice)
+            payload.append("discount", form.discount || "0")
+            payload.append("stock", form.stock)
+            payload.append("category", form.category)
+            payload.append("subCategory", form.subCategory)
+            payload.append("description", form.description)
+            payload.append("colors", form.colors)
+            payload.append("tags", form.tags)
 
-        const res = await fetch("/api/products", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(form),
-        })
+            const res = await fetch("/api/products", {
+                method: "POST",
+                body: payload, // مهم: هدر Content-Type رو دستی ست نکن، خود مرورگر boundary درست می‌کنه
+            })
 
+            if (!res.ok) throw new Error("خطا در ثبت محصول")
+
+            resetForm()
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setIsSubmitting(false)
+        }
         setTimeout(() => {
             setIsSubmitting(false)
         }, 1200)
-
-        return res
     }
 
     return (
@@ -169,8 +196,8 @@ export default function AddProduct() {
                     <div>
                         <label className='block mb-1.5 text-xs text-zinc-500'>درصد تخفیف (اختیاری)</label>
                         <input
-                            value={form.exPrice}
-                            onChange={e => updateField("exPrice", e.target.value.replace(/[^0-9]/g, ""))}
+                            value={form.discount}
+                            onChange={e => updateField("discount", e.target.value.replace(/[^0-9]/g, ""))}
                             placeholder='30'
                             className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
                         />
@@ -231,9 +258,9 @@ export default function AddProduct() {
 
                     <div>
                         <label className='block mb-1.5 text-xs text-zinc-500'>رنگ ها (اختیاری)</label>
-                                                <input
-                            value={form.tags}
-                            onChange={e => updateField("tags", e.target.value)}
+                        <input
+                            value={form.colors}
+                            onChange={e => updateField("colors", e.target.value)}
                             placeholder='قرمز، آبی، مشکی'
                             className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
                         />
@@ -255,8 +282,8 @@ export default function AddProduct() {
                             توضیحات (اختیاری)
                         </label>
                         <textarea
-                            value={form.longDescription}
-                            onChange={e => updateField("longDescription", e.target.value)}
+                            value={form.description}
+                            onChange={e => updateField("description", e.target.value)}
                             rows={7}
                             placeholder='مشخصات فنی، ویژگی‌ها و توضیحات محصول را وارد کنید'
                             className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors resize-none'

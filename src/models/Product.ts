@@ -2,6 +2,7 @@ import mongoose, { Schema, models, model } from "mongoose"
 
 export interface IProduct {
     name: string
+    linkName: string
     price: number
     exPrice?: number
     discount?: number
@@ -11,14 +12,13 @@ export interface IProduct {
     description?: string
     colors: string
     tags: string[]
-    img1: string
-    img2?: string
-    linkName: string
+    img: string
 }
 
 const ProductSchema = new Schema<IProduct>(
     {
         name: { type: String, required: true },
+        linkName: { type: String, required: true, unique: true },
         price: { type: Number, required: true },
         exPrice: { type: Number },
         discount: { type: Number },
@@ -28,9 +28,7 @@ const ProductSchema = new Schema<IProduct>(
         description: { type: String, required: false },
         colors: { type: String, required: false },
         tags: { type: [String], required: false },
-        img1: { type: String, required: true },
-        img2: { type: String },
-        linkName: { type: String, required: true, unique: true },
+        img: { type: String, required: true },
     },
     { timestamps: true }
 )
