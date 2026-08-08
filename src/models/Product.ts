@@ -13,6 +13,7 @@ export interface IProduct {
     colors: string
     tags: string[]
     img: string
+    images?: []
 }
 
 const ProductSchema = new Schema<IProduct>(
