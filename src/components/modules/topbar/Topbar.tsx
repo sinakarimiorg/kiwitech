@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { RiSearch2Line } from "react-icons/ri";
 import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
 import { HiOutlineShoppingCart } from "react-icons/hi2";
@@ -17,8 +17,9 @@ import { IoDocumentTextOutline } from "react-icons/io5";
 import { BiPhone } from "react-icons/bi";
 import { RiGroupLine } from "react-icons/ri";
 import { HiMiniChevronLeft } from "react-icons/hi2";
-// import Overlay from '../overlay/Overlay';
+import Overlay from '../overlay/Overlay';
 import { useEffect } from "react";
+import SearchSuggestions from './SearchSuggestions/SearchSuggestions'
 
 
 const Topbar = () => {
@@ -29,10 +30,31 @@ const Topbar = () => {
     const [isSubmenuOpen, setIsSubmenuOpen] = useState(false)
 
 
+    ////////// Handle Search Suggestions Box
+    const [showDesktopSuggestions, setShowDesktopSuggestions] = useState(false)
+    const [showMobileSuggestions, setShowMobileSuggestions] = useState(false)
+    const desktopSearchRef = useRef<HTMLDivElement>(null)
+    const mobileSearchRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (desktopSearchRef.current && !desktopSearchRef.current.contains(event.target as Node)) {
+                setShowDesktopSuggestions(false)
+            }
+            if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target as Node)) {
+                setShowMobileSuggestions(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
+    ////////////////////////////
+
     useEffect(() => {
         window.history.scrollRestoration = "manual";
         window.scrollTo(0, 0);
     }, []);
+
     const openMenuBar = () => {
         setNavClass('right-0')
         setVisibleOverlay(!visibleOverlay)
@@ -59,9 +81,22 @@ const Topbar = () => {
 
     ///////////// For Search Section 
     const router = useRouter()
+
+    const openSearchBox = () => {
+        setShowDesktopSuggestions(true)
+        setVisibleOverlay(true)
+    }
+
+    const goToSearch = (value: string) => {
+        if (!value.trim()) return
+        setShowDesktopSuggestions(false)
+        setShowMobileSuggestions(false)
+        router.push(`/search/${encodeURIComponent(value.trim())}`)
+    }
+
     const enterInInput = (event: any) => {
         if (event.keyCode === 13) {
-            router.replace(`/search/${searchedValue}`)
+            goToSearch(searchedValue)
         }
     }
 
@@ -82,11 +117,24 @@ const Topbar = () => {
                 </Link>
 
                 {/* Search Box */}
-                <div className='flex items-center w-75 md:w-87.5 lg:w-125 xl:w-175 2xl:mr-24 bg-dark-secondary border border-border rounded-2xl overflow-hidden'>
-                    <Link href={`/search/${searchedValue}`} className='flex-center p-2 md:p-3 text-black bg-primary-500 hover:bg-primary-400  cursor-pointer'>
-                        <RiSearch2Line className='w-5 md:w-6 h-5 md:h-6' />
-                    </Link>
-                    <input value={searchedValue} onChange={event => { setSearchedValue(event.target.value) }} onKeyDown={event => enterInInput(event)} type='text' className='w-full text-sm md:text-base text-text text-center bg-transparent focus:outline-none placeholder-text-muted' placeholder='جستجو در مـوبـولـــند' />
+                <div ref={desktopSearchRef} className='relative w-75 md:w-87.5 lg:w-125 xl:w-175 2xl:mr-24'>
+                    <div className='flex items-center bg-dark-secondary border border-border rounded-2xl overflow-hidden'>
+                        <button onClick={() => goToSearch(searchedValue)} className='flex-center p-2 md:p-3 text-black bg-primary-500 hover:bg-primary-400 cursor-pointer'>
+                            <RiSearch2Line className='w-5 md:w-6 h-5 md:h-6' />
+                        </button>
+                        <input
+                            value={searchedValue}
+                            onChange={event => { setSearchedValue(event.target.value) }}
+                            onKeyDown={event => enterInInput(event)}
+                            onFocus={() => openSearchBox()}
+                            type='text'
+                            className='w-full text-sm md:text-base text-text text-center bg-transparent focus:outline-none placeholder-text-muted'
+                            placeholder='جستجو در مـوبـولـــند' />
+                    </div>
+
+                    {showDesktopSuggestions &&
+                        <SearchSuggestions query={searchedValue} onNavigate={() => setShowDesktopSuggestions(false)} />
+                    }
                 </div>
 
                 {/* Cart & Login  */}
@@ -344,15 +392,27 @@ const Topbar = () => {
                     </div>
                 </div >
                 {/* Search Input For Mobile*/}
-                < div className='flex items-center m-6 bg-transparent rounded-xl border border-custom-dark/80 overflow-hidden' >
-                    <Link href={`/search/${searchedValue}`} className='flex-center p-3 bg-primarybg-primary-500 cursor-pointer'>
-                        <RiSearch2Line className='w-5 h-5 text-white' />
-                    </Link>
-                    <input value={searchedValue} onChange={event => { setSearchedValue(event.target.value) }} onKeyDown={event => enterInInput(event)} type='text' placeholder='جستجو در مـوبـولـــند'
-                        className='w-full text-neutral-600 text-center text-sm bg-transparent focus:outline-none placeholder:bg-primarybg-primary-500 ' />
+                < div ref={mobileSearchRef} className='relative m-6' >
+                    <div className='flex items-center bg-transparent rounded-xl border border-custom-dark/80 overflow-hidden'>
+                        <button onClick={() => goToSearch(searchedValue)} className='flex-center p-3 bg-primary-500 cursor-pointer'>
+                            <RiSearch2Line className='w-5 h-5 text-white' />
+                        </button>
+                        <input
+                            value={searchedValue}
+                            onChange={event => { setSearchedValue(event.target.value) }}
+                            onKeyDown={event => enterInInput(event)}
+                            onFocus={() => setShowMobileSuggestions(true)}
+                            type='text'
+                            placeholder='جستجو در مـوبـولـــند'
+                            className='w-full text-neutral-600 text-center text-sm bg-transparent focus:outline-none' />
+                    </div>
+
+                    {showMobileSuggestions &&
+                        <SearchSuggestions query={searchedValue} onNavigate={() => setShowMobileSuggestions(false)} />
+                    }
                 </div >
             </div >
-            {/* <Overlay isOpen={visibleOverlay} isClose={() => closeOverlayFunc()} /> */}
+            <Overlay isOpen={visibleOverlay} isClose={() => closeOverlayFunc()} />
         </>
     )
 }
