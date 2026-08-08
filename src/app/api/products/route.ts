@@ -19,20 +19,24 @@ export async function POST(req: Request) {
         await connectDB();
 
         const formData = await req.formData();
-        const img = formData.get("img") as File | null;
+        const imageFiles = formData.getAll("images") as File[];
 
-        if (!img) {
+        if (!imageFiles.length) {
             return NextResponse.json(
                 { success: false, error: "تصویر محصول الزامی است" },
                 { status: 400 }
             );
         }
 
-        const buffer = Buffer.from(await img.arrayBuffer());
-        const filename = `${Date.now()}-${img.name.replace(/\s+/g, "-")}`;
-        const imgPath = path.join(process.cwd(), "public/uploads", filename);
-
-        await writeFile(imgPath, buffer);
+        const savedPaths: string[] = [];
+        for (let i = 0; i < imageFiles.length; i++) {
+            const img = imageFiles[i];
+            const buffer = Buffer.from(await img.arrayBuffer());
+            const filename = `${Date.now()}-${i}-${img.name.replace(/\s+/g, "-")}`;
+            const imgPath = path.join(process.cwd(), "public/uploads", filename);
+            await writeFile(imgPath, buffer);
+            savedPaths.push(`/uploads/${filename}`);
+        }
 
         const exPriceInput = formData.get("exPrice");
         const descriptionInput = formData.get("description") as string | null;
@@ -47,10 +51,11 @@ export async function POST(req: Request) {
             stock: Number(formData.get("stock")),
             category: formData.get("category"),
             subCategory: formData.get("subCategory"),
-            description: descriptionInput? descriptionInput : null,
+            description: descriptionInput ? descriptionInput : null,
             colors: formData.get("colors"),
             tags: tagsInput ? tagsInput.split(",").map(tag => tag.trim()) : [],
-            img: `/uploads/${filename}`
+            img: savedPaths[0],
+            images: savedPaths.slice(1),
         };
 
         const product = await ProductModel.create(productData);

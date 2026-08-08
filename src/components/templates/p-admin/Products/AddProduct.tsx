@@ -10,6 +10,7 @@ import {
     PiXCircleFill,
     PiFloppyDiskLight,
 } from "react-icons/pi"
+import Swal from "sweetalert2"
 
 const categories = [
     "انتخاب کنید",
@@ -57,8 +58,8 @@ const initialState: ProductFormState = {
 
 export default function AddProduct() {
     const [form, setForm] = useState<ProductFormState>(initialState)
-    const [imagePreview, setImagePreview] = useState<string | null>(null)
-    const [imageFile, setImageFile] = useState<File | null>(null)
+    const [imagePreviews, setImagePreviews] = useState<string[]>([])
+    const [imageFiles, setImageFiles] = useState<File[]>([])
     const [isSubmitting, setIsSubmitting] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -66,36 +67,50 @@ export default function AddProduct() {
         setForm(prev => ({ ...prev, [field]: value }))
     }
 
-    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0]
-        if (!file) return
-        setImageFile(file)
-        const reader = new FileReader()
-        reader.onload = () => setImagePreview(reader.result as string)
-        reader.readAsDataURL(file)
+    const formatNumber = (value: string) => {
+        if (!value) return ""
+        return Number(value).toLocaleString("en-US")
     }
 
-    const removeImage = () => {
-        setImagePreview(null)
-        setImageFile(null)
+    const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const files = Array.from(event.target.files || [])
+        if (!files.length) return
+        setImageFiles(prev => [...prev, ...files])
+        files.forEach(file => {
+            const reader = new FileReader()
+            reader.onload = () => setImagePreviews(prev => [...prev, reader.result as string])
+            reader.readAsDataURL(file)
+        })
         if (fileInputRef.current) fileInputRef.current.value = ""
+    }
+
+    const removeImage = (index: number) => {
+        setImagePreviews(prev => prev.filter((_, i) => i !== index))
+        setImageFiles(prev => prev.filter((_, i) => i !== index))
     }
 
     const resetForm = () => {
         setForm(initialState)
-        removeImage()
+        setImagePreviews([])
+        setImageFiles([])
+        if (fileInputRef.current) fileInputRef.current.value = ""
     }
 
     const handleSubmit = async () => {
-        if (!imageFile) {
-            console.error("تصویر محصول الزامی است")
+        if (!imageFiles.length) {
+            Swal.fire({
+                icon: "error",
+                title: "خطا",
+                text: "حداقل یک تصویر محصول الزامی است",
+            })
             return
         }
 
         setIsSubmitting(true)
         try {
             const payload = new FormData()
-            payload.append("img", imageFile)
+            imageFiles.forEach(file => payload.append("images", file))
+            payload.append("name", form.name)
             payload.append("name", form.name)
             payload.append("linkName", form.linkName)
             payload.append("price", form.price)
@@ -137,29 +152,34 @@ export default function AddProduct() {
             <div className='flex flex-col lg:flex-row gap-6'>
                 {/* Image Uploader */}
                 <div className='w-full lg:w-56 shrink-0'>
-                    <label className='block mb-2 text-xs text-zinc-500'>تصویر محصول</label>
-                    {imagePreview ? (
-                        <div className='relative w-full h-56 rounded-xl overflow-hidden border border-gray-200'>
-                            <img src={imagePreview} className='w-full h-full object-cover' alt='پیش‌نمایش محصول' />
-                            <button
-                                onClick={removeImage}
-                                className='absolute top-2 left-2 text-white bg-black/50 hover:bg-black/70 rounded-full transition-colors cursor-pointer'>
-                                <PiXCircleFill className='w-6 h-6' />
-                            </button>
-                        </div>
-                    ) : (
-                        <label className='flex flex-col items-center justify-center gap-2 w-full h-56 border-2 border-dashed border-gray-200 hover:border-primary-400 rounded-xl cursor-pointer text-zinc-400 hover:text-primary-500 transition-colors'>
-                            <PiImageLight className='w-9 h-9' />
-                            <span className='text-xs'>برای آپلود کلیک کنید</span>
+                    <label className='block mb-2 text-xs text-zinc-500'>تصاویر محصول</label>
+                    <div className='grid grid-cols-3 lg:grid-cols-2 gap-2'>
+                        {imagePreviews.map((src, index) => (
+                            <div key={index} className='relative aspect-square rounded-xl overflow-hidden border border-gray-200'>
+                                <img src={src} className='w-full h-full object-cover' alt={`پیش‌نمایش ${index + 1}`} />
+                                <button
+                                    onClick={() => removeImage(index)}
+                                    type='button'
+                                    className='absolute top-1 left-1 text-white bg-black/50 hover:bg-black/70 rounded-full transition-colors cursor-pointer'>
+                                    <PiXCircleFill className='w-5 h-5' />
+                                </button>
+                            </div>
+                        ))}
+
+                        <label className='flex flex-col items-center justify-center gap-1 aspect-square border-2 border-dashed border-gray-200 hover:border-primary-400 rounded-xl cursor-pointer text-zinc-400 hover:text-primary-500 transition-colors'>
+                            <PiImageLight className='w-7 h-7' />
+                            <span className='text-[10px]'>افزودن عکس</span>
                             <input
                                 ref={fileInputRef}
                                 onChange={handleImageChange}
                                 type='file'
                                 accept='image/*'
+                                multiple
                                 className='hidden'
                             />
                         </label>
-                    )}
+                    </div>
+                    <p className='mt-1.5 text-[11px] text-zinc-400'>اولین عکس، تصویر اصلی محصول در نظر گرفته می‌شود.</p>
                 </div>
 
                 {/* Fields */}
@@ -186,9 +206,9 @@ export default function AddProduct() {
                     <div>
                         <label className='block mb-1.5 text-xs text-zinc-500'>قیمت (تومان)</label>
                         <input
-                            value={form.price}
+                            value={formatNumber(form.price)}
                             onChange={e => updateField("price", e.target.value.replace(/[^0-9]/g, ""))}
-                            placeholder='765000'
+                            placeholder='765,000'
                             className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
                         />
                     </div>
@@ -205,9 +225,9 @@ export default function AddProduct() {
                     <div>
                         <label className='block mb-1.5 text-xs text-zinc-500'>قیمت قبل از تخفیف (اختیاری)</label>
                         <input
-                            value={form.exPrice}
+                            value={formatNumber(form.exPrice)}
                             onChange={e => updateField("exPrice", e.target.value.replace(/[^0-9]/g, ""))}
-                            placeholder='850000'
+                            placeholder='850,000'
                             className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
                         />
                     </div>
@@ -218,7 +238,7 @@ export default function AddProduct() {
                             موجودی انبار
                         </label>
                         <input
-                            value={form.stock}
+                            value={formatNumber(form.stock)}
                             onChange={e => updateField("stock", e.target.value.replace(/[^0-9]/g, ""))}
                             placeholder='تعداد'
                             className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'

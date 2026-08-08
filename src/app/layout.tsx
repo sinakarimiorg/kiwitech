@@ -17,7 +17,7 @@ export default function RootLayout({
 }: LayoutPropsType) {
   return (
     <html lang="fa" dir="rtl">
-      <body>
+      <body suppressHydrationWarning>
         <ReduxProvider>
           {children}
         </ReduxProvider>

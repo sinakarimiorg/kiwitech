@@ -13,7 +13,7 @@ export interface IProduct {
     colors: string
     tags: string[]
     img: string
-    images?: []
+    images?: string[]
 }
 
 const ProductSchema = new Schema<IProduct>(
@@ -30,6 +30,7 @@ const ProductSchema = new Schema<IProduct>(
         colors: { type: String, required: false },
         tags: { type: [String], required: false },
         img: { type: String, required: true },
+        images: { type: [String], default: [] },
     },
     { timestamps: true }
 )
