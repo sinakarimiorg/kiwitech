@@ -1,8 +1,4 @@
-"use client"
-
-import React, { useState } from 'react'
 import { PiPencilSimpleLight, PiTrashLight } from 'react-icons/pi'
-import Swal from 'sweetalert2'
 
 type Product = {
     _id: string
@@ -20,61 +16,22 @@ type Product = {
     img: string
     images?: string[]
 }
+
+type ProductBoxProps = {
+    product: Product
+    onEdit: (product: Product) => void
+    onDelete: (id: string) => void
+}
+
 function stockBadge(stock: number) {
     if (stock === 0) return { label: "ناموجود", className: "bg-danger/10 text-danger" }
     if (stock <= 3) return { label: `${stock} عدد`, className: "bg-amber-50 text-amber-600" }
     return { label: `${stock} عدد`, className: "bg-primary-50 text-primary-600" }
 }
 
-
-function ProductBox({ product, onDelete }: { product: Product, onDelete?: (id: string) => void }) {
+function ProductBox({ product, onDelete, onEdit }: ProductBoxProps) {
     const badge = stockBadge(product.stock)
-    const [isDeleting, setIsDeleting] = useState(false)
 
-
-    const handleDelete = async () => {
-        const result = await Swal.fire({
-            title: "حذف محصول",
-            text: "آیا از حذف این محصول مطمئن هستید؟",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "بله، حذف شود",
-            cancelButtonText: "انصراف",
-            confirmButtonColor: "#EF4444",
-        })
-        if (!result.isConfirmed) return
-
-        setIsDeleting(true)
-        try {
-            const res = await fetch(`/api/products/${product._id}`, {
-                method: "DELETE",
-            })
-            const data = await res.json()
-
-            if (!res.ok || !data.success) {
-                throw new Error(data.error || "خطا در حذف محصول")
-            }
-
-            Swal.fire({
-                icon: "success",
-                title: "حذف شد",
-                text: "محصول با موفقیت حذف شد",
-                timer: 1500,
-                showConfirmButton: false,
-            })
-
-            onDelete?.(product._id)
-        } catch (error) {
-            console.error(error)
-            Swal.fire({
-                icon: "error",
-                title: "خطا",
-                text: "مشکلی در حذف محصول پیش آمد",
-            })
-        } finally {
-            setIsDeleting(false)
-        }
-    }
     return (
         <tr key={product._id} className='hover:bg-primary-50/30 transition-colors'>
             <td className='px-5 sm:px-6 py-3.5'>
@@ -99,12 +56,15 @@ function ProductBox({ product, onDelete }: { product: Product, onDelete?: (id: s
             </td>
             <td className='px-3 py-3.5'>
                 <div className='flex items-center gap-2'>
-                    <button className='flex-center w-8 h-8 text-zinc-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer'>
+                    <button
+                        className='flex-center w-8 h-8 text-zinc-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer'
+                        onClick={() => onEdit(product)}
+                    >
                         <PiPencilSimpleLight className='w-4 h-4' />
                     </button>
                     <button
                         className='flex-center w-8 h-8 text-zinc-500 hover:text-danger hover:bg-danger/10 rounded-lg transition-colors cursor-pointer'
-                        onClick={handleDelete}
+                        onClick={() => onDelete(product._id)}
                     >
                         <PiTrashLight className='w-4 h-4' />
                     </button>

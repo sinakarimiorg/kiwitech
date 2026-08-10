@@ -6,7 +6,8 @@ import {
     PiListMagnifyingGlassLight,
 } from "react-icons/pi"
 import ProductBox from "./ProductBox"
-import { ObjectId } from "mongoose"
+import EditProductModal from "./EditProductModal"
+import Swal from "sweetalert2"
 
 type Product = {
     _id: string
@@ -29,6 +30,7 @@ export default function ProductsList() {
     const [productsList, setProductsList] = useState<Product[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(true)
     const [search, setSearch] = useState<string>("")
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null)
 
 
     ////////get products on loading
@@ -59,8 +61,52 @@ export default function ProductsList() {
         fetchProducts()
     }, [])
 
-    const handleDeleteProduct = (id: string) => {
-        setProductsList(prev => prev.filter(p => p._id !== id))
+    ////////handle delete product
+    const handleDelete = async (id: string) => {
+        const result = await Swal.fire({
+            title: "حذف محصول",
+            text: "آیا از حذف این محصول مطمئن هستید؟ این عملیات قابل بازگشت نیست.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "بله، حذف شود",
+            cancelButtonText: "انصراف",
+            confirmButtonColor: "#EF4444",
+        })
+
+        if (!result.isConfirmed) return
+
+        try {
+            const res = await fetch(`/api/products/${id}`, {
+                method: "DELETE",
+            })
+            const data = await res.json()
+
+            if (!res.ok || !data.success) {
+                throw new Error(data.error || "خطا در حذف محصول")
+            }
+
+            setProductsList(prev => prev.filter(p => p._id !== id))
+
+            Swal.fire({
+                icon: "success",
+                title: "حذف شد",
+                text: "محصول با موفقیت حذف شد",
+                timer: 1500,
+                showConfirmButton: false,
+            })
+        } catch (error) {
+            console.error("خطا در حذف محصول:", error)
+            Swal.fire({
+                icon: "error",
+                title: "خطا",
+                text: "مشکلی در حذف محصول پیش آمد",
+            })
+        }
+    }
+
+    ////////handle updated product after edit
+    const handleSaved = (updatedProduct: Product) => {
+        setProductsList(prev => prev.map(p => (p._id === updatedProduct._id ? updatedProduct : p)))
     }
 
     const filtered = productsList.filter(p =>
@@ -110,7 +156,12 @@ export default function ProductsList() {
                             </tr>
                         ) : filtered.length > 0 ? (
                             filtered.map(product => (
-                                <ProductBox key={product._id} product={product} onDelete={handleDeleteProduct} />
+                                <ProductBox 
+                                key={product._id} 
+                                product={product} 
+                                onDelete={handleDelete} 
+                                onEdit={setEditingProduct}
+                                />
                             ))
                         ) : (
                             <tr>
@@ -122,6 +173,14 @@ export default function ProductsList() {
                     </tbody>
                 </table>
             </div>
+
+            {editingProduct && (
+                <EditProductModal
+                    product={editingProduct}
+                    onClose={() => setEditingProduct(null)}
+                    onSaved={handleSaved}
+                />
+            )}
         </div>
     )
 }
