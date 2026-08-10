@@ -1,7 +1,8 @@
+"use client"
 
-import { ObjectId } from 'mongoose'
-import React from 'react'
+import React, { useState } from 'react'
 import { PiPencilSimpleLight, PiTrashLight } from 'react-icons/pi'
+import Swal from 'sweetalert2'
 
 type Product = {
     _id: string
@@ -25,8 +26,55 @@ function stockBadge(stock: number) {
     return { label: `${stock} عدد`, className: "bg-primary-50 text-primary-600" }
 }
 
-function ProductBox({ product }: { product: Product }) {
+
+function ProductBox({ product, onDelete }: { product: Product, onDelete?: (id: string) => void }) {
     const badge = stockBadge(product.stock)
+    const [isDeleting, setIsDeleting] = useState(false)
+
+
+    const handleDelete = async () => {
+        const result = await Swal.fire({
+            title: "حذف محصول",
+            text: "آیا از حذف این محصول مطمئن هستید؟",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "بله، حذف شود",
+            cancelButtonText: "انصراف",
+            confirmButtonColor: "#EF4444",
+        })
+        if (!result.isConfirmed) return
+
+        setIsDeleting(true)
+        try {
+            const res = await fetch(`/api/products/${product._id}`, {
+                method: "DELETE",
+            })
+            const data = await res.json()
+
+            if (!res.ok || !data.success) {
+                throw new Error(data.error || "خطا در حذف محصول")
+            }
+
+            Swal.fire({
+                icon: "success",
+                title: "حذف شد",
+                text: "محصول با موفقیت حذف شد",
+                timer: 1500,
+                showConfirmButton: false,
+            })
+
+            onDelete?.(product._id)
+        } catch (error) {
+            console.error(error)
+            Swal.fire({
+                icon: "error",
+                title: "خطا",
+                text: "مشکلی در حذف محصول پیش آمد",
+            })
+        } finally {
+            setIsDeleting(false)
+        }
+    }
     return (
         <tr key={product._id} className='hover:bg-primary-50/30 transition-colors'>
             <td className='px-5 sm:px-6 py-3.5'>
@@ -56,7 +104,7 @@ function ProductBox({ product }: { product: Product }) {
                     </button>
                     <button
                         className='flex-center w-8 h-8 text-zinc-500 hover:text-danger hover:bg-danger/10 rounded-lg transition-colors cursor-pointer'
-                        
+                        onClick={handleDelete}
                     >
                         <PiTrashLight className='w-4 h-4' />
                     </button>

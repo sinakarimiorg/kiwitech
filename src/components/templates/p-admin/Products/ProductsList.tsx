@@ -32,32 +32,36 @@ export default function ProductsList() {
 
 
     ////////get products on loading
-useEffect(() => {
-    const fetchProducts = async () => {
-        try {
-            const res = await fetch('/api/products')
-            const data = await res.json()
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const res = await fetch('/api/products')
+                const data = await res.json()
 
-            // بررسی کنید که آیا data خودش آرایه است یا داخل یک کلید مثل data.products است
-            if (Array.isArray(data)) {
-                setProductsList(data)
-            } else if (Array.isArray(data.products)) {
-                setProductsList(data.products)
-            } else if (Array.isArray(data.data)) {
-                setProductsList(data.data)
-            } else {
+                // بررسی کنید که آیا data خودش آرایه است یا داخل یک کلید مثل data.products است
+                if (Array.isArray(data)) {
+                    setProductsList(data)
+                } else if (Array.isArray(data.products)) {
+                    setProductsList(data.products)
+                } else if (Array.isArray(data.data)) {
+                    setProductsList(data.data)
+                } else {
+                    setProductsList([])
+                }
+            } catch (error) {
+                console.error("خطا در دریافت محصولات:", error)
                 setProductsList([])
+            } finally {
+                setIsLoading(false)
             }
-        } catch (error) {
-            console.error("خطا در دریافت محصولات:", error)
-            setProductsList([])
-        } finally {
-            setIsLoading(false)
         }
-    }
 
-    fetchProducts()
-}, [])
+        fetchProducts()
+    }, [])
+
+    const handleDeleteProduct = (id: string) => {
+        setProductsList(prev => prev.filter(p => p._id !== id))
+    }
 
     const filtered = productsList.filter(p =>
         p.name.toLowerCase().includes(search.toLowerCase())
@@ -106,7 +110,7 @@ useEffect(() => {
                             </tr>
                         ) : filtered.length > 0 ? (
                             filtered.map(product => (
-                                <ProductBox key={product._id} product={product} />
+                                <ProductBox key={product._id} product={product} onDelete={handleDeleteProduct} />
                             ))
                         ) : (
                             <tr>
