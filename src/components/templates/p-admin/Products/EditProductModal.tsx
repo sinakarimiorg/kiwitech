@@ -14,6 +14,9 @@ import {
     PiXBold,
 } from "react-icons/pi"
 import Swal from "sweetalert2"
+import { useAppDispatch, useAppSelector } from "@root/src/store/hooks"
+import { updateAdminProduct } from "@root/src/store/reducers/adminProductsSlice"
+import type { AdminProduct } from "@root/src/types/adminProductType"
 
 const categories = [
     "لوازم جانبی موبایل",
@@ -29,27 +32,9 @@ const subCategories = [
     "پایه نگهدارنده",
 ]
 
-type Product = {
-    _id: string
-    name: string
-    linkName: string
-    price: number
-    exPrice?: number
-    discount?: number
-    stock: number
-    category: string
-    subCategory: string
-    description?: string
-    colors: string
-    tags: string[]
-    img: string
-    images?: string[]
-}
-
 type EditProductModalProps = {
-    product: Product
+    product: AdminProduct
     onClose: () => void
-    onSaved: (updatedProduct: Product) => void
 }
 
 interface FormValues {
@@ -87,7 +72,10 @@ const validationSchema = Yup.object({
     tags: Yup.string(),
 })
 
-export default function EditProductModal({ product, onClose, onSaved }: EditProductModalProps) {
+export default function EditProductModal({ product, onClose }: EditProductModalProps) {
+    const dispatch = useAppDispatch()
+    const { isSubmitting: isReduxSubmitting } = useAppSelector((state) => state.adminProducts)
+
     const [existingImages, setExistingImages] = useState<string[]>(
         [product.img, ...(product.images ?? [])].filter(Boolean)
     )
@@ -143,16 +131,7 @@ export default function EditProductModal({ product, onClose, onSaved }: EditProd
             payload.append("existingImages", JSON.stringify(existingImages))
             Object.entries(values).forEach(([key, val]) => payload.append(key, val))
 
-            const res = await fetch(`/api/products/${product._id}`, {
-                method: "PUT",
-                body: payload,
-            })
-
-            const data = await res.json()
-
-            if (!res.ok || !data.success) {
-                throw new Error(data.error || "خطا در ویرایش محصول")
-            }
+            await dispatch(updateAdminProduct({ id: product._id, formData: payload })).unwrap()
 
             Swal.fire({
                 icon: "success",
@@ -162,7 +141,6 @@ export default function EditProductModal({ product, onClose, onSaved }: EditProd
                 showConfirmButton: false,
             })
 
-            onSaved(data.data)
             onClose()
         } catch (error) {
             console.error(error)
@@ -191,7 +169,9 @@ export default function EditProductModal({ product, onClose, onSaved }: EditProd
                     validationSchema={validationSchema}
                     onSubmit={handleFormSubmit}
                 >
-                    {({ isSubmitting }) => (
+                    {({ isSubmitting }) => {
+                        const submitting = isSubmitting || isReduxSubmitting
+                        return (
                         <Form>
                             <div className='flex flex-col lg:flex-row gap-6'>
                                 {/* Image Uploader */}
@@ -395,14 +375,14 @@ export default function EditProductModal({ product, onClose, onSaved }: EditProd
                                 </button>
                                 <button
                                     type='submit'
-                                    disabled={isSubmitting}
+                                    disabled={submitting}
                                     className='flex-center gap-1.5 px-6 py-2.5 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed'>
                                     <PiFloppyDiskLight className='w-4 h-4' />
-                                    {isSubmitting ? "در حال ذخیره..." : "ذخیره تغییرات"}
+                                    {submitting ? "در حال ذخیره..." : "ذخیره تغییرات"}
                                 </button>
                             </div>
                         </Form>
-                    )}
+                    )}}
                 </Formik>
             </div>
         </div>

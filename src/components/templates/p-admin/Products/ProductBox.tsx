@@ -1,25 +1,9 @@
 import { PiPencilSimpleLight, PiTrashLight } from 'react-icons/pi'
-
-type Product = {
-    _id: string
-    name: string
-    linkName: string
-    price: number
-    exPrice?: number
-    discount?: number
-    stock: number
-    category: string
-    subCategory: string
-    description?: string
-    colors: string
-    tags: string[]
-    img: string
-    images?: string[]
-}
+import { AdminProduct } from "@root/src/types/adminProductType"
 
 type ProductBoxProps = {
-    product: Product
-    onEdit: (product: Product) => void
+    product: AdminProduct
+    onEdit: (product: AdminProduct) => void
     onDelete: (id: string) => void
 }
 

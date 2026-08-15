@@ -5,61 +5,27 @@ import {
     PiMagnifyingGlassLight,
     PiListMagnifyingGlassLight,
 } from "react-icons/pi"
+import Swal from "sweetalert2"
 import ProductBox from "./ProductBox"
 import EditProductModal from "./EditProductModal"
-import Swal from "sweetalert2"
+import { AdminProduct } from "@root/src/types/adminProductType"
+import { useAppDispatch, useAppSelector } from "@root/src/store/hooks"
+import { fetchAdminProducts, deleteAdminProduct } from "@root/src/store/reducers/adminProductsSlice"
 
-type Product = {
-    _id: string
-    name: string
-    linkName: string
-    price: number
-    exPrice?: number
-    discount?: number
-    stock: number
-    category: string
-    subCategory: string
-    description?: string
-    colors: string
-    tags: string[]
-    img: string
-    images?: string[]
-}
 
 export default function ProductsList() {
-    const [productsList, setProductsList] = useState<Product[]>([])
-    const [isLoading, setIsLoading] = useState<boolean>(true)
+    const dispatch = useAppDispatch()
+    const { items: productsList, loading: isLoading } = useAppSelector(
+        (state) => state.adminProducts
+    )
     const [search, setSearch] = useState<string>("")
-    const [editingProduct, setEditingProduct] = useState<Product | null>(null)
+    const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null)
 
 
     ////////get products on loading
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const res = await fetch('/api/products')
-                const data = await res.json()
-
-                // بررسی کنید که آیا data خودش آرایه است یا داخل یک کلید مثل data.products است
-                if (Array.isArray(data)) {
-                    setProductsList(data)
-                } else if (Array.isArray(data.products)) {
-                    setProductsList(data.products)
-                } else if (Array.isArray(data.data)) {
-                    setProductsList(data.data)
-                } else {
-                    setProductsList([])
-                }
-            } catch (error) {
-                console.error("خطا در دریافت محصولات:", error)
-                setProductsList([])
-            } finally {
-                setIsLoading(false)
-            }
-        }
-
-        fetchProducts()
-    }, [])
+        dispatch(fetchAdminProducts())
+    }, [dispatch])
 
     ////////handle delete product
     const handleDelete = async (id: string) => {
@@ -76,16 +42,7 @@ export default function ProductsList() {
         if (!result.isConfirmed) return
 
         try {
-            const res = await fetch(`/api/products/${id}`, {
-                method: "DELETE",
-            })
-            const data = await res.json()
-
-            if (!res.ok || !data.success) {
-                throw new Error(data.error || "خطا در حذف محصول")
-            }
-
-            setProductsList(prev => prev.filter(p => p._id !== id))
+            await dispatch(deleteAdminProduct(id)).unwrap()
 
             Swal.fire({
                 icon: "success",
@@ -104,10 +61,6 @@ export default function ProductsList() {
         }
     }
 
-    ////////handle updated product after edit
-    const handleSaved = (updatedProduct: Product) => {
-        setProductsList(prev => prev.map(p => (p._id === updatedProduct._id ? updatedProduct : p)))
-    }
 
     const filtered = productsList.filter(p =>
         p.name.toLowerCase().includes(search.toLowerCase())
@@ -156,11 +109,11 @@ export default function ProductsList() {
                             </tr>
                         ) : filtered.length > 0 ? (
                             filtered.map(product => (
-                                <ProductBox 
-                                key={product._id} 
-                                product={product} 
-                                onDelete={handleDelete} 
-                                onEdit={setEditingProduct}
+                                <ProductBox
+                                    key={product._id}
+                                    product={product}
+                                    onDelete={handleDelete}
+                                    onEdit={setEditingProduct}
                                 />
                             ))
                         ) : (
@@ -178,7 +131,6 @@ export default function ProductsList() {
                 <EditProductModal
                     product={editingProduct}
                     onClose={() => setEditingProduct(null)}
-                    onSaved={handleSaved}
                 />
             )}
         </div>
