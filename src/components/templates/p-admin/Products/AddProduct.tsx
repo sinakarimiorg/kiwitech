@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useTransition } from "react"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import {
@@ -14,7 +14,8 @@ import {
 } from "react-icons/pi"
 import Swal from "sweetalert2"
 import { useAppDispatch, useAppSelector } from "@root/src/store/hooks"
-import { addAdminProduct } from "@root/src/store/reducers/adminProductsSlice"
+import { addProductAction } from "./actions"
+
 
 
 const categories = [
@@ -81,8 +82,7 @@ const validationSchema = Yup.object({
 })
 
 export default function AddProduct() {
-    const dispatch = useAppDispatch()
-        const { isSubmitting: isReduxSubmitting } = useAppSelector((state) => state.adminProducts)
+    const [isPending, startTransition] = useTransition()
 
     const [imagePreviews, setImagePreviews] = useState<string[]>([])
     const [imageFiles, setImageFiles] = useState<File[]>([])
@@ -116,32 +116,31 @@ export default function AddProduct() {
             return
         }
 
-        try {
-            const payload = new FormData()
-            imageFiles.forEach(file => payload.append("images", file))
-            Object.entries(values).forEach(([key, val]) => payload.append(key, val))
+        const payload = new FormData()
+        imageFiles.forEach(file => payload.append("images", file))
+        Object.entries(values).forEach(([key, val]) => payload.append(key, val as string))
 
-            await dispatch(addAdminProduct(payload)).unwrap()
+        startTransition(async () => {
+            const result = await addProductAction(payload)
 
-            Swal.fire({
-                icon: "success",
-                title: "موفقیت‌آمیز",
-                text: "محصول با موفقیت ذخیره شد",
-            })
-
-            resetForm()
-            setImagePreviews([])
-            setImageFiles([])
-        } catch (error) {
-            console.error(error)
-            Swal.fire({
-                icon: "error",
-                title: "خطا",
-                text: "مشکلی در ذخیره محصول پیش آمد",
-            })
-        } finally {
+            if (result.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "موفقیت‌آمیز",
+                    text: "محصول با موفقیت ذخیره شد",
+                })
+                resetForm()
+                setImagePreviews([])
+                setImageFiles([])
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "خطا",
+                    text: result.error || "مشکلی در ذخیره محصول پیش آمد",
+                })
+            }
             setSubmitting(false)
-        }
+        })
     }
 
     return (
@@ -157,7 +156,7 @@ export default function AddProduct() {
                 onSubmit={handleFormSubmit}
             >
                 {({ isSubmitting, isValid, dirty, handleReset }) => {
-                    const submitting = isSubmitting || isReduxSubmitting
+                    const submitting = isSubmitting || isPending
                     return (
                         <Form>
                             <div className='flex flex-col lg:flex-row gap-6'>

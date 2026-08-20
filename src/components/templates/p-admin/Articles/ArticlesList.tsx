@@ -8,29 +8,18 @@ import {
     PiArticleLight,
     PiEyeLight,
 } from "react-icons/pi"
+import { AdminArticle } from "@root/src/types/adminArticleType"
 
-type ArticleStatus = "منتشر شده" | "پیش‌نویس"
-
-type Article = {
-    id: number
-    title: string
-    shortName: string
-    img: string
-    category: string
-    date: string
-    views: number
-    status: ArticleStatus
-}
 
 // نمونه دیتای اولیه - منطبق با دیتای LatestArticles - در آینده با فچ از API جایگزین می‌شود
-const articles: Article[] = [
-    { id: 1, title: "بهترین گوشی تا پنج میلیون", shortName: "best-phone", img: "/images/articles/phone.jpg", category: "راهنمای خرید", date: "۱۴۰۴/۰۴/۲۱", views: 1240, status: "منتشر شده" },
-    { id: 2, title: "کسب درآمد از بازی!", shortName: "earn-from-game", img: "/images/articles/game-article.jpg", category: "اخبار تکنولوژی", date: "۱۴۰۴/۰۹/۰۳", views: 860, status: "منتشر شده" },
-    { id: 3, title: "راهنمای خرید اسپیکر بلوتوث قابل حمل", shortName: "how-buy-speaker", img: "/images/articles/speaker.jpg", category: "راهنمای خرید", date: "۱۴۰۳/۰۲/۲۸", views: 2310, status: "منتشر شده" },
-    { id: 4, title: "راهنمای خرید هندزفری سیمی", shortName: "how-buy-headphon", img: "/images/articles/headphone.jpg", category: "راهنمای خرید", date: "۱۴۰۳/۰۵/۳۱", views: 540, status: "پیش‌نویس" },
+const articles: AdminArticle[] = [
+    { _id: "1", title: "بهترین گوشی تا پنج میلیون", linkName: "best-phone", img: "/images/articles/phone.jpg", category: "راهنمای خرید", date: "۱۴۰۴/۰۴/۲۱", views: 1240, status: "منتشر شده" },
+    { _id: "2", title: "کسب درآمد از بازی!", linkName: "earn-from-game", img: "/images/articles/game-article.jpg", category: "اخبار تکنولوژی", date: "۱۴۰۴/۰۹/۰۳", views: 860, status: "منتشر شده" },
+    { _id: "3", title: "راهنمای خرید اسپیکر بلوتوث قابل حمل", linkName: "how-buy-speaker", img: "/images/articles/speaker.jpg", category: "راهنمای خرید", date: "۱۴۰۳/۰۲/۲۸", views: 2310, status: "منتشر شده" },
+    { _id: "4", title: "راهنمای خرید هندزفری سیمی", linkName: "how-buy-headphon", img: "/images/articles/headphone.jpg", category: "راهنمای خرید", date: "۱۴۰۳/۰۵/۳۱", views: 540, status: "پیش‌نویس" },
 ]
 
-const statusStyle: Record<ArticleStatus, string> = {
+const statusStyle: Record<AdminArticle["status"], string> = {
     "منتشر شده": "bg-primary-50 text-primary-600",
     "پیش‌نویس": "bg-amber-50 text-amber-600",
 }
@@ -77,7 +66,7 @@ export default function ArticlesList() {
                     </thead>
                     <tbody className='divide-y divide-gray-50'>
                         {filtered.map(article => (
-                            <tr key={article.id} className='hover:bg-primary-50/30 transition-colors'>
+                            <tr key={article._id} className='hover:bg-primary-50/30 transition-colors'>
                                 <td className='px-5 sm:px-6 py-3.5'>
                                     <div className='flex items-center gap-3'>
                                         <div className='w-14 h-11 shrink-0 bg-gray-50 rounded-lg overflow-hidden'>
@@ -85,7 +74,7 @@ export default function ArticlesList() {
                                         </div>
                                         <div className='min-w-0'>
                                             <p className='text-zinc-700 line-clamp-1 max-w-64'>{article.title}</p>
-                                            <p className='text-xs text-zinc-400 tracking-tight' dir='ltr'>/{article.shortName}</p>
+                                            <p className='text-xs text-zinc-400 tracking-tight' dir='ltr'>/{article.linkName}</p>
                                         </div>
                                     </div>
                                 </td>

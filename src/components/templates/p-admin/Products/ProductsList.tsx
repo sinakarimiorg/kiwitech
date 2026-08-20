@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useTransition } from "react"
 import {
     PiMagnifyingGlassLight,
     PiListMagnifyingGlassLight,
@@ -9,23 +9,19 @@ import Swal from "sweetalert2"
 import ProductBox from "./ProductBox"
 import EditProductModal from "./EditProductModal"
 import { AdminProduct } from "@root/src/types/adminProductType"
-import { useAppDispatch, useAppSelector } from "@root/src/store/hooks"
-import { fetchAdminProducts, deleteAdminProduct } from "@root/src/store/reducers/adminProductsSlice"
+import { deleteProductAction } from "./actions"
 
+type ProductsListProps = {
+    initialProducts: AdminProduct[]
+}
 
-export default function ProductsList() {
-    const dispatch = useAppDispatch()
-    const { items: productsList, loading: isLoading } = useAppSelector(
-        (state) => state.adminProducts
-    )
+export default function ProductsList({ initialProducts }: ProductsListProps) {
     const [search, setSearch] = useState<string>("")
     const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null)
+    const [isDeleting, startDeleteTransition] = useTransition()
 
 
-    ////////get products on loading
-    useEffect(() => {
-        dispatch(fetchAdminProducts())
-    }, [dispatch])
+
 
     ////////handle delete product
     const handleDelete = async (id: string) => {
@@ -41,28 +37,29 @@ export default function ProductsList() {
 
         if (!result.isConfirmed) return
 
-        try {
-            await dispatch(deleteAdminProduct(id)).unwrap()
+        startDeleteTransition(async () => {
+            const res = await deleteProductAction(id)
 
-            Swal.fire({
-                icon: "success",
-                title: "حذف شد",
-                text: "محصول با موفقیت حذف شد",
-                timer: 1500,
-                showConfirmButton: false,
-            })
-        } catch (error) {
-            console.error("خطا در حذف محصول:", error)
-            Swal.fire({
-                icon: "error",
-                title: "خطا",
-                text: "مشکلی در حذف محصول پیش آمد",
-            })
-        }
+            if (res.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "حذف شد",
+                    text: "محصول با موفقیت حذف شد",
+                    timer: 1500,
+                    showConfirmButton: false,
+                })
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "خطا",
+                    text: res.error || "مشکلی در حذف محصول پیش آمد",
+                })
+            }
+        })
     }
 
 
-    const filtered = productsList.filter(p =>
+    const filtered = initialProducts.filter(p =>
         p.name.toLowerCase().includes(search.toLowerCase())
     )
 
@@ -101,7 +98,7 @@ export default function ProductsList() {
                         </tr>
                     </thead>
                     <tbody className='divide-y divide-gray-50'>
-                        {isLoading ? (
+                        {filtered.length > 0 ? (
                             <tr>
                                 <td colSpan={5} className='py-10 text-center text-zinc-400'>
                                     در حال دریافت داده‌ها...

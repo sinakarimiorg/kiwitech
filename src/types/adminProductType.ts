@@ -15,9 +15,9 @@ export interface AdminProduct {
     images?: string[]
 }
 
-export interface AdminProductsState {
-    items: AdminProduct[]
-    loading: boolean
-    isSubmitting: boolean
-    error: string | null
-}
+// export interface AdminProductsState {
+//     items: AdminProduct[]
+//     loading: boolean
+//     isSubmitting: boolean
+//     error: string | null
+// }

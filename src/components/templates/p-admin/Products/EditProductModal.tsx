@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useTransition } from "react"
 import { Formik, Form, Field, ErrorMessage } from "formik"
 import * as Yup from "yup"
 import {
@@ -14,8 +14,7 @@ import {
     PiXBold,
 } from "react-icons/pi"
 import Swal from "sweetalert2"
-import { useAppDispatch, useAppSelector } from "@root/src/store/hooks"
-import { updateAdminProduct } from "@root/src/store/reducers/adminProductsSlice"
+import { updateProductAction } from "./actions"
 import type { AdminProduct } from "@root/src/types/adminProductType"
 
 const categories = [
@@ -73,8 +72,7 @@ const validationSchema = Yup.object({
 })
 
 export default function EditProductModal({ product, onClose }: EditProductModalProps) {
-    const dispatch = useAppDispatch()
-    const { isSubmitting: isReduxSubmitting } = useAppSelector((state) => state.adminProducts)
+    const [isPending, startTransition] = useTransition()
 
     const [existingImages, setExistingImages] = useState<string[]>(
         [product.img, ...(product.images ?? [])].filter(Boolean)
@@ -125,29 +123,28 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
             return
         }
 
-        try {
-            const payload = new FormData()
-            newImageFiles.forEach(file => payload.append("newImages", file))
-            payload.append("existingImages", JSON.stringify(existingImages))
-            Object.entries(values).forEach(([key, val]) => payload.append(key, val))
+        const payload = new FormData()
+        newImageFiles.forEach(file => payload.append("newImages", file))
+        payload.append("existingImages", JSON.stringify(existingImages))
+        Object.entries(values).forEach(([key, val]) => payload.append(key, val as string))
 
-            await dispatch(updateAdminProduct({ id: product._id, formData: payload })).unwrap()
+        startTransition(async () => {
+            const result = await updateProductAction(product._id, payload)
 
-            Swal.fire({
-                icon: "success",
-                title: "موفقیت‌آمیز",
-                text: "محصول با موفقیت ویرایش شد",
-                timer: 1500,
-                showConfirmButton: false,
-            })
-
-            onClose()
-        } catch (error) {
-            console.error(error)
-            Swal.fire({ icon: "error", title: "خطا", text: "مشکلی در ویرایش محصول پیش آمد" })
-        } finally {
+            if (result.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "موفقیت‌آمیز",
+                    text: "محصول با موفقیت ویرایش شد",
+                    timer: 1500,
+                    showConfirmButton: false,
+                })
+                onClose()
+            } else {
+                Swal.fire({ icon: "error", title: "خطا", text: result.error || "مشکلی در ویرایش محصول پیش آمد" })
+            }
             setSubmitting(false)
-        }
+        })
     }
 
     return (
@@ -170,7 +167,7 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
                     onSubmit={handleFormSubmit}
                 >
                     {({ isSubmitting }) => {
-                        const submitting = isSubmitting || isReduxSubmitting
+                        const submitting = isSubmitting || isPending
                         return (
                         <Form>
                             <div className='flex flex-col lg:flex-row gap-6'>

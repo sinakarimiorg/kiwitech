@@ -38,7 +38,6 @@ const initialState: ArticleFormState = {
     publish: false,
 }
 
-// تبدیل عنوان فارسی به یک شناسه‌ی ساده برای URL (در پروژه واقعی بهتره دستی هم قابل ویرایش باشه)
 const slugify = (value: string) =>
     value.trim().replace(/\s+/g, "-")
 
