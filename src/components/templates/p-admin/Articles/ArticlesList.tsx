@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import {
     PiMagnifyingGlassLight,
     PiPencilSimpleLight,
@@ -9,25 +9,52 @@ import {
     PiEyeLight,
 } from "react-icons/pi"
 import { AdminArticle } from "@root/src/types/adminArticleType"
+import Swal from "sweetalert2"
+import { deleteArticleAction } from "./actions"
+import ArticleBox from "./ArticleBox"
+import EditArticleModal from "./EditArticleModal"
 
 
-// نمونه دیتای اولیه - منطبق با دیتای LatestArticles - در آینده با فچ از API جایگزین می‌شود
-const articles: AdminArticle[] = [
-    { _id: "1", title: "بهترین گوشی تا پنج میلیون", linkName: "best-phone", img: "/images/articles/phone.jpg", category: "راهنمای خرید", date: "۱۴۰۴/۰۴/۲۱", views: 1240, status: "منتشر شده" },
-    { _id: "2", title: "کسب درآمد از بازی!", linkName: "earn-from-game", img: "/images/articles/game-article.jpg", category: "اخبار تکنولوژی", date: "۱۴۰۴/۰۹/۰۳", views: 860, status: "منتشر شده" },
-    { _id: "3", title: "راهنمای خرید اسپیکر بلوتوث قابل حمل", linkName: "how-buy-speaker", img: "/images/articles/speaker.jpg", category: "راهنمای خرید", date: "۱۴۰۳/۰۲/۲۸", views: 2310, status: "منتشر شده" },
-    { _id: "4", title: "راهنمای خرید هندزفری سیمی", linkName: "how-buy-headphon", img: "/images/articles/headphone.jpg", category: "راهنمای خرید", date: "۱۴۰۳/۰۵/۳۱", views: 540, status: "پیش‌نویس" },
-]
-
-const statusStyle: Record<AdminArticle["status"], string> = {
-    "منتشر شده": "bg-primary-50 text-primary-600",
-    "پیش‌نویس": "bg-amber-50 text-amber-600",
+type ArticlesListProps = {
+    initialArticles: AdminArticle[]
 }
 
-export default function ArticlesList() {
+export default function ArticlesList({ initialArticles }: ArticlesListProps) {
     const [search, setSearch] = useState("")
+    const [editingArticle, setEditingArticle] = useState<AdminArticle | null>(null)
+    const [, startDeleteTransition] = useTransition()
 
-    const filtered = articles.filter(a => a.title.includes(search))
+    const handleDelete = async (id: string) => {
+        const result = await Swal.fire({
+            title: "حذف مقاله",
+            text: "آیا از حذف این مقاله مطمئن هستید؟ این عملیات قابل بازگشت نیست.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "بله، حذف شود",
+            cancelButtonText: "انصراف",
+            confirmButtonColor: "#EF4444",
+        })
+
+        if (!result.isConfirmed) return
+
+        startDeleteTransition(async () => {
+            const res = await deleteArticleAction(id)
+
+            if (res.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "حذف شد",
+                    text: "مقاله با موفقیت حذف شد",
+                    timer: 1500,
+                    showConfirmButton: false,
+                })
+            } else {
+                Swal.fire({ icon: "error", title: "خطا", text: res.error || "مشکلی در حذف مقاله پیش آمد" })
+            }
+        })
+    }
+
+    const filtered = initialArticles.filter(a => a.title.includes(search))
 
     return (
         <div className='bg-white shadow-lg rounded-2xl overflow-hidden'>
@@ -66,42 +93,12 @@ export default function ArticlesList() {
                     </thead>
                     <tbody className='divide-y divide-gray-50'>
                         {filtered.map(article => (
-                            <tr key={article._id} className='hover:bg-primary-50/30 transition-colors'>
-                                <td className='px-5 sm:px-6 py-3.5'>
-                                    <div className='flex items-center gap-3'>
-                                        <div className='w-14 h-11 shrink-0 bg-gray-50 rounded-lg overflow-hidden'>
-                                            <img src={article.img} className='w-full h-full object-cover' alt={article.title} />
-                                        </div>
-                                        <div className='min-w-0'>
-                                            <p className='text-zinc-700 line-clamp-1 max-w-64'>{article.title}</p>
-                                            <p className='text-xs text-zinc-400 tracking-tight' dir='ltr'>/{article.linkName}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className='px-3 py-3.5 text-zinc-500'>{article.category}</td>
-                                <td className='px-3 py-3.5 text-zinc-400'>{article.date}</td>
-                                <td className='px-3 py-3.5'>
-                                    <span className='inline-flex items-center gap-1 text-zinc-600'>
-                                        <PiEyeLight className='w-3.5 h-3.5' />
-                                        {article.views.toLocaleString()}
-                                    </span>
-                                </td>
-                                <td className='px-3 py-3.5'>
-                                    <span className={`px-2.5 py-1 text-xs whitespace-nowrap rounded-lg ${statusStyle[article.status]}`}>
-                                        {article.status}
-                                    </span>
-                                </td>
-                                <td className='px-3 py-3.5'>
-                                    <div className='flex items-center gap-2'>
-                                        <button className='flex-center w-8 h-8 text-zinc-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer'>
-                                            <PiPencilSimpleLight className='w-4 h-4' />
-                                        </button>
-                                        <button className='flex-center w-8 h-8 text-zinc-500 hover:text-danger hover:bg-danger/10 rounded-lg transition-colors cursor-pointer'>
-                                            <PiTrashLight className='w-4 h-4' />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            <ArticleBox
+                                key={article._id}
+                                article={article}
+                                onEdit={setEditingArticle}
+                                onDelete={handleDelete}
+                            />
                         ))}
 
                         {filtered.length === 0 &&
@@ -112,6 +109,13 @@ export default function ArticlesList() {
                     </tbody>
                 </table>
             </div>
+
+            {editingArticle && (
+                <EditArticleModal
+                    article={editingArticle}
+                    onClose={() => setEditingArticle(null)}
+                />
+            )}
         </div>
     )
 }

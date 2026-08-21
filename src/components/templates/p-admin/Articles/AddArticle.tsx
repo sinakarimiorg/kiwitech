@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, useTransition } from "react"
 import {
     PiArticleLight,
     PiTextAlignRightLight,
@@ -10,6 +10,8 @@ import {
     PiFloppyDiskLight,
     PiLinkSimpleLight,
 } from "react-icons/pi"
+import Swal from "sweetalert2"
+import { addArticleAction } from "./actions"
 
 const categories = [
     "راهنمای خرید",
@@ -44,7 +46,8 @@ const slugify = (value: string) =>
 export default function AddArticle() {
     const [form, setForm] = useState<ArticleFormState>(initialState)
     const [imagePreview, setImagePreview] = useState<string | null>(null)
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [imageFile, setImageFile] = useState<File | null>(null)
+    const [isPending, startTransition] = useTransition()
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const updateField = <K extends keyof ArticleFormState>(field: K, value: ArticleFormState[K]) => {
@@ -62,6 +65,7 @@ export default function AddArticle() {
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (!file) return
+        setImageFile(file)
         const reader = new FileReader()
         reader.onload = () => setImagePreview(reader.result as string)
         reader.readAsDataURL(file)
@@ -69,6 +73,7 @@ export default function AddArticle() {
 
     const removeImage = () => {
         setImagePreview(null)
+        setImageFile(null)
         if (fileInputRef.current) fileInputRef.current.value = ""
     }
 
@@ -78,11 +83,42 @@ export default function AddArticle() {
     }
 
     const handleSubmit = async () => {
-        // TODO: اتصال به API افزودن مقاله (فعلاً فقط UI آماده است)
-        setIsSubmitting(true)
-        setTimeout(() => {
-            setIsSubmitting(false)
-        }, 1200)
+        if (!form.title.trim() || !form.shortName.trim() || !form.category) {
+            Swal.fire({ icon: "error", title: "خطا", text: "عنوان، آدرس صفحه و دسته‌بندی الزامی است" })
+            return
+        }
+        if (!imageFile) {
+            Swal.fire({ icon: "error", title: "خطا", text: "تصویر کاور مقاله الزامی است" })
+            return
+        }
+
+        const payload = new FormData()
+        payload.append("title", form.title.trim())
+        payload.append("shortName", form.shortName.trim())
+        payload.append("category", form.category)
+        payload.append("excerpt", form.excerpt)
+        payload.append("content", form.content)
+        payload.append("tags", form.tags)
+        payload.append("publish", String(form.publish))
+        payload.append("image", imageFile)
+
+        startTransition(async () => {
+            const res = await addArticleAction(payload)
+
+            if (res.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "موفقیت‌آمیز",
+                    text: "مقاله با موفقیت ذخیره شد",
+                    timer: 1500,
+                    showConfirmButton: false,
+                })
+                resetForm()
+            } else {
+                Swal.fire({ icon: "error", title: "خطا", text: res.error || "مشکلی در ذخیره مقاله پیش آمد" })
+            }
+        })
+
     }
 
     return (
@@ -224,10 +260,10 @@ export default function AddArticle() {
                 </button>
                 <button
                     onClick={handleSubmit}
-                    disabled={isSubmitting}
+                    disabled={isPending}
                     className='flex-center gap-1.5 px-6 py-2.5 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed'>
                     <PiFloppyDiskLight className='w-4 h-4' />
-                    {isSubmitting ? "در حال ذخیره..." : form.publish ? "ذخیره و انتشار" : "ذخیره پیش‌نویس"}
+                    {isPending ? "در حال ذخیره..." : form.publish ? "ذخیره و انتشار" : "ذخیره پیش‌نویس"}
                 </button>
             </div>
         </div>

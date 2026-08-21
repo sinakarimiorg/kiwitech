@@ -4,7 +4,10 @@ export interface AdminArticle {
     linkName: string
     img: string
     category: string
-    date: string
+    excerpt?: string
+    content?: string
+    tags?: string[]
     views: number
     status: "منتشر شده" | "پیش‌نویس"
+    createdAt?: string
 }
