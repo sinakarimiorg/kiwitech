@@ -9,7 +9,7 @@ import ProductModel from "@root/src/models/Product"
 type ActionResult = { success: true } | { success: false; error: string }
 
 // ────────────────────────────────
-// افزودن محصول
+// Create Product
 // ────────────────────────────────
 export async function addProductAction(formData: FormData): Promise<ActionResult> {
     await connectDB()
@@ -30,7 +30,7 @@ export async function addProductAction(formData: FormData): Promise<ActionResult
             savedPaths.push(`/uploads/${filename}`)
         }
 
-        const exPriceInput = formData.get("exPrice")
+        const exPriceInput = formData.get("exPrice") as Number | null
         const descriptionInput = formData.get("description") as string | null
         const tagsInput = formData.get("tags") as string | null
 
@@ -59,7 +59,7 @@ export async function addProductAction(formData: FormData): Promise<ActionResult
 }
 
 // ────────────────────────────────
-// ویرایش محصول
+// Update Product
 // ────────────────────────────────
 export async function updateProductAction(id: string, formData: FormData): Promise<ActionResult> {
     await connectDB()
@@ -121,7 +121,7 @@ export async function updateProductAction(id: string, formData: FormData): Promi
 }
 
 // ────────────────────────────────
-// حذف محصول
+// Delete Product
 // ────────────────────────────────
 export async function deleteProductAction(id: string): Promise<ActionResult> {
     await connectDB()

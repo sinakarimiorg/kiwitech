@@ -98,13 +98,7 @@ export default function ProductsList({ initialProducts }: ProductsListProps) {
                         </tr>
                     </thead>
                     <tbody className='divide-y divide-gray-50'>
-                        {filtered.length > 0 ? (
-                            <tr>
-                                <td colSpan={5} className='py-10 text-center text-zinc-400'>
-                                    در حال دریافت داده‌ها...
-                                </td>
-                            </tr>
-                        ) : filtered.length > 0 ? (
+                       {filtered.length > 0 ? (
                             filtered.map(product => (
                                 <ProductBox
                                     key={product._id}

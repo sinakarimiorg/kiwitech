@@ -13,7 +13,6 @@ import {
     PiFloppyDiskLight,
 } from "react-icons/pi"
 import Swal from "sweetalert2"
-import { useAppDispatch, useAppSelector } from "@root/src/store/hooks"
 import { addProductAction } from "./actions"
 
 
@@ -121,9 +120,9 @@ export default function AddProduct() {
         Object.entries(values).forEach(([key, val]) => payload.append(key, val as string))
 
         startTransition(async () => {
-            const result = await addProductAction(payload)
+            const res = await addProductAction(payload)
 
-            if (result.success) {
+            if (res.success) {
                 Swal.fire({
                     icon: "success",
                     title: "موفقیت‌آمیز",
@@ -136,7 +135,7 @@ export default function AddProduct() {
                 Swal.fire({
                     icon: "error",
                     title: "خطا",
-                    text: result.error || "مشکلی در ذخیره محصول پیش آمد",
+                    text: res.error || "مشکلی در ذخیره محصول پیش آمد",
                 })
             }
             setSubmitting(false)
