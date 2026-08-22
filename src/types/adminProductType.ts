@@ -14,10 +14,3 @@ export interface AdminProduct {
     img: string
     images?: string[]
 }
-
-// export interface AdminProductsState {
-//     items: AdminProduct[]
-//     loading: boolean
-//     isSubmitting: boolean
-//     error: string | null
-// }
