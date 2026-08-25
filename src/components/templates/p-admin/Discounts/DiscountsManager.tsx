@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import {
     PiTicketLight,
     PiPercentLight,
@@ -15,29 +15,10 @@ import {
 import StatCard from '@root/src/components/templates/P-admin/Index/StatCard'
 import DiscountModal from './DiscountModal'
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
+import { AdminDiscount, DiscountStatus } from '@root/src/types/adminDiscountType'
+import Swal from 'sweetalert2'
+import { addDiscountAction, deleteDiscountAction, updateDiscountAction } from './actions'
 
-export type DiscountType = 'percent' | 'fixed'
-export type DiscountStatus = 'active' | 'disabled' | 'expired'
-
-export type Discount = {
-    id: number
-    code: string
-    type: DiscountType
-    value: number
-    minOrderAmount: number
-    usageLimit: number
-    usedCount: number
-    expiresAt: string
-    status: DiscountStatus
-}
-
-const seedDiscounts: Discount[] = [
-    { id: 1, code: 'SUMMER40', type: 'percent', value: 40, minOrderAmount: 500000, usageLimit: 200, usedCount: 184, expiresAt: '۱۴۰۴/۰۶/۱۵', status: 'active' },
-    { id: 2, code: 'WELCOME10', type: 'percent', value: 10, minOrderAmount: 0, usageLimit: 1000, usedCount: 312, expiresAt: '۱۴۰۴/۰۹/۰۱', status: 'active' },
-    { id: 3, code: 'FREESHIP', type: 'fixed', value: 45000, minOrderAmount: 300000, usageLimit: 150, usedCount: 150, expiresAt: '۱۴۰۴/۰۴/۲۰', status: 'expired' },
-    { id: 4, code: 'VIP100K', type: 'fixed', value: 100000, minOrderAmount: 1000000, usageLimit: 50, usedCount: 12, expiresAt: '۱۴۰۴/۰۷/۱۰', status: 'active' },
-    { id: 5, code: 'TEST20', type: 'percent', value: 20, minOrderAmount: 0, usageLimit: 100, usedCount: 3, expiresAt: '۱۴۰۴/۰۵/۰۱', status: 'disabled' },
-]
 
 const statusMeta: Record<DiscountStatus, { label: string; classes: string }> = {
     active: { label: 'فعال', classes: 'bg-primary-50 text-primary-600' },
@@ -45,18 +26,22 @@ const statusMeta: Record<DiscountStatus, { label: string; classes: string }> = {
     expired: { label: 'منقضی شده', classes: 'bg-danger/10 text-danger' },
 }
 
-export default function DiscountsManager() {
-    const [discounts, setDiscounts] = useState<Discount[]>(seedDiscounts)
+type DiscountsManagerProps = {
+    initialDiscounts: AdminDiscount[]
+}
+
+export default function DiscountsManager({ initialDiscounts }: DiscountsManagerProps) {
     const [search, setSearch] = useState('')
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [editingDiscount, setEditingDiscount] = useState<Discount | null>(null)
+    const [editingDiscount, setEditingDiscount] = useState<AdminDiscount | null>(null)
+    const [isPending, startTransition] = useTransition()
 
-    const activeCount = discounts.filter(d => d.status === 'active').length
-    const totalUsed = discounts.reduce((sum, d) => sum + d.usedCount, 0)
-    const almostFinished = discounts.filter(d => d.status === 'active' && d.usageLimit - d.usedCount <= 20).length
-    const expiredCount = discounts.filter(d => d.status === 'expired').length
+    const activeCount = initialDiscounts.filter(d => d.status === 'active').length
+    const totalUsed = initialDiscounts.reduce((sum, d) => sum + d.usedCount, 0)
+    const almostFinished = initialDiscounts.filter(d => d.status === 'active' && d.usageLimit - d.usedCount <= 20).length
+    const expiredCount = initialDiscounts.filter(d => d.status === 'expired').length
 
-    const filteredDiscounts = discounts.filter(d =>
+    const filteredDiscounts = initialDiscounts.filter(d =>
         d.code.toLowerCase().includes(search.toLowerCase())
     )
 
@@ -65,25 +50,61 @@ export default function DiscountsManager() {
         setIsModalOpen(true)
     }
 
-    const openEditModal = (discount: Discount) => {
+    const openEditModal = (discount: AdminDiscount) => {
         setEditingDiscount(discount)
         setIsModalOpen(true)
     }
 
-    const removeDiscount = (id: number) => {
-        setDiscounts(prev => prev.filter(d => d.id !== id))
+    const removeDiscount = async (id: string) => {
+        const result = await Swal.fire({
+            title: 'حذف کد تخفیف',
+            text: 'آیا از حذف این کد تخفیف مطمئن هستید؟ این عملیات قابل بازگشت نیست.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'بله، حذف شود',
+            cancelButtonText: 'انصراف',
+            confirmButtonColor: '#EF4444',
+        })
+
+        if (!result.isConfirmed) return
+
+        startTransition(async () => {
+            const res = await deleteDiscountAction(id)
+            if (res.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'حذف شد',
+                    text: 'کد تخفیف با موفقیت حذف شد',
+                    timer: 1500,
+                    showConfirmButton: false,
+                })
+            } else {
+                Swal.fire({ icon: 'error', title: 'خطا', text: res.error || 'مشکلی در حذف کد تخفیف پیش آمد' })
+            }
+        })
     }
 
-    const saveDiscount = (data: Omit<Discount, 'id' | 'usedCount'>) => {
-        if (editingDiscount) {
-            setDiscounts(prev => prev.map(d => d.id === editingDiscount.id ? { ...d, ...data } : d))
-        } else {
-            setDiscounts(prev => [
-                { ...data, id: Date.now(), usedCount: 0 },
-                ...prev,
-            ])
-        }
-        setIsModalOpen(false)
+    const saveDiscount = (data: Omit<AdminDiscount, '_id' | 'usedCount'>) => {
+        startTransition(async () => {
+            const res = editingDiscount
+                ? await updateDiscountAction(editingDiscount._id, data)
+                : await addDiscountAction(data)
+
+
+            if (res.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'موفقیت‌آمیز',
+                    text: editingDiscount ? 'کد تخفیف با موفقیت ویرایش شد' : 'کد تخفیف با موفقیت ثبت شد',
+                    timer: 1500,
+                    showConfirmButton: false,
+                })
+                setIsModalOpen(false)
+            } else {
+                Swal.fire({ icon: 'error', title: 'خطا', text: res.error || 'مشکلی در ذخیره کد تخفیف پیش آمد' })
+            }
+        })
+
     }
 
     return (
@@ -145,7 +166,7 @@ export default function DiscountsManager() {
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {filteredDiscounts.map(discount => (
-                                    <tr key={discount.id} className="hover:bg-primary-50/30 transition-colors">
+                                    <tr key={discount._id} className="hover:bg-primary-50/30 transition-colors">
                                         <td className="px-5 sm:px-6 py-3.5">
                                             <span className="inline-flex px-2.5 py-1 font-IranYekanBold text-xs tracking-wider text-primary-700 bg-primary-50 rounded-lg">
                                                 {discount.code}
@@ -184,7 +205,7 @@ export default function DiscountsManager() {
                                                     <PiPencilSimpleLight className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={() => removeDiscount(discount.id)}
+                                                    onClick={() => removeDiscount(discount._id)}
                                                     className="flex-center w-8 h-8 text-zinc-500 hover:text-danger hover:bg-danger/10 rounded-lg transition-colors cursor-pointer"
                                                 >
                                                     <PiTrashLight className="w-4 h-4" />
@@ -204,6 +225,7 @@ export default function DiscountsManager() {
                     initialData={editingDiscount}
                     onClose={() => setIsModalOpen(false)}
                     onSave={saveDiscount}
+                    isSaving={isPending}
                 />
             )}
         </div>

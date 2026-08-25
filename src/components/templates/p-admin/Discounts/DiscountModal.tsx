@@ -2,15 +2,17 @@
 
 import { useState } from 'react'
 import { PiXBold } from 'react-icons/pi'
-import type { Discount, DiscountType, DiscountStatus } from './DiscountsManager'
+import type { AdminDiscount, DiscountType, DiscountStatus } from '@root/src/types/adminDiscountType'
+
 
 type DiscountModalProps = {
-    initialData: Discount | null
+    initialData: AdminDiscount | null
     onClose: () => void
-    onSave: (data: Omit<Discount, 'id' | 'usedCount'>) => void
+    onSave: (data: Omit<AdminDiscount, '_id' | 'usedCount'>) => void
+    isSaving?: boolean
 }
 
-export default function DiscountModal({ initialData, onClose, onSave }: DiscountModalProps) {
+export default function DiscountModal({ initialData, onClose, onSave, isSaving }: DiscountModalProps) {
     const [code, setCode] = useState(initialData?.code ?? '')
     const [type, setType] = useState<DiscountType>(initialData?.type ?? 'percent')
     const [value, setValue] = useState(initialData ? String(initialData.value) : '')
@@ -77,9 +79,12 @@ export default function DiscountModal({ initialData, onClose, onSave }: Discount
                             مقدار تخفیف {type === 'percent' ? '(٪)' : '(تومان)'}
                         </label>
                         <input
-                            value={value}
-                            onChange={e => setValue(e.target.value)}
-                            type="number"
+                            value={value ? Number(value).toLocaleString('en-US') : ''}
+                            onChange={e => {
+                                const rawValue = e.target.value.replace(/\D/g, '');
+                                setValue(rawValue);
+                            }}
+                            type="text"
                             placeholder={type === 'percent' ? 'مثال: 20' : 'مثال: 50000'}
                             className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"
                         />
@@ -88,9 +93,12 @@ export default function DiscountModal({ initialData, onClose, onSave }: Discount
                     <div>
                         <label className="block mb-1.5 text-xs text-zinc-500">حداقل مبلغ خرید (تومان)</label>
                         <input
-                            value={minOrderAmount}
-                            onChange={e => setMinOrderAmount(e.target.value)}
-                            type="number"
+                            value={minOrderAmount ? Number(minOrderAmount).toLocaleString('en-US') : ''}
+                            onChange={e => {
+                                const rawValue = e.target.value.replace(/\D/g, '');
+                                setMinOrderAmount(rawValue);
+                            }}
+                            type="text"
                             placeholder="۰ برای بدون محدودیت"
                             className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"
                         />
@@ -111,8 +119,26 @@ export default function DiscountModal({ initialData, onClose, onSave }: Discount
                         <label className="block mb-1.5 text-xs text-zinc-500">تاریخ انقضا</label>
                         <input
                             value={expiresAt}
-                            onChange={e => setExpiresAt(e.target.value)}
-                            placeholder="۱۴۰۴/۰۶/۱۵"
+                            onChange={e => {
+                                let val = e.target.value
+                                    .replace(/[۰-۹]/g, d => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d)))
+                                    .replace(/[٠-٩]/g, d => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)))
+                                    .replace(/\D/g, ''); // ۲. حذف غیرعددی‌ها
+
+                                if (val.length > 8) val = val.slice(0, 8);
+
+                                if (val.length > 4 && val.length <= 6) {
+                                    val = `${val.slice(0, 4)}/${val.slice(4)}`;
+                                } else if (val.length > 6) {
+                                    val = `${val.slice(0, 4)}/${val.slice(4, 6)}/${val.slice(6)}`;
+                                }
+
+                                setExpiresAt(val);
+                            }}
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={10}
+                            placeholder="1406/06/15"
                             className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"
                         />
                     </div>
@@ -138,7 +164,7 @@ export default function DiscountModal({ initialData, onClose, onSave }: Discount
                         onClick={handleSubmit}
                         className="flex-1 flex-center h-11 text-sm text-text linear_btn"
                     >
-                        {initialData ? 'ذخیره تغییرات' : 'افزودن کد تخفیف'}
+                        {isSaving ? 'در حال ذخیره...' : initialData ? 'ذخیره تغییرات' : 'افزودن کد تخفیف'}
                     </button>
                     <button
                         onClick={onClose}
