@@ -22,7 +22,7 @@ function isDuplicateKeyError(error: unknown): boolean {
 }
 
 // ────────────────────────────────
-// افزودن کد تخفیف
+// Add new discount action
 // ────────────────────────────────
 export async function addDiscountAction(data: DiscountInput): Promise<ActionResult> {
     await connectDB()
@@ -46,7 +46,7 @@ export async function addDiscountAction(data: DiscountInput): Promise<ActionResu
 }
 
 // ────────────────────────────────
-// ویرایش کد تخفیف
+// Update existing discount action 
 // ────────────────────────────────
 export async function updateDiscountAction(id: string, data: DiscountInput): Promise<ActionResult> {
     await connectDB()
@@ -72,7 +72,7 @@ export async function updateDiscountAction(id: string, data: DiscountInput): Pro
 }
 
 // ────────────────────────────────
-// حذف کد تخفیف
+// Delete discount action
 // ────────────────────────────────
 export async function deleteDiscountAction(id: string): Promise<ActionResult> {
     await connectDB()

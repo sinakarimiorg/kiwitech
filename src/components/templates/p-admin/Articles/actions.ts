@@ -9,7 +9,7 @@ import ArticleModel from "@root/src/models/Article"
 type ActionResult = { success: true } | { success: false; error: string }
 
 // ────────────────────────────────
-// افزودن مقاله
+// Add new article action
 // ────────────────────────────────
 export async function addArticleAction(formData: FormData): Promise<ActionResult> {
     await connectDB()
@@ -48,7 +48,7 @@ export async function addArticleAction(formData: FormData): Promise<ActionResult
 }
 
 // ────────────────────────────────
-// ویرایش مقاله
+// Update existing article action
 // ────────────────────────────────
 export async function updateArticleAction(id: string, formData: FormData): Promise<ActionResult> {
     await connectDB()
@@ -98,7 +98,7 @@ export async function updateArticleAction(id: string, formData: FormData): Promi
 }
 
 // ────────────────────────────────
-// حذف مقاله
+// Delete article action
 // ────────────────────────────────
 export async function deleteArticleAction(id: string): Promise<ActionResult> {
     await connectDB()
