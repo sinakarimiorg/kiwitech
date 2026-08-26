@@ -1,13 +1,14 @@
 "use client"
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { PiXBold, PiUploadSimpleLight } from 'react-icons/pi'
-import type { Banner, BannerPosition, BannerStatus } from './BannersManager'
+import type { AdminBanner, BannerPosition, BannerStatus } from '@root/src/types/adminBannerType'
 
 type BannerModalProps = {
-    initialData: Banner | null
+    initialData: AdminBanner | null
     onClose: () => void
-    onSave: (data: Omit<Banner, 'id'>) => void
+    onSave: (formData: FormData) => void
+    isSaving?: boolean
 }
 
 const positionOptions: { value: BannerPosition; label: string }[] = [
@@ -16,36 +17,40 @@ const positionOptions: { value: BannerPosition; label: string }[] = [
     { value: 'categoriesByPhone', label: 'دسته‌بندی بر اساس گوشی' },
 ]
 
-export default function BannerModal({ initialData, onClose, onSave }: BannerModalProps) {
+export default function BannerModal({ initialData, onClose, onSave, isSaving }: BannerModalProps) {
     const [title, setTitle] = useState(initialData?.title ?? '')
     const [position, setPosition] = useState<BannerPosition>(initialData?.position ?? 'landing')
-    const [image, setImage] = useState(initialData?.image ?? '')
     const [imagePreview, setImagePreview] = useState(initialData?.image ?? '')
+    const [imageFile, setImageFile] = useState<File | null>(null)
     const [linkUrl, setLinkUrl] = useState(initialData?.linkUrl ?? '')
     const [status, setStatus] = useState<BannerStatus>(initialData?.status ?? 'active')
     const [error, setError] = useState('')
+    const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0]
         if (!file) return
-        const url = URL.createObjectURL(file)
-        setImagePreview(url)
-        setImage(url) // در پروژه‌ی واقعی: آپلود فایل به سرور و ذخیره‌ی مسیر برگشتی
+        setImageFile(file)
+        const reader = new FileReader()
+        reader.onload = () => setImagePreview(reader.result as string)
+        reader.readAsDataURL(file)
     }
 
     const handleSubmit = () => {
-        if (!title.trim() || !image) {
+        if (!title.trim() || (!imageFile && !imagePreview)) {
             setError('لطفاً عنوان و تصویر بنر را مشخص کنید.')
             return
         }
-        onSave({
-            title: title.trim(),
-            position,
-            image,
-            linkUrl: linkUrl.trim() || '#',
-            order: initialData?.order ?? 1,
-            status,
-        })
+
+        const payload = new FormData()
+        payload.append('title', title.trim())
+        payload.append('position', position)
+        payload.append('linkUrl', linkUrl.trim() || '#')
+        payload.append('status', status)
+        if (initialData) payload.append('existingImage', initialData.image)
+        if (imageFile) payload.append('image', imageFile)
+
+        onSave(payload)
     }
 
     return (
@@ -75,7 +80,7 @@ export default function BannerModal({ initialData, onClose, onSave }: BannerModa
                                     <span className="text-xs text-zinc-400">آپلود تصویر بنر</span>
                                 </>
                             )}
-                            <input type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                            <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
                         </label>
                     </div>
 
@@ -130,9 +135,10 @@ export default function BannerModal({ initialData, onClose, onSave }: BannerModa
                 <div className="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100">
                     <button
                         onClick={handleSubmit}
-                        className="flex-1 flex-center h-11 text-sm text-text linear_btn"
+                        disabled={isSaving}
+                        className="flex-1 flex-center h-11 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                        {initialData ? 'ذخیره تغییرات' : 'افزودن بنر'}
+                        {isSaving ? 'در حال ذخیره...' : initialData ? 'ذخیره تغییرات' : 'افزودن بنر'}
                     </button>
                     <button
                         onClick={onClose}
