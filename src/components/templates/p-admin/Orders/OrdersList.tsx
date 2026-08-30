@@ -7,123 +7,16 @@ import {
     PiShoppingBagOpenLight,
     PiUserCircleLight,
 } from "react-icons/pi"
+import type { AdminOrder, OrderStatus } from "@root/src/types/adminOrderType"
+import { statusStyle, getOrderTotal } from "@root/src/types/adminOrderType"
 
-export type OrderStatus = "در حال پردازش" | "ارسال شده" | "تحویل شده" | "لغو شده"
-
-export type OrderItem = {
-    id: number
-    title: string
-    img: string
-    price: number
-    count: number
-}
-
-export type Order = {
-    id: string
-    customer: string
-    phone: string
-    address: string
-    items: OrderItem[]
-    paymentMethod: "آنلاین" | "در محل"
-    shippingCost: number
-    status: OrderStatus
-    date: string
-    time: string
-}
-
-// نمونه دیتای اولیه - در آینده با فچ از API جایگزین می‌شود
-export const seedOrders: Order[] = [
-    {
-        id: "۱۴۰۴۰۹۲۳۱۸",
-        customer: "سینا کریمی",
-        phone: "۰۹۳۰۰۵۲۵۲۶۲",
-        address: "تهران، خیابان ولیعصر، بالاتر از میدان ونک، پلاک ۱۲، واحد ۳",
-        items: [
-            { id: 1, title: "هندزفری بلوتوثی کربی مدل CR-T107", img: "/images/products/airpods.png", price: 765000, count: 1 },
-            { id: 2, title: "کابل شارژ مولتی رابط مدل ایکس", img: "/images/products/charge-cable.png", price: 490000, count: 2 },
-        ],
-        paymentMethod: "آنلاین",
-        shippingCost: 0,
-        status: "در حال پردازش",
-        date: "۱۴۰۴/۰۴/۰۸",
-        time: "۱۴:۲۲",
-    },
-    {
-        id: "۱۴۰۴۰۹۲۳۱۷",
-        customer: "علی رضایی",
-        phone: "۰۹۱۲۳۴۵۶۷۸۹",
-        address: "تهران، خیابان آزادی، برج نگین، طبقه ۵، واحد ۹",
-        items: [
-            { id: 3, title: "قاب و کاور گوشی مدل پترن", img: "/images/products/cover.png", price: 149000, count: 1 },
-        ],
-        paymentMethod: "در محل",
-        shippingCost: 45000,
-        status: "ارسال شده",
-        date: "۱۴۰۴/۰۴/۰۸",
-        time: "۱۳:۵۰",
-    },
-    {
-        id: "۱۴۰۴۰۹۲۳۱۶",
-        customer: "مریم احمدی",
-        phone: "۰۹۳۵۱۱۲۲۳۳۴",
-        address: "اصفهان، خیابان چهارباغ، کوچه ۱۴، پلاک ۷",
-        items: [
-            { id: 4, title: "پاوربانک انکر مدل PowerCore 10000", img: "/images/products/power-bank1.png", price: 2200000, count: 1 },
-        ],
-        paymentMethod: "آنلاین",
-        shippingCost: 0,
-        status: "تحویل شده",
-        date: "۱۴۰۴/۰۴/۰۷",
-        time: "۱۱:۰۵",
-    },
-    {
-        id: "۱۴۰۴۰۹۲۳۱۵",
-        customer: "حسین نوری",
-        phone: "۰۹۱۹۸۸۷۷۶۶۵",
-        address: "شیراز، بلوار زند، نبش کوچه ۹",
-        items: [
-            { id: 5, title: "شارژر فندکی 35 وات مدل QC 3", img: "/images/products/car-charger.png", price: 320000, count: 1 },
-            { id: 6, title: "کابل شارژ مولتی رابط مدل ایکس", img: "/images/products/charge-cable.png", price: 490000, count: 1 },
-        ],
-        paymentMethod: "در محل",
-        shippingCost: 45000,
-        status: "لغو شده",
-        date: "۱۴۰۴/۰۴/۰۷",
-        time: "۲۲:۱۸",
-    },
-    {
-        id: "۱۴۰۴۰۹۲۳۱۴",
-        customer: "زهرا محمدی",
-        phone: "۰۹۳۶۴۴۵۵۶۶۷",
-        address: "مشهد، بلوار وکیل‌آباد، پلاک ۲۲",
-        items: [
-            { id: 7, title: "هندزفری بلوتوثی کربی مدل CR-T107", img: "/images/products/airpods.png", price: 765000, count: 1 },
-        ],
-        paymentMethod: "آنلاین",
-        shippingCost: 0,
-        status: "تحویل شده",
-        date: "۱۴۰۴/۰۴/۰۶",
-        time: "۰۹:۱۲",
-    },
-]
-
-export const statusStyle: Record<OrderStatus, string> = {
-    "در حال پردازش": "bg-amber-50 text-amber-600",
-    "ارسال شده": "bg-sky-50 text-sky-600",
-    "تحویل شده": "bg-primary-50 text-primary-600",
-    "لغو شده": "bg-danger/10 text-danger",
-}
 
 const statusOptions: OrderStatus[] = ["در حال پردازش", "ارسال شده", "تحویل شده", "لغو شده"]
 const filters: ("همه" | OrderStatus)[] = ["همه", "در حال پردازش", "ارسال شده", "تحویل شده", "لغو شده"]
 
-export function getOrderTotal(order: Order) {
-    return order.items.reduce((sum, item) => sum + item.price * item.count, 0) + order.shippingCost
-}
-
 type OrdersListProps = {
-    orders: Order[]
-    onView: (order: Order) => void
+    orders: AdminOrder[]
+    onView: (order: AdminOrder) => void
     onStatusChange: (id: string, status: OrderStatus) => void
 }
 
@@ -132,7 +25,7 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
     const [activeFilter, setActiveFilter] = useState<"همه" | OrderStatus>("همه")
 
     const filtered = orders.filter(o => {
-        const matchesSearch = o.customer.includes(search) || o.id.includes(search) || o.phone.includes(search)
+        const matchesSearch = o.customer.includes(search) || o._id.includes(search) || o.phone.includes(search)
         const matchesFilter = activeFilter === "همه" || o.status === activeFilter
         return matchesSearch && matchesFilter
     })
@@ -184,7 +77,6 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
                             <th className='font-IranYekanMedium px-3 py-3'>مشتری</th>
                             <th className='font-IranYekanMedium px-3 py-3'>تعداد اقلام</th>
                             <th className='font-IranYekanMedium px-3 py-3'>مبلغ</th>
-                            <th className='font-IranYekanMedium px-3 py-3'>پرداخت</th>
                             <th className='font-IranYekanMedium px-3 py-3'>وضعیت</th>
                             <th className='font-IranYekanMedium px-3 py-3'>تاریخ</th>
                             <th className='font-IranYekanMedium px-3 py-3'>عملیات</th>
@@ -192,9 +84,9 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
                     </thead>
                     <tbody className='divide-y divide-gray-50'>
                         {filtered.map(order => (
-                            <tr key={order.id} className='hover:bg-primary-50/30 transition-colors'>
-                                <td className='px-5 sm:px-6 py-3.5 font-IranYekanMedium text-zinc-700 tracking-wide'>
-                                    {order.id}
+                            <tr key={order._id} className='hover:bg-primary-50/30 transition-colors'>
+                                <td className='px-5 sm:px-6 py-3.5 font-IranYekanMedium text-zinc-700 tracking-wide' >
+                                    #{order._id.slice(-8).toUpperCase()}
                                 </td>
                                 <td className='px-3 py-3.5'>
                                     <div className='flex items-center gap-2'>
@@ -208,11 +100,10 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
                                 <td className='px-3 py-3.5 font-IranYekanMedium text-zinc-700'>
                                     {getOrderTotal(order).toLocaleString()} تومان
                                 </td>
-                                <td className='px-3 py-3.5 text-zinc-500'>{order.paymentMethod}</td>
                                 <td className='px-3 py-3.5'>
                                     <select
                                         value={order.status}
-                                        onChange={e => onStatusChange(order.id, e.target.value as OrderStatus)}
+                                        onChange={e => onStatusChange(order._id, e.target.value as OrderStatus)}
                                         className={`px-2.5 py-1 text-xs rounded-lg outline-none cursor-pointer border-0 ${statusStyle[order.status]}`}>
                                         {statusOptions.map(s => (
                                             <option key={s} value={s}>{s}</option>
@@ -220,7 +111,7 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
                                     </select>
                                 </td>
                                 <td className='px-3 py-3.5 text-zinc-400 whitespace-nowrap'>
-                                    {order.date} <span className='text-zinc-300'>|</span> {order.time}
+                                    {order.createdAt ? new Date(order.createdAt).toLocaleDateString('fa-IR') : '—'}
                                 </td>
                                 <td className='px-3 py-3.5'>
                                     <button

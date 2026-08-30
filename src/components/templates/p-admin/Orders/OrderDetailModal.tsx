@@ -2,11 +2,11 @@
 
 import { PiXBold, PiMapPinLight, PiUserCircleLight, PiCreditCardLight, PiPackageLight } from "react-icons/pi"
 import TomanIcon from "@root/src/components/modules/Icons/TomanIcon"
-import { getOrderTotal, statusStyle } from "./OrdersList"
-import type { Order } from "./OrdersList"
+import { statusStyle, getOrderTotal } from "@root/src/types/adminOrderType"
+import type { AdminOrder } from "@root/src/types/adminOrderType"
 
 type OrderDetailModalProps = {
-    order: Order
+    order: AdminOrder
     onClose: () => void
 }
 
@@ -21,7 +21,7 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
                 <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
                     <div>
                         <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">جزئیات سفارش</h2>
-                        <p className="text-xs text-zinc-400 mt-0.5 tracking-wide">{order.id}</p>
+                        <p className="text-xs text-zinc-400 mt-0.5 tracking-wide" dir='ltr'>#{order._id.slice(-8).toUpperCase()}</p>
                     </div>
                     <button onClick={onClose} className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                         <PiXBold className="w-4 h-4" />
@@ -35,7 +35,9 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
                         <span className={`px-3 py-1.5 text-xs rounded-lg ${statusStyle[order.status]}`}>
                             {order.status}
                         </span>
-                        <span className="text-xs text-zinc-400">{order.date} - {order.time}</span>
+                        <span className="text-xs text-zinc-400">
+                            {order.createdAt ? new Date(order.createdAt).toLocaleString('fa-IR') : '—'}
+                        </span>
                     </div>
 
                     {/* Customer & Address */}
@@ -64,8 +66,8 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
                             اقلام سفارش
                         </div>
                         <div className="flex flex-col gap-3">
-                            {order.items.map(item => (
-                                <div key={item.id} className="flex items-center gap-3 p-3 border border-gray-100 rounded-xl">
+                            {order.items.map((item, index) => (
+                                <div key={index} className="flex items-center gap-3 p-3 border border-gray-100 rounded-xl">
                                     <div className="w-14 h-14 shrink-0 bg-gray-50 rounded-lg overflow-hidden">
                                         <img src={item.img} className="w-full h-full object-cover" alt={item.title} />
                                     </div>
@@ -84,13 +86,6 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
 
                     {/* Payment Summary */}
                     <div className="p-4 bg-gray-50 rounded-xl flex flex-col gap-2.5 text-sm">
-                        <div className="flex items-center justify-between text-zinc-500">
-                            <span className="flex items-center gap-1.5">
-                                <PiCreditCardLight className="w-4 h-4" />
-                                روش پرداخت
-                            </span>
-                            <span className="text-zinc-700">{order.paymentMethod}</span>
-                        </div>
                         <div className="flex items-center justify-between text-zinc-500">
                             <span>جمع اقلام</span>
                             <span className="inline-flex items-center gap-1 text-zinc-700">
