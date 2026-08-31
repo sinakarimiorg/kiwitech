@@ -15,54 +15,34 @@ import {
     PiListMagnifyingGlassLight,
 } from "react-icons/pi"
 import type { IconType } from "react-icons"
+import type { AdminTransaction, TransactionType, TransactionStatus } from "@root/src/types/adminTransactionType"
 
-type TxType = "واریز" | "برداشت" | "خرید" | "بازگشت وجه"
-type TxStatus = "موفق" | "در انتظار" | "ناموفق"
-type TxMethod = "کیف پول" | "درگاه بانکی" | "کارت به کارت"
 
-type Transaction = {
-    id: string
-    user: string
-    type: TxType
-    amount: number
-    method: TxMethod
-    status: TxStatus
-    date: string
-    time: string
-}
-
-// نمونه دیتای اولیه - در آینده با فچ از API جایگزین می‌شود
-const transactions: Transaction[] = [
-    { id: "TRX-10482", user: "سینا کریمی", type: "واریز", amount: 2000000, method: "درگاه بانکی", status: "موفق", date: "۱۴۰۴/۰۴/۰۸", time: "۱۴:۲۲" },
-    { id: "TRX-10481", user: "علی رضایی", type: "خرید", amount: 890000, method: "کیف پول", status: "موفق", date: "۱۴۰۴/۰۴/۰۸", time: "۱۳:۵۰" },
-    { id: "TRX-10480", user: "مریم احمدی", type: "برداشت", amount: 1200000, method: "کارت به کارت", status: "در انتظار", date: "۱۴۰۴/۰۴/۰۸", time: "۱۱:۰۵" },
-    { id: "TRX-10479", user: "حسین نوری", type: "خرید", amount: 560000, method: "کیف پول", status: "ناموفق", date: "۱۴۰۴/۰۴/۰۷", time: "۲۲:۱۸" },
-    { id: "TRX-10478", user: "زهرا محمدی", type: "بازگشت وجه", amount: 277000, method: "کیف پول", status: "موفق", date: "۱۴۰۴/۰۴/۰۷", time: "۱۸:۴۰" },
-    { id: "TRX-10477", user: "سینا کریمی", type: "واریز", amount: 500000, method: "درگاه بانکی", status: "موفق", date: "۱۴۰۴/۰۴/۰۶", time: "۰۹:۱۲" },
-    { id: "TRX-10476", user: "علی رضایی", type: "برداشت", amount: 3000000, method: "کارت به کارت", status: "موفق", date: "۱۴۰۴/۰۴/۰۶", time: "۰۸:۰۳" },
-]
-
-const typeMeta: Record<TxType, { icon: IconType; color: string }> = {
+const typeMeta: Record<TransactionType, { icon: IconType; color: string }> = {
     "واریز": { icon: PiPlusCircleLight, color: "text-primary-600 bg-primary-50" },
     "برداشت": { icon: PiMinusCircleLight, color: "text-danger bg-danger/10" },
     "خرید": { icon: PiShoppingCartLight, color: "text-sky-600 bg-sky-50" },
     "بازگشت وجه": { icon: PiWalletLight, color: "text-amber-600 bg-amber-50" },
 }
 
-const statusMeta: Record<TxStatus, { icon: IconType; color: string }> = {
+const statusMeta: Record<TransactionStatus, { icon: IconType; color: string }> = {
     "موفق": { icon: PiCheckCircleLight, color: "bg-primary-50 text-primary-600" },
     "در انتظار": { icon: PiHourglassLight, color: "bg-amber-50 text-amber-600" },
     "ناموفق": { icon: PiXCircleLight, color: "bg-danger/10 text-danger" },
 }
 
-const typeFilters: ("همه" | TxType)[] = ["همه", "واریز", "برداشت", "خرید", "بازگشت وجه"]
+const typeFilters: ("همه" | TransactionType)[] = ["همه", "واریز", "برداشت", "خرید", "بازگشت وجه"]
 
-export default function TransactionsList() {
+type TransactionsListProps = {
+    transactions: AdminTransaction[]
+}
+
+export default function TransactionsList({ transactions }: TransactionsListProps) {
     const [search, setSearch] = useState("")
-    const [activeFilter, setActiveFilter] = useState<"همه" | TxType>("همه")
+    const [activeFilter, setActiveFilter] = useState<"همه" | TransactionType>("همه")
 
     const filtered = transactions.filter(tx => {
-        const matchesSearch = tx.user.includes(search) || tx.id.toLowerCase().includes(search.toLowerCase())
+        const matchesSearch = tx.user.includes(search) || tx._id.toLowerCase().includes(search.toLowerCase())
         const matchesFilter = activeFilter === "همه" || tx.type === activeFilter
         return matchesSearch && matchesFilter
     })
@@ -127,11 +107,12 @@ export default function TransactionsList() {
                             const TypeIcon = type.icon
                             const StatusIcon = status.icon
                             const isPositive = tx.type === "واریز" || tx.type === "بازگشت وجه"
+                            const dateObj = tx.createdAt ? new Date(tx.createdAt) : null
 
                             return (
-                                <tr key={tx.id} className='hover:bg-primary-50/30 transition-colors'>
+                                <tr key={tx._id} className='hover:bg-primary-50/30 transition-colors'>
                                     <td className='px-5 sm:px-6 py-3.5 font-IranYekanMedium text-zinc-700 tracking-wide' dir='ltr'>
-                                        {tx.id}
+                                        #{tx._id.slice(-8).toUpperCase()}
                                     </td>
                                     <td className='px-3 py-3.5'>
                                         <div className='flex items-center gap-2'>
@@ -156,7 +137,7 @@ export default function TransactionsList() {
                                         </span>
                                     </td>
                                     <td className='px-3 py-3.5 text-zinc-400 whitespace-nowrap'>
-                                        {tx.date} <span className='text-zinc-300'>|</span> {tx.time}
+                                        {dateObj ? dateObj.toLocaleDateString('fa-IR') : '—'} <span className='text-zinc-300'>|</span> {dateObj ? dateObj.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) : ''}
                                     </td>
                                     <td className='px-3 py-3.5'>
                                         <button className='flex-center w-8 h-8 text-zinc-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer'>
