@@ -3,6 +3,12 @@ import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 import SalesPulse from '@root/src/components/templates/P-admin/Index/SalesPulse'
 import StatCard from '@root/src/components/templates/P-admin/Index/StatCard'
 import Link from 'next/link'
+import { connectDB } from '@root/src/lib/mongodb'
+import OrderModel from '@root/src/models/Order'
+import ProductModel from '@root/src/models/Product'
+import CommentModel from '@root/src/models/Comment'
+import { getOrderTotal, statusStyle } from '@root/src/types/adminOrderType'
+import type { AdminOrder } from '@root/src/types/adminOrderType'
 
 import {
     PiShoppingBagOpenLight,
@@ -12,49 +18,96 @@ import {
     PiWarningCircleLight,
 } from 'react-icons/pi'
 
-type Order = {
-    id: string
-    customer: string
-    total: number
-    status: 'در حال پردازش' | 'ارسال شده' | 'تحویل شده' | 'لغو شده'
-    date: string
+export const dynamic = "force-dynamic"
+
+const weekDays = ["شنبه", "یک‌شنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه"]
+
+function toPersianWeekdayIndex(jsDay: number) {
+    return (jsDay + 1) % 7
 }
 
-const recentOrders: Order[] = [
-    { id: '۱۴۰۴۰۹۲۳۱۸', customer: 'سینا کریمی', total: 1450000, status: 'در حال پردازش', date: '۱۴۰۴/۰۴/۰۸' },
-    { id: '۱۴۰۴۰۹۲۳۱۷', customer: 'علی رضایی', total: 890000, status: 'ارسال شده', date: '۱۴۰۴/۰۴/۰۸' },
-    { id: '۱۴۰۴۰۹۲۳۱۶', customer: 'مریم احمدی', total: 2340000, status: 'تحویل شده', date: '۱۴۰۴/۰۴/۰۷' },
-    { id: '۱۴۰۴۰۹۲۳۱۵', customer: 'حسین نوری', total: 560000, status: 'لغو شده', date: '۱۴۰۴/۰۴/۰۷' },
-    { id: '۱۴۰۴۰۹۲۳۱۴', customer: 'زهرا محمدی', total: 1120000, status: 'تحویل شده', date: '۱۴۰۴/۰۴/۰۶' },
-]
+const LOW_STOCK_THRESHOLD = 5
 
-const statusStyle: Record<Order['status'], string> = {
-    'در حال پردازش': 'bg-amber-50 text-amber-600',
-    'ارسال شده': 'bg-sky-50 text-sky-600',
-    'تحویل شده': 'bg-primary-50 text-primary-600',
-    'لغو شده': 'bg-danger/10 text-danger',
-}
+const page = async () => {
+    await connectDB()
 
-const lowStockProducts = [
-    { title: 'هندزفری بلوتوثی کربی مدل CR-T107', stock: 3 },
-    { title: 'پاوربانک انکر مدل PowerCore 10000', stock: 1 },
-    { title: 'کابل شارژ مولتی رابط مدل ایکس', stock: 4 },
-]
-function page() {
+    const [ordersRaw, lowStockRaw, pendingCommentsCount] = await Promise.all([
+        OrderModel.find({}).sort({ _id: -1 }).limit(200).lean(),
+        ProductModel.find({ stock: { $lte: LOW_STOCK_THRESHOLD } }).sort({ stock: 1 }).limit(5).lean(),
+        CommentModel.countDocuments({ status: "در انتظار بررسی" }),
+    ])
+
+    const allOrders: AdminOrder[] = JSON.parse(JSON.stringify(ordersRaw))
+    const lowStockProducts = JSON.parse(JSON.stringify(lowStockRaw)) as { _id: string; name: string; stock: number }[]
+
+    // ** Set Dates **-----------
+    const now = new Date()
+    const startOfToday = new Date(now)
+    startOfToday.setHours(0, 0, 0, 0)
+    const startOfYesterday = new Date(startOfToday)
+    startOfYesterday.setDate(startOfToday.getDate() - 1)
+    const sevenDaysAgo = new Date(now)
+    sevenDaysAgo.setDate(now.getDate() - 7)
+    // ----------------------------
+
+    const isSameOrAfter = (dateStr: string | undefined, ref: Date) => (dateStr ? new Date(dateStr) >= ref : false)
+    const isBetween = (dateStr: string | undefined, start: Date, end: Date) => {
+        if (!dateStr) return false
+        const d = new Date(dateStr)
+        return d >= start && d < end
+    }
+    const notCancelled = (o: AdminOrder) => o.status !== "لغو شده"
+
+    const todaysOrders = allOrders.filter(o => isSameOrAfter(o.createdAt, startOfToday) && notCancelled(o))
+    const yesterdaysOrders = allOrders.filter(o => isBetween(o.createdAt, startOfYesterday, startOfToday) && notCancelled(o))
+
+    const todaySales = todaysOrders.reduce((sum, o) => sum + getOrderTotal(o), 0)
+    const yesterdaySales = yesterdaysOrders.reduce((sum, o) => sum + getOrderTotal(o), 0)
+    const salesTrend = yesterdaySales > 0 ? Math.round(((todaySales - yesterdaySales) / yesterdaySales) * 100) : null
+
+    const newOrdersToday = todaysOrders.length
+    const newOrdersYesterday = yesterdaysOrders.length
+    const ordersTrend = newOrdersYesterday > 0 ? Math.round(((newOrdersToday - newOrdersYesterday) / newOrdersYesterday) * 100) : null
+
+    const customersWithOrders = new Set(allOrders.map(o => o.phone).filter(Boolean)).size
+
+    const weekBuckets = weekDays.map(day => ({ day, value: 0 }))
+    allOrders.forEach(o => {
+        if (!o.createdAt) return
+        const d = new Date(o.createdAt)
+        if (d < sevenDaysAgo) return
+        weekBuckets[toPersianWeekdayIndex(d.getDay())].value += 1
+    })
+    const totalWeeklyOrders = weekBuckets.reduce((sum, d) => sum + d.value, 0)
+
+    const recentOrders = allOrders.slice(0, 5)
+
     return (
         <Layout>
             <main className='flex-1 min-w-0'>
                 <div className="p-5 sm:p-6 flex flex-col gap-6">
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                        <StatCard label="فروش امروز" value="۳۲,۴۰۰,۰۰۰ تومان"  icon={PiWalletLight} accent="primary" trend={{ value: '۱۲٪', positive: true }} />
-                        <StatCard label="سفارش‌های جدید" value="۱۲" icon={PiShoppingBagOpenLight} accent="neon" trend={{ value: '۴٪', positive: true }} />
-                        <StatCard label="مشتریان فعال" value="۸۷۶" icon={PiUsersLight} accent="primary" trend={{ value: '۲٪', positive: false }} />
-                        <StatCard label="نظرات در انتظار تایید" value="۵" icon={PiChatCircleTextLight} accent="danger" />
+                        <StatCard
+                            label="فروش امروز"
+                            value={`${todaySales.toLocaleString()} تومان`}
+                            icon={PiWalletLight}
+                            accent="primary"
+                            trend={salesTrend !== null ? { value: `${Math.abs(salesTrend)}٪`, positive: salesTrend >= 0 } : undefined}
+                        />
+                        <StatCard
+                            label="سفارش‌های جدید امروز"
+                            value={newOrdersToday.toLocaleString('fa-IR')}
+                            icon={PiShoppingBagOpenLight}
+                            accent="neon"
+                            trend={ordersTrend !== null ? { value: `${Math.abs(ordersTrend)}٪`, positive: ordersTrend >= 0 } : undefined}
+                        />
+                        <StatCard label="مشتریان دارای سفارش" value={customersWithOrders.toLocaleString('fa-IR')} icon={PiUsersLight} accent="primary" />
+                        <StatCard label="نظرات در انتظار تایید" value={pendingCommentsCount.toLocaleString('fa-IR')} icon={PiChatCircleTextLight} accent="danger" />
                     </div>
                     <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                         {/* Sales Pulse */}
                         <div className="xl:col-span-2">
-                            <SalesPulse />
+                            <SalesPulse weekData={weekBuckets} totalCount={totalWeeklyOrders} />
                         </div>
 
                         {/* Low Stock */}
@@ -64,14 +117,18 @@ function page() {
                                 <h2 className="font-IranYekanBold text-base text-zinc-800">موجودی رو به اتمام</h2>
                             </div>
                             <div className="flex flex-col gap-4">
-                                {lowStockProducts.map(p => (
-                                    <div key={p.title} className="flex items-center justify-between gap-3">
-                                        <p className="text-sm text-zinc-600 line-clamp-1">{p.title}</p>
-                                        <span className="shrink-0 px-2.5 py-1 text-xs font-IranYekanMedium text-danger bg-danger/10 rounded-lg">
-                                            {p.stock} عدد
-                                        </span>
-                                    </div>
-                                ))}
+                                {lowStockProducts.length > 0 ? (
+                                    lowStockProducts.map(p => (
+                                        <div key={p._id} className="flex items-center justify-between gap-3">
+                                            <p className="text-sm text-zinc-600 line-clamp-1">{p.name}</p>
+                                            <span className="shrink-0 px-2.5 py-1 text-xs font-IranYekanMedium text-danger bg-danger/10 rounded-lg">
+                                                {p.stock} عدد
+                                            </span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="py-4 text-sm text-center text-zinc-400">موجودی رو به اتمامی وجود ندارد.</p>
+                                )}
                             </div>
                             <Link href="/p-admin/products" className="flex-center gap-1.5 w-full mt-5 py-2.5 text-sm text-primary-600 hover:text-primary-700 border border-dashed border-primary-300 rounded-xl transition-colors">
                                 مدیریت موجودی محصولات
@@ -100,24 +157,34 @@ function page() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-50">
-                                    {recentOrders.map(order => (
-                                        <tr key={order.id} className="hover:bg-primary-50/30 transition-colors">
-                                            <td className="px-5 sm:px-6 py-3.5 font-IranYekanMedium text-zinc-700 tracking-wide">{order.id}</td>
-                                            <td className="px-3 py-3.5 text-zinc-600">{order.customer}</td>
-                                            <td className="px-3 py-3.5">
-                                                <span className="inline-flex items-center gap-1 text-zinc-700">
-                                                    {order.total.toLocaleString()}
-                                                    <TomanIcon className="w-3 h-3" />
-                                                </span>
-                                            </td>
-                                            <td className="px-3 py-3.5">
-                                                <span className={`px-2.5 py-1 text-xs rounded-lg ${statusStyle[order.status]}`}>
-                                                    {order.status}
-                                                </span>
-                                            </td>
-                                            <td className="px-3 py-3.5 text-zinc-400">{order.date}</td>
+                                    {recentOrders.length > 0 ? (
+                                        recentOrders.map(order => (
+                                            <tr key={order._id} className="hover:bg-primary-50/30 transition-colors">
+                                                <td className="px-5 sm:px-6 py-3.5 font-IranYekanMedium text-zinc-700 tracking-wide" dir='ltr'>
+                                                    #{order._id.slice(-8).toUpperCase()}
+                                                </td>
+                                                <td className="px-3 py-3.5 text-zinc-600">{order.customer}</td>
+                                                <td className="px-3 py-3.5">
+                                                    <span className="inline-flex items-center gap-1 text-zinc-700">
+                                                        {getOrderTotal(order).toLocaleString()}
+                                                        <TomanIcon className="w-3 h-3" />
+                                                    </span>
+                                                </td>
+                                                <td className="px-3 py-3.5">
+                                                    <span className={`px-2.5 py-1 text-xs rounded-lg ${statusStyle[order.status]}`}>
+                                                        {order.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-3 py-3.5 text-zinc-400">
+                                                    {order.createdAt ? new Date(order.createdAt).toLocaleDateString('fa-IR') : '—'}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr>
+                                            <td colSpan={5} className="py-10 text-center text-zinc-400">سفارشی ثبت نشده است.</td>
                                         </tr>
-                                    ))}
+                                    )}
                                 </tbody>
                             </table>
                         </div>
