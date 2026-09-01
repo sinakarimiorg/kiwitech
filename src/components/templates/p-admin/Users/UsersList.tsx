@@ -1,52 +1,97 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useTransition } from "react"
 import {
     PiMagnifyingGlassLight,
-    PiUserCircleLight,
-    PiEyeLight,
-    PiProhibitLight,
     PiUsersLight,
+    PiPlusCircleLight,
 } from "react-icons/pi"
+import { AdminUser, UserRole, UserStatus } from "@root/src/types/adminUserType"
+import { addUserAction, deleteUserAction, toggleUserStatusAction, updateUserAction } from "./actions"
+import Swal from "sweetalert2"
+import UserModal from "./UserModal"
+import UserBox from "./UserBox"
 
-type CustomerStatus = "فعال" | "مسدود"
+const filters: ("همه" | UserStatus)[] = ["همه", "فعال", "مسدود"]
 
-type Customer = {
-    id: number
-    name: string
-    phone: string
-    email: string
-    ordersCount: number
-    totalSpent: number
-    joinedAt: string
-    status: CustomerStatus
+type UsersListProps = {
+    initialUsers: AdminUser[]
 }
 
-// نمونه دیتای اولیه - در آینده با فچ از API جایگزین می‌شود
-const customers: Customer[] = [
-    { id: 1, name: "سینا کریمی", phone: "۰۹۳۰۰۵۲۵۲۶۲", email: "sina@example.com", ordersCount: 14, totalSpent: 18450000, joinedAt: "۱۴۰۳/۰۲/۱۱", status: "فعال" },
-    { id: 2, name: "علی رضایی", phone: "۰۹۱۲۳۴۵۶۷۸۹", email: "ali.rezaei@example.com", ordersCount: 6, totalSpent: 5230000, joinedAt: "۱۴۰۳/۰۵/۰۳", status: "فعال" },
-    { id: 3, name: "مریم احمدی", phone: "۰۹۳۵۱۱۲۲۳۳۴", email: "maryam.a@example.com", ordersCount: 22, totalSpent: 31200000, joinedAt: "۱۴۰۲/۱۱/۲۸", status: "فعال" },
-    { id: 4, name: "حسین نوری", phone: "۰۹۱۹۸۸۷۷۶۶۵", email: "h.nouri@example.com", ordersCount: 1, totalSpent: 560000, joinedAt: "۱۴۰۴/۰۳/۱۹", status: "مسدود" },
-    { id: 5, name: "زهرا محمدی", phone: "۰۹۳۶۴۴۵۵۶۶۷", email: "z.mohammadi@example.com", ordersCount: 9, totalSpent: 11200000, joinedAt: "۱۴۰۳/۰۸/۰۷", status: "فعال" },
-]
-
-const statusStyle: Record<CustomerStatus, string> = {
-    "فعال": "bg-primary-50 text-primary-600",
-    "مسدود": "bg-danger/10 text-danger",
-}
-
-const filters: ("همه" | CustomerStatus)[] = ["همه", "فعال", "مسدود"]
-
-export default function UsersList() {
+export default function UsersList({ initialUsers }: UsersListProps) {
     const [search, setSearch] = useState("")
-    const [activeFilter, setActiveFilter] = useState<"همه" | CustomerStatus>("همه")
+    const [activeFilter, setActiveFilter] = useState<"همه" | UserStatus>("همه")
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [editingUser, setEditingUser] = useState<AdminUser | null>(null)
+    const [isPending, startTransition] = useTransition()
 
-    const filtered = customers.filter(c => {
-        const matchesSearch = c.name.includes(search) || c.phone.includes(search)
-        const matchesFilter = activeFilter === "همه" || c.status === activeFilter
+    const filtered = initialUsers.filter(u => {
+        const matchesSearch = u.name.includes(search) || u.phone.includes(search)
+        const matchesFilter = activeFilter === "همه" || u.status === activeFilter
         return matchesSearch && matchesFilter
     })
+
+    const openAddModal = () => {
+        setEditingUser(null)
+        setIsModalOpen(true)
+    }
+
+    const openEditModal = (user: AdminUser) => {
+        setEditingUser(user)
+        setIsModalOpen(true)
+    }
+
+    const saveUser = async (data: { name: string; phone: string; email?: string; status: UserStatus; role?: UserRole }) => {
+        startTransition(async () => {
+            const res = editingUser
+                ? await updateUserAction(editingUser._id, data)
+                : await addUserAction(data)
+
+            if (res.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "موفقیت‌آمیز",
+                    text: editingUser ? "مشتری با موفقیت ویرایش شد" : "مشتری با موفقیت افزوده شد",
+                    timer: 1500,
+                    showConfirmButton: false,
+                })
+                setIsModalOpen(false)
+            } else {
+                Swal.fire({ icon: "error", title: "خطا", text: res.error || "مشکلی در ذخیره مشتری پیش آمد" })
+            }
+        })
+    }
+
+    const toggleStatus = async (id: string, currentStatus: UserStatus) => {
+        startTransition(async () => {
+            const res = await toggleUserStatusAction(id, currentStatus === "فعال" ? "مسدود" : "فعال")
+            if (!res.success) {
+                Swal.fire({ icon: "error", title: "خطا", text: res.error })
+            }
+        })
+    }
+
+    const removeUser = async (id: string) => {
+        const result = await Swal.fire({
+            title: "حذف مشتری",
+            text: "آیا از حذف این مشتری مطمئن هستید؟ این عملیات قابل بازگشت نیست.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "بله، حذف شود",
+            cancelButtonText: "انصراف",
+            confirmButtonColor: "#EF4444",
+        })
+        if (!result.isConfirmed) return
+
+        startTransition(async () => {
+            const res = await deleteUserAction(id)
+            if (res.success) {
+                Swal.fire({ icon: "success", title: "حذف شد", text: "مشتری با موفقیت حذف شد", timer: 1500, showConfirmButton: false })
+            } else {
+                Swal.fire({ icon: "error", title: "خطا", text: res.error || "مشکلی در حذف مشتری پیش آمد" })
+            }
+        })
+    }
 
     return (
         <div className='bg-white shadow-lg rounded-2xl overflow-hidden'>
@@ -85,6 +130,11 @@ export default function UsersList() {
                             className='w-full bg-transparent outline-none placeholder:text-zinc-400'
                         />
                     </div>
+
+                    <button onClick={openAddModal} className='flex-center gap-1.5 px-4 py-2 text-sm text-text linear_btn shrink-0'>
+                        <PiPlusCircleLight className='w-4 h-4' />
+                        <span className='hidden sm:inline'>مشتری جدید</span>
+                    </button>
                 </div>
             </div>
 
@@ -92,8 +142,9 @@ export default function UsersList() {
             <div className='overflow-x-auto'>
                 <table className='w-full text-sm'>
                     <thead>
-                        <tr className='text-right text-xs text-zinc-400 border-b border-gray-100'>
-                            <th className='font-IranYekanMedium px-5 sm:px-6 py-3'>مشتری</th>
+                        <tr className='text-xs text-zinc-400 border-b border-gray-100'>
+                            <th className='font-IranYekanMedium px-5 sm:px-10 py-3 text-right'>مشتری</th>
+                            <th className='font-IranYekanMedium px-5 sm:px-6 py-3'>نقش</th>
                             <th className='font-IranYekanMedium px-3 py-3'>شماره تماس</th>
                             <th className='font-IranYekanMedium px-3 py-3'>تعداد سفارش</th>
                             <th className='font-IranYekanMedium px-3 py-3'>مجموع خرید</th>
@@ -103,39 +154,15 @@ export default function UsersList() {
                         </tr>
                     </thead>
                     <tbody className='divide-y divide-gray-50'>
-                        {filtered.map(customer => (
-                            <tr key={customer.id} className='hover:bg-primary-50/30 transition-colors'>
-                                <td className='px-5 sm:px-6 py-3.5'>
-                                    <div className='flex items-center gap-3'>
-                                        <span className='flex-center w-10 h-10 shrink-0 bg-primary-50 text-primary-500 rounded-full'>
-                                            <PiUserCircleLight className='w-6 h-6' />
-                                        </span>
-                                        <div>
-                                            <p className='font-IranYekanMedium text-zinc-700 line-clamp-1'>{customer.name}</p>
-                                            <p className='text-xs text-zinc-400'>{customer.email}</p>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td className='px-3 py-3.5 text-zinc-500 tracking-wide'>{customer.phone}</td>
-                                <td className='px-3 py-3.5 text-zinc-600'>{customer.ordersCount}</td>
-                                <td className='px-3 py-3.5 text-zinc-700 font-IranYekanMedium'>{customer.totalSpent.toLocaleString()} تومان</td>
-                                <td className='px-3 py-3.5 text-zinc-400'>{customer.joinedAt}</td>
-                                <td className='px-3 py-3.5'>
-                                    <span className={`px-2.5 py-1 text-xs rounded-lg ${statusStyle[customer.status]}`}>
-                                        {customer.status}
-                                    </span>
-                                </td>
-                                <td className='px-3 py-3.5'>
-                                    <div className='flex items-center gap-2'>
-                                        <button className='flex-center w-8 h-8 text-zinc-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer'>
-                                            <PiEyeLight className='w-4 h-4' />
-                                        </button>
-                                        <button className='flex-center w-8 h-8 text-zinc-500 hover:text-danger hover:bg-danger/10 rounded-lg transition-colors cursor-pointer'>
-                                            <PiProhibitLight className='w-4 h-4' />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                        {filtered.map(user => (
+                            <UserBox
+                                key={user._id}
+                                user={user}
+                                openEditModal={openEditModal}
+                                toggleStatus={toggleStatus}
+                                removeUser={removeUser}
+                                isPending={isPending}
+                            />
                         ))}
 
                         {filtered.length === 0 &&
@@ -146,6 +173,16 @@ export default function UsersList() {
                     </tbody>
                 </table>
             </div>
+
+            {isModalOpen && (
+                <UserModal
+                    initialData={editingUser}
+                    onClose={() => setIsModalOpen(false)}
+                    onSave={saveUser}
+                    isSaving={isPending}
+                    isEdit={editingUser}
+                />
+            )}
         </div>
     )
 }

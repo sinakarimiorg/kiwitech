@@ -1,20 +1,7 @@
 import mongoose, { Schema, models, model } from "mongoose"
+import { AdminProduct } from "../types/adminProductType"
 
-export interface IProduct {
-    name: string
-    linkName: string
-    price: number
-    exPrice?: number
-    discount?: number
-    stock: number
-    category: string
-    subCategory: string
-    description?: string
-    colors: string
-    tags: string[]
-    img: string
-    images?: string[]
-}
+type IProduct = Omit<AdminProduct, "_id">
 
 const ProductSchema = new Schema<IProduct>(
     {
