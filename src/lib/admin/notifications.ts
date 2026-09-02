@@ -3,11 +3,15 @@ import OrderModel from "@root/src/models/Order"
 import CommentModel from "@root/src/models/Comment"
 import ProductModel from "@root/src/models/Product"
 
+export type NotificationType = "order" | "comment" | "product"
+
 export type AdminNotificationItem = {
-    id: string
+    _id: string
+    type: NotificationType
     title: string
     subtitle: string
     createdAt?: string
+    read: boolean
 }
 
 export type AdminNotificationsData = {
@@ -35,35 +39,42 @@ export async function getAdminNotifications(): Promise<AdminNotificationsData> {
                 .sort({ stock: 1 })
                 .limit(5)
                 .lean(),
-        ]);
+        ])
 
         const pendingOrders: AdminNotificationItem[] = pendingOrdersRaw.map((o: any) => ({
-            id: o._id.toString(),
+            _id: o._id.toString(),
             title: `سفارش جدید از ${o.user?.name ?? "مشتری"}`,
+            type: "order",
             subtitle: `${o.items?.length ?? 0} قلم کالا`,
-            createdAt: o.createdAt,
+            createdAt: o.createdAt ? new Date(o.createdAt).toISOString() : undefined,
+            read: false,
         }))
 
         const pendingComments: AdminNotificationItem[] = pendingCommentsRaw.map((c: any) => ({
-            id: c._id.toString(),
-            title: `نظر جدید از ${c.author}`,
+            _id: c._id.toString(),
+            title: `نظر جدید از ${c.author ?? "کاربر"}`,
+            type: "comment",
             subtitle: c.product?.name ?? "محصول حذف‌شده",
-            createdAt: c.createdAt,
+            createdAt: c.createdAt ? new Date(c.createdAt).toISOString() : undefined,
+            read: false,
         }))
 
         const lowStockProducts: AdminNotificationItem[] = lowStockRaw.map((p: any) => ({
-            id: p._id.toString(),
+            _id: p._id.toString(),
             title: p.name,
+            type: "product",
             subtitle: `${p.stock} عدد باقی‌مانده`,
+            read: false,
         }))
 
-        return {
-            pendingOrders,
-            pendingComments,
-            lowStockProducts,
-            totalCount: pendingOrders.length + pendingComments.length + lowStockProducts.length,
-        }
-
+        return JSON.parse(
+            JSON.stringify({
+                pendingOrders,
+                pendingComments,
+                lowStockProducts,
+                totalCount: pendingOrders.length + pendingComments.length + lowStockProducts.length,
+            })
+        )
     } catch (error) {
         console.error("Error fetching admin notifications:", error)
         return { pendingOrders: [], pendingComments: [], lowStockProducts: [], totalCount: 0 }
