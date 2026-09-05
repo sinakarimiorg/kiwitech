@@ -13,6 +13,13 @@ type VerifyOtpResult =
     | { success: true; isNewUser: boolean }
     | { success: false; error: string }
 
+type CompleteProfileResult =
+    | { success: true }
+    | { success: false; error: string }
+
+type SessionUser = { name: string; phone: string; role: string } | null
+
+
 const OTP_EXPIRE_MINUTES = 2
 const PHONE_REGEX = /^0?9\d{9}$/
 
@@ -46,8 +53,8 @@ export async function requestOtpAction(phone: string): Promise<RequestOtpResult>
         const code = generateOtpCode()
         const expiresAt = new Date(Date.now() + OTP_EXPIRE_MINUTES * 60 * 1000)
 
-                await OtpModel.deleteMany({ phone: normalizedPhone })
-                await OtpModel.create({ phone: normalizedPhone, code, expiresAt })
+        await OtpModel.deleteMany({ phone: normalizedPhone })
+        await OtpModel.create({ phone: normalizedPhone, code, expiresAt })
 
         console.log(`[OTP] کد تایید برای ${normalizedPhone}: ${code}`)
 
@@ -121,6 +128,73 @@ export async function verifyOtpAction(phone: string, code: string): Promise<Veri
     } catch (error) {
         console.error("Error verifying OTP:", error);
         return { success: false, error: "خطا در تایید کد تایید" }
+    }
+}
+
+
+
+// ────────────────────────────────
+// Complete Profile Action
+// ────────────────────────────────
+export async function completeProfileAction(fullName: string, email?: string): Promise<CompleteProfileResult> {
+    if (!fullName.trim()) {
+        return { success: false, error: "نام و نام خانوادگی الزامی است" }
+    }
+
+    const cookieStore = await cookies()
+    const userId = cookieStore.get("kiwitech_session")?.value
+    if (!userId) {
+
+        return { success: false, error: "کاربر یافت نشد، لطفاً دوباره تلاش کنید" }
+    }
+
+    await connectDB();
+
+    try {
+        const updated = await UserModel.findByIdAndUpdate(
+            userId,
+            {
+                name: fullName.trim(),
+                ...(email?.trim() ? { email: email.trim() } : {}),
+            },
+            { new: true, runValidators: true }
+        )
+
+        if (!updated) {
+            return { success: false, error: "کاربر یافت نشد" }
+        }
+
+        return { success: true }
+
+    } catch (error) {
+        console.error("Error completing profile:", error);
+        return { success: false, error: "خطا در ثبت اطلاعات کاربری" }
+    }
+}
+
+
+// ────────────────────────────────
+// Get Session User Action
+// ────────────────────────────────
+export async function getSessionUserAction(): Promise<SessionUser> {
+    const cookieStore = await cookies()
+    const userId = cookieStore.get("kiwitech_session")?.value
+    if (!userId) return null
+
+    await connectDB();
+
+    try {
+        const user = await UserModel.findById(userId).select("name phone role").lean()
+        if (!user) return null
+
+        return {
+            name: (user as any).name,
+            phone: (user as any).phone,
+            role: (user as any).role
+        }
+    } catch (error) {
+        console.error("Error fetching session user:", error);
+        return null;
     }
 }
 

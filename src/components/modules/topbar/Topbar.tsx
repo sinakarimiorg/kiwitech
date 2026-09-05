@@ -20,7 +20,10 @@ import { HiMiniChevronLeft } from "react-icons/hi2";
 import Overlay from '../overlay/Overlay';
 import { useEffect } from "react";
 import SearchSuggestions from './SearchSuggestions/SearchSuggestions'
+import { getSessionUserAction, logoutAction } from '@root/src/components/templates/Auth/action'
 
+
+type SessionUser = { name: string; phone: string; role: string } | null
 
 const Topbar = () => {
     const [searchedValue, setSearchedValue] = useState('')
@@ -29,6 +32,10 @@ const Topbar = () => {
     const [cartClass, setCartClass] = useState('-left-64')
     const [isSubmenuOpen, setIsSubmenuOpen] = useState(false)
 
+    const [currentUser, setCurrentUser] = useState<SessionUser>(null)
+    useEffect(() => {
+        getSessionUserAction().then(setCurrentUser)
+    }, [])
 
     ////////// Handle Search Suggestions Box
     const [showDesktopSuggestions, setShowDesktopSuggestions] = useState(false)
@@ -100,9 +107,9 @@ const Topbar = () => {
         }
     }
 
-    const exitUser = () => {
+    const exitUser = async () => {
+        await logoutAction()
         window.location.reload()
-        localStorage.removeItem('username')
     }
     return (
         <>
@@ -195,26 +202,31 @@ const Topbar = () => {
                     <span className="block w-px h-14 bg-border"></span>
 
                     {/* <!-- Login Link --> */}
-                    {/* {
-                        localStorage.getItem('username') ? <span className='group relative flex-center gap-1 text-sm custom-sc:text-base tracking-tighter cursor-pointer'>
-                            {localStorage.getItem('username')}
+
+                    {currentUser ? (
+                        <span className='group relative flex-center gap-1 text-sm custom-sc:text-base tracking-tighter cursor-pointer hover:text-neon transition-colors'>
+                            {currentUser.name}
                             <HiMiniChevronDown />
-                            <div className='invisible opacity-0 group-hover:visible absolute -left-4 top-full group-hover:opacity-100 w-32 custom-sc:w-40 bg-purple-800 text-white rounded-lg transition-all'>
-                                <div className='w-full text-center hover:bg-sky-800 py-2 px-4 hover:rounded-lg border-b border-gray-400'>سبد خرید</div>
-                                <div className={`${localStorage.getItem('role') === 'کاربر' ? 'hidden' : 'block'} w-full text-center hover:bg-sky-800 py-2 px-4 hover:rounded-lg border-b border-gray-400`}><Link href={'/p-admin'}>ورود به ادمین پنل</Link></div>
-                                <div className='w-full text-center hover:bg-sky-800 py-2 px-4 hover:rounded-lg border-b border-gray-400' onClick={() => { exitUser() }}>خروج</div>
+                            <div className='invisible opacity-0 group-hover:visible absolute -left-4 top-full group-hover:opacity-100 w-32 custom-sc:w-40 bg-dark-secondary border border-border text-text rounded-lg transition-all overflow-hidden z-30'>
+                                <Link href={'/p-user/profile'} className='block w-full text-center hover:bg-navbar-hover py-2 px-4 border-b border-border'>
+                                    پروفایل من
+                                </Link>
+                                {currentUser.role === 'ادمین' &&
+                                    <Link href={'/p-admin'} className='block w-full text-center hover:bg-navbar-hover py-2 px-4 border-b border-border'>
+                                        ورود به ادمین پنل
+                                    </Link>
+                                }
+                                <button onClick={exitUser} className='w-full text-center hover:bg-navbar-hover py-2 px-4 cursor-pointer'>
+                                    خروج
+                                </button>
                             </div>
                         </span>
-                            :
-                            < Link href={'/login-register'} className="flex items-center gap-x-2.5 tracking-tightest">
-                                <HiArrowRightEndOnRectangle className='w-6 md:w-8 h-6 md:h-8 hover:text-neon transition-colors' />
-                                <span className="hidden xl:inline-block">ورود | ثبت‌‌نام</span>
-                            </Link>
-                    } */}
-                    < Link href={'/login-register'} className="flex items-center gap-x-2.5 tracking-tightest hover:text-neon transition-colors">
-                        <HiArrowRightEndOnRectangle className='w-6 md:w-8 h-6 md:h-8' />
-                        <span className="hidden xl:inline-block">ورود | ثبت‌‌نام</span>
-                    </Link>
+                    ) : (
+                        <Link href={'/login-register'} className="flex items-center gap-x-2.5 tracking-tightest hover:text-neon transition-colors">
+                            <HiArrowRightEndOnRectangle className='w-6 md:w-8 h-6 md:h-8' />
+                            <span className="hidden xl:inline-block">ورود | ثبت‌‌نام</span>
+                        </Link>
+                    )}
                 </div>
             </div >
 

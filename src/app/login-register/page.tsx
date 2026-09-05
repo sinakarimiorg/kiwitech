@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { IoIosArrowBack, IoMdRefresh } from "react-icons/io";
 import { ErrorMessage, Field, Form, Formik } from "formik";
-import { requestOtpAction, verifyOtpAction } from "@root/src/components/templates/Auth/action";
+import { requestOtpAction, verifyOtpAction, completeProfileAction } from "@root/src/components/templates/Auth/action";
 
 
 const RESEND_SECONDS = 119
@@ -15,6 +15,7 @@ const RESEND_SECONDS = 119
 const login_register = () => {
 
     const [isCodeStep, setIsCodeStep] = useState(false)
+    const [isProfileStep, setIsProfileStep] = useState(false)
     const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS)
     const [isPending, startTransition] = useTransition()
     const router = useRouter()
@@ -70,11 +71,28 @@ const login_register = () => {
             const result = await verifyOtpAction(phone, values.code)
             console.log("verifyCode result:", result)
             if (result.success) {
+                if (result.isNewUser) {
+                    setIsProfileStep(true)
+                    return
+                }
                 await showSwal(
                     result.isNewUser ? "ثبت نام شما با موفقیت انجام شد" : "خوش آمدید",
                     "success",
                     "ورود به فروشگاه"
                 )
+                router.replace("/")
+                router.refresh()
+            } else {
+                showSwal(result.error, "error", "تلاش مجدد")
+            }
+        })
+    }
+
+    const completeProfile = (values: { fullName: string; email: string }) => {
+        startTransition(async () => {
+            const result = await completeProfileAction(values.fullName, values.email)
+            if (result.success) {
+                await showSwal("ثبت نام شما با موفقیت انجام شد", "success", "ورود به فروشگاه")
                 router.replace("/")
                 router.refresh()
             } else {
@@ -164,93 +182,190 @@ const login_register = () => {
 
                             </Formik>
                         </div>
-                        :
-                        <div className="flex flex-col bg-white px-13 text-center text-surface">
-                            <Link href={"/"} className="mx-auto">
-                                <Image
-                                    src={"/images/logo/logo.png"}
-                                    alt="logo"
-                                    width={300}
-                                    height={300}
-                                />
-                            </Link>
-                            <h3 className="mb-16 mt-4 text-xl font-extrabold font-IranYekanBold">کــد تــایـیـد:</h3>
+                        : !isProfileStep ?
+                            <div className="flex flex-col bg-white px-13 text-center text-surface">
+                                <Link href={"/"} className="mx-auto">
+                                    <Image
+                                        src={"/images/logo/logo.png"}
+                                        alt="logo"
+                                        width={300}
+                                        height={300}
+                                    />
+                                </Link>
+                                <h3 className="mb-16 mt-4 text-xl font-extrabold font-IranYekanBold">کــد تــایـیـد:</h3>
 
-                            <Formik
-                                initialValues={{ phone, code: "" }}
-                                onSubmit={(values) => {
-                                    verifyCode(values)
-                                }}
-                                validateOnBlur={false}
-                                validate={(values) => {
-                                    const errors: { code?: string } = {}
+                                <Formik
+                                    initialValues={{ phone, code: "" }}
+                                    onSubmit={(values) => {
+                                        verifyCode(values)
+                                    }}
+                                    validateOnBlur={false}
+                                    validate={(values) => {
+                                        const errors: { code?: string } = {}
 
-                                    if (values.code === '') {
-                                        errors.code = "کد را وارد کنید";
-                                    }
-                                    return errors;
-                                }}
-                            >
-                                {({ errors, submitCount }) => (
-                                    <Form>
-                                        <div>
-                                            <div className="flex gap-2 items-center mb-2">
-                                                <span className="text-text-muted text-xs opacity-75 text-nowrap">
-                                                    لطفاً کد تأیید ارسال شده را به شماره
-                                                </span>
-                                                <span className="font-bold text-sm text-surface-3 tracking-widest">{phone} </span>
-                                                <span className="text-text-muted text-xs opacity-75 text-nowrap">
-                                                    را وارد کنید
-                                                </span>
-                                            </div>
-                                            <Field
-                                                name='code'
-                                                type="text"
-                                                placeholder=" "
-                                                className={`peer w-full p-3 border-2  rounded-md outline-none 
-                                                    ${submitCount > 0 && errors.code
-                                                        ?
-                                                        'border-red-500'
-                                                        :
-                                                        'border-gray-300 focus:border-primary-500'}`}
-                                            />
-
-                                        </div>
-                                        <ErrorMessage name='code'>{(msg) => <span className='block w-full mt-2 mr-4 text-xs text-right text-red-500'>{msg}</span>}</ErrorMessage>
-                                        {
-                                            secondsLeft > 0 ?
-                                                <div className="mt-3 mb-18 pl-2 text-end font-semibold">
-                                                    <span>
-                                                        {formatTime(secondsLeft)}
+                                        if (values.code === '') {
+                                            errors.code = "کد را وارد کنید";
+                                        }
+                                        return errors;
+                                    }}
+                                >
+                                    {({ errors, submitCount }) => (
+                                        <Form>
+                                            <div>
+                                                <div className="flex gap-2 items-center mb-2">
+                                                    <span className="text-text-muted text-xs opacity-75 text-nowrap">
+                                                        لطفاً کد تأیید ارسال شده را به شماره
+                                                    </span>
+                                                    <span className="font-bold text-sm text-surface-3 tracking-widest">{phone} </span>
+                                                    <span className="text-text-muted text-xs opacity-75 text-nowrap">
+                                                        را وارد کنید
                                                     </span>
                                                 </div>
-                                                :
-                                                <div
-                                                    onClick={resendCode}
-                                                    className="mt-3 mb-18 pl-2 flex items-center justify-end gap-1 font-semibold text-primary-700 text-xs cursor-pointer">
-                                                    <p>دریافت مجدد کد</p>
-                                                    <IoMdRefresh className="size-4 text-primary-500" />
-                                                </div>
+                                                <Field
+                                                    name='code'
+                                                    type="text"
+                                                    placeholder=" "
+                                                    className={`peer w-full p-3 border-2  rounded-md outline-none 
+                                                    ${submitCount > 0 && errors.code
+                                                            ?
+                                                            'border-red-500'
+                                                            :
+                                                            'border-gray-300 focus:border-primary-500'}`}
+                                                />
+
+                                            </div>
+                                            <ErrorMessage name='code'>{(msg) => <span className='block w-full mt-2 mr-4 text-xs text-right text-red-500'>{msg}</span>}</ErrorMessage>
+                                            {
+                                                secondsLeft > 0 ?
+                                                    <div className="mt-3 mb-18 pl-2 text-end font-semibold">
+                                                        <span>
+                                                            {formatTime(secondsLeft)}
+                                                        </span>
+                                                    </div>
+                                                    :
+                                                    <div
+                                                        onClick={resendCode}
+                                                        className="mt-3 mb-18 pl-2 flex items-center justify-end gap-1 font-semibold text-primary-700 text-xs cursor-pointer">
+                                                        <p>دریافت مجدد کد</p>
+                                                        <IoMdRefresh className="size-4 text-primary-500" />
+                                                    </div>
+                                            }
+
+
+                                            <div className="flex items-center justify-center gap-2 mb-4 text-primary-700 cursor-pointer" onClick={() => setIsCodeStep(false)}>
+                                                <span>ویرایش شماره</span>
+                                                <IoIosArrowBack className="size-3.5 text-primary-500" />
+                                            </div>
+                                            <button
+                                                type="submit"
+                                                disabled={isPending}
+                                                className="w-full p-3 mt-4 linear_btn text-lg text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                                            >
+                                                {isPending ? "در حال بررسی..." : "ثبت کد تایید"}
+                                            </button>
+                                        </Form>
+                                    )}
+
+                                </Formik>
+
+                            </div>
+                            :
+                            <div className="flex flex-col bg-white px-13 text-center text-surface">
+                                <Link href={"/"} className="mx-auto">
+                                    <Image
+                                        src={"/images/logo/logo.png"}
+                                        alt="logo"
+                                        width={300}
+                                        height={300}
+                                    />
+                                </Link>
+                                <h3 className="mb-3 mt-4 text-xl font-extrabold font-IranYekanBold">تکمیل اطلاعات حساب</h3>
+                                <p className="mb-10 text-xs text-text-muted leading-6">
+                                    خوش اومدی! برای تکمیل ثبت‌نام، لطفاً نام و نام خانوادگی خودتون رو وارد کنید.
+                                </p>
+
+                                <Formik
+                                    initialValues={{ fullName: "", email: "" }}
+                                    onSubmit={(values) => {
+                                        completeProfile(values)
+                                    }}
+                                    validateOnBlur={false}
+                                    validate={(values) => {
+                                        const errors: { fullName?: string; email?: string } = {}
+
+                                        if (!values.fullName.trim()) {
+                                            errors.fullName = "نام و نام خانوادگی را وارد کنید."
                                         }
 
+                                        if (values.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim())) {
+                                            errors.email = "ایمیل وارد شده معتبر نیست."
+                                        }
 
-                                        <div className="flex items-center justify-center gap-2 mb-4 text-primary-700 cursor-pointer" onClick={() => setIsCodeStep(false)}>
-                                            <span>ویرایش شماره</span>
-                                            <IoIosArrowBack className="size-3.5 text-primary-500" />
-                                        </div>
-                                        <button
-                                            type="submit"
-                                            disabled={isPending}
-                                            className="w-full p-3 mt-4 linear_btn text-lg text-white disabled:opacity-60 disabled:cursor-not-allowed"
-                                        >
-                                            {isPending ? "در حال بررسی..." : "ثبت کد تایید"}
-                                        </button>
-                                    </Form>
-                                )}
+                                        return errors;
+                                    }}
+                                >
+                                    {({ errors, submitCount }) => (
+                                        <Form>
+                                            <div className="relative mb-6">
+                                                <Field
+                                                    name='fullName'
+                                                    type="text"
+                                                    placeholder=" "
+                                                    className={`peer w-full p-3 border-2  rounded-md outline-none 
+                                                    ${submitCount > 0 && errors.fullName
+                                                            ?
+                                                            'border-red-500'
+                                                            :
+                                                            'border-gray-300 focus:border-primary-500'}`}
+                                                />
+                                                <label
+                                                    className="absolute right-3 top-[30%] bg-white px-1 text-gray-500 text-sm transition-all duration-1000 pointer-events-none
+                               peer-focus:-top-2
+                                peer-focus:text-xs
+                              peer-focus:text-primary-500
+                                peer-not-placeholder-shown:-top-2
+                                peer-not-placeholder-shown:text-xs">
+                                                    نام و نام خانوادگی
+                                                </label>
+                                            </div>
+                                            <ErrorMessage name='fullName'>{(msg) => <span className='block w-full mb-4 -mt-3 mr-4 text-xs text-right text-red-500'>{msg}</span>}</ErrorMessage>
 
-                            </Formik>
+                                            <div className="relative">
+                                                <Field
+                                                    name='email'
+                                                    type="email"
+                                                    placeholder=" "
+                                                    dir="ltr"
+                                                    className={`peer w-full p-3 border-2  rounded-md outline-none 
+                                                    ${submitCount > 0 && errors.email
+                                                            ?
+                                                            'border-red-500'
+                                                            :
+                                                            'border-gray-300 focus:border-primary-500'}`}
+                                                />
+                                                <label
+                                                    className="absolute right-3 top-[30%] bg-white px-1 text-gray-500 text-sm transition-all duration-1000 pointer-events-none
+                               peer-focus:-top-2
+                                peer-focus:text-xs
+                              peer-focus:text-primary-500
+                                peer-not-placeholder-shown:-top-2
+                                peer-not-placeholder-shown:text-xs">
+                                                    ایمیل (اختیاری)
+                                                </label>
+                                            </div>
+                                            <ErrorMessage name='email'>{(msg) => <span className='block w-full mt-2 mr-4 text-xs text-right text-red-500'>{msg}</span>}</ErrorMessage>
 
-                        </div>
+                                            <button
+                                                type="submit"
+                                                disabled={isPending}
+                                                className="w-full p-3 mt-6 linear_btn text-lg text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                                            >
+                                                {isPending ? "در حال ثبت..." : "تکمیل ثبت‌نام"}
+                                            </button>
+                                        </Form>
+                                    )}
+                                </Formik>
+                            </div>
                 }
                 {/* //////////// Terms and Caonditions */}
                 <p className="px-10 text-xs font-medium text-gray-600 leading-6">
