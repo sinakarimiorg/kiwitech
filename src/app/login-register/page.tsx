@@ -1,44 +1,91 @@
 "use client"
 
-import { useState } from "react";
+import { useState, useTransition, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-// import { showSwal } from "@/utils/helpers";
+import { showSwal } from "@/utils/helpers";
 import Image from "next/image";
 import Link from "next/link";
 import { IoIosArrowBack, IoMdRefresh } from "react-icons/io";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import { requestOtpAction, verifyOtpAction } from "@root/src/components/templates/Auth/action";
+
+
+const RESEND_SECONDS = 119
 
 const login_register = () => {
 
     const [isCodeStep, setIsCodeStep] = useState(false)
-    const [timeExpired, setTimeExpired] = useState(true)
+    const [secondsLeft, setSecondsLeft] = useState(RESEND_SECONDS)
+    const [isPending, startTransition] = useTransition()
     const router = useRouter()
     const [phone, setPhone] = useState('')
-    const [code, setCode] = useState('')
+    const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+    const startResendTimer = () => {
+        setSecondsLeft(RESEND_SECONDS)
+        if (timerRef.current) clearInterval(timerRef.current)
+        timerRef.current = setInterval(() => {
+            setSecondsLeft(prev => {
+                if (prev <= 1) {
+                    if (timerRef.current) clearInterval(timerRef.current)
+                    return 0
+                }
+                return prev - 1
+            })
+        }, 1000)
+    }
+
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current)
+        }
+    }, [])
+
+    const formatTime = (totalSeconds: number) => {
+        const m = Math.floor(totalSeconds / 60)
+        const s = totalSeconds % 60
+        return `${m}:${s.toString().padStart(2, '0')}`
+    }
+
+    const sendOtp = (phoneValue: string) => {
+        startTransition(async () => {
+            const result = await requestOtpAction(phoneValue)
+            if (result.success) {
+                setPhone(phoneValue)
+                setIsCodeStep(true)
+                startResendTimer()
+                if (result.devCode) {
+                    console.log("Otp code:", result.devCode)
+                    showSwal(`کد تایید : ${result.devCode}`, "info", "متوجه شدم")
+                }
+            } else {
+                showSwal(result.error, "error", "تلاش مجدد")
+            }
+
+        })
+    }
 
     const verifyCode = async (values: { phone: string; code: string; }) => {
-        // const body = { phone, code };
-        // const res = await fetch("/api/auth/sms/verify", {
-        //     headers: {
-        //         "Content-Type": "application/json"
-        //     },
-        //     body: JSON.stringify(body)
-        // });
+        startTransition(async () => {
+            const result = await verifyOtpAction(phone, values.code)
+            console.log("verifyCode result:", result)
+            if (result.success) {
+                await showSwal(
+                    result.isNewUser ? "ثبت نام شما با موفقیت انجام شد" : "خوش آمدید",
+                    "success",
+                    "ورود به فروشگاه"
+                )
+                router.replace("/")
+                router.refresh()
+            } else {
+                showSwal(result.error, "error", "تلاش مجدد")
+            }
+        })
+    }
 
-        // if (res.status === 409) {
-        //     return showSwal("کد وارد شده معتبر نیست", "error", "تلاش مجدد");
-        // } else if (res.status == 410) {
-        //     return showSwal("کد وارد شده منقضی شده", "error", "تلاش مجدد");
-        // } else if (res.status === 200) {
-        //     await showSwal(
-        //         "ثبت نام شما با موفقیت انجام شد",
-        //         "success",
-        //         "ورود به پنل کاربری"
-        //     ).then(() => {
-        //         router.replace("p-user");
-        //     });
-        // }
-        setIsCodeStep(true)
+    const resendCode = () => {
+        if (secondsLeft > 0) return
+        sendOtp(phone)
     }
 
     return (
@@ -64,10 +111,9 @@ const login_register = () => {
                             <h3 className="my-12 font-medium tracking-wider">خوش اومدی :)
                             </h3>
                             <Formik
-                                initialValues={{ phone: "", code }}
-                                onSubmit={(values, { setSubmitting }) => {
-                                    setPhone(values.phone)
-                                    setIsCodeStep(true)
+                                initialValues={{ phone: "", code: "" }}
+                                onSubmit={(values) => {
+                                    sendOtp(values.phone)
                                 }}
                                 validateOnBlur={false}
                                 validate={(values) => {
@@ -81,7 +127,7 @@ const login_register = () => {
                                     return errors;
                                 }}
                             >
-                                {({ isSubmitting, errors, submitCount }) => (
+                                {({ errors, submitCount }) => (
                                     <Form>
                                         <div className="relative">
                                             <Field
@@ -107,10 +153,11 @@ const login_register = () => {
                                         </div>
                                         <ErrorMessage name='phone'>{(msg) => <span className='block w-full mt-2 mr-4 text-xs text-right text-red-500'>{msg}</span>}</ErrorMessage>
                                         <button
-                                            className="w-full p-3 mt-4 linear_btn text-lg text-white"
+                                            type="submit"
+                                            disabled={isPending}
+                                            className="w-full p-3 mt-4 linear_btn text-lg text-white disabled:opacity-60 disabled:cursor-not-allowed"
                                         >
-                                            ادامه
-
+                                            {isPending ? "در حال ارسال..." : "ادامه"}
                                         </button>
                                     </Form>
                                 )}
@@ -131,10 +178,7 @@ const login_register = () => {
 
                             <Formik
                                 initialValues={{ phone, code: "" }}
-                                onSubmit={(values, { setSubmitting }) => {
-                                    setTimeout(() => {
-                                        setSubmitting(false)
-                                    }, 3000)
+                                onSubmit={(values) => {
                                     verifyCode(values)
                                 }}
                                 validateOnBlur={false}
@@ -147,7 +191,7 @@ const login_register = () => {
                                     return errors;
                                 }}
                             >
-                                {({ isSubmitting, errors, submitCount }) => (
+                                {({ errors, submitCount }) => (
                                     <Form>
                                         <div>
                                             <div className="flex gap-2 items-center mb-2">
@@ -174,16 +218,18 @@ const login_register = () => {
                                         </div>
                                         <ErrorMessage name='code'>{(msg) => <span className='block w-full mt-2 mr-4 text-xs text-right text-red-500'>{msg}</span>}</ErrorMessage>
                                         {
-                                            timeExpired ?
-                                                <div className="mt-3 mb-18 pl-2 flex items-center justify-end gap-1 font-semibold text-primary-700 text-xs cursor-pointer">
-                                                    <p>دریافت مجدد کد</p>
-                                                    <IoMdRefresh className="size-4 text-primary-500" />
-                                                </div>
-                                                :
+                                            secondsLeft > 0 ?
                                                 <div className="mt-3 mb-18 pl-2 text-end font-semibold">
                                                     <span>
-                                                        1:59
+                                                        {formatTime(secondsLeft)}
                                                     </span>
+                                                </div>
+                                                :
+                                                <div
+                                                    onClick={resendCode}
+                                                    className="mt-3 mb-18 pl-2 flex items-center justify-end gap-1 font-semibold text-primary-700 text-xs cursor-pointer">
+                                                    <p>دریافت مجدد کد</p>
+                                                    <IoMdRefresh className="size-4 text-primary-500" />
                                                 </div>
                                         }
 
@@ -193,10 +239,11 @@ const login_register = () => {
                                             <IoIosArrowBack className="size-3.5 text-primary-500" />
                                         </div>
                                         <button
-                                            className="w-full p-3 mt-4 linear_btn text-lg text-white"
+                                            type="submit"
+                                            disabled={isPending}
+                                            className="w-full p-3 mt-4 linear_btn text-lg text-white disabled:opacity-60 disabled:cursor-not-allowed"
                                         >
-                                            ثبت کد تایید
-
+                                            {isPending ? "در حال بررسی..." : "ثبت کد تایید"}
                                         </button>
                                     </Form>
                                 )}
