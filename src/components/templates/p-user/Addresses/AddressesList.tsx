@@ -120,6 +120,13 @@ export default function AddressesList({ initialAddresses }: { initialAddresses: 
                                 <PiPhoneLight className='w-3.5 h-3.5' />
                                 {address.phone}
                             </p>
+
+                            {(address.province || address.city) &&
+                                <p className='inline-flex items-center gap-1 mb-2 px-2.5 py-1 text-[11px] text-primary-600 bg-primary-50 rounded-lg'>
+                                    {address.province}{address.province && address.city ? '، ' : ''}{address.city}
+                                </p>
+                            }
+
                             <p className='text-sm text-zinc-600 leading-6 min-h-12'>{address.fullAddress}</p>
 
                             <div className='flex items-center gap-2 mt-4 pt-4 border-t border-gray-100'>

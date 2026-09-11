@@ -5,6 +5,8 @@ export interface IAddress {
     title: string
     receiver: string
     phone: string
+    province: string
+    city: string
     fullAddress: string
     isDefault: boolean
 }
@@ -15,6 +17,8 @@ const AddressSchema = new Schema<IAddress>(
         title: { type: String, required: true },
         receiver: { type: String, required: true },
         phone: { type: String, required: true },
+        province: { type: String, required: true },
+        city: { type: String, required: true },
         fullAddress: { type: String, required: true },
         isDefault: { type: Boolean, default: false },
     },

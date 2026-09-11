@@ -6,11 +6,8 @@ import {
     PiUserCircleLight,
     PiPackageLight,
     PiHeartLight,
-    PiChatCircleTextLight,
     PiMapPinLight,
-    PiGiftLight,
     PiEnvelopeSimpleLight,
-    PiEyeLight,
     PiWalletLight,
     PiSignOutLight,
 } from "react-icons/pi";

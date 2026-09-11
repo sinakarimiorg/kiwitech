@@ -1,5 +1,6 @@
+import { getCitiesOfProvince, iranProvinces } from '@root/src/data/iranProvinces'
 import { UserAddress } from '@root/src/types/userAddressType'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { PiXBold } from 'react-icons/pi'
 
 type AddressModalProps = {
@@ -13,15 +14,32 @@ export default function AddressModal({ initialData, onClose, onSave, isSaving }:
   const [title, setTitle] = useState(initialData?.title ?? '')
   const [receiver, setReceiver] = useState(initialData?.receiver ?? '')
   const [phone, setPhone] = useState(initialData?.phone ?? '')
+  const [province, setProvince] = useState(initialData?.province ?? '')
+  const [city, setCity] = useState(initialData?.city ?? '')
   const [fullAddress, setFullAddress] = useState(initialData?.fullAddress ?? '')
   const [error, setError] = useState('')
 
+
+  const cityOptions = useMemo(() => getCitiesOfProvince(province), [province])
+
+  const handleProvinceChange = (value: string) => {
+    setProvince(value)
+    setCity(prevCity => (getCitiesOfProvince(value).includes(prevCity) ? prevCity : ''))
+  }
+
   const handleSubmit = () => {
-    if (!title.trim() || !receiver.trim() || !phone.trim() || !fullAddress.trim()) {
+    if (!title.trim() || !receiver.trim() || !phone.trim() || !province || !city || !fullAddress.trim()) {
       setError('لطفاً همه‌ی فیلدها را پر کنید.')
       return
     }
-    onSave({ title: title.trim(), receiver: receiver.trim(), phone: phone.trim(), fullAddress: fullAddress.trim() })
+    onSave({
+      title: title.trim(),
+      receiver: receiver.trim(),
+      phone: phone.trim(),
+      province,
+      city,
+      fullAddress: fullAddress.trim(),
+    })
   }
 
   return (
@@ -69,13 +87,42 @@ export default function AddressModal({ initialData, onClose, onSave, isSaving }:
             />
           </div>
 
+          <div>
+            <label className="block mb-1.5 text-xs text-zinc-500">استان</label>
+            <select
+              value={province}
+              onChange={e => handleProvinceChange(e.target.value)}
+              className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors cursor-pointer"
+            >
+              <option value="">انتخاب استان</option>
+              {iranProvinces.map(p => (
+                <option key={p.name} value={p.name}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block mb-1.5 text-xs text-zinc-500">شهر</label>
+            <select
+              value={city}
+              onChange={e => setCity(e.target.value)}
+              disabled={!province}
+              className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <option value="">{province ? 'انتخاب شهر' : 'ابتدا استان را انتخاب کنید'}</option>
+              {cityOptions.map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+
           <div className="sm:col-span-2">
-            <label className="block mb-1.5 text-xs text-zinc-500">آدرس کامل</label>
+            <label className="block mb-1.5 text-xs text-zinc-500">آدرس کامل (خیابان، پلاک، واحد)</label>
             <textarea
               value={fullAddress}
               onChange={e => setFullAddress(e.target.value)}
               rows={3}
-              placeholder="استان، شهر، خیابان، پلاک، واحد..."
+              placeholder="خیابان، کوچه، پلاک، واحد..."
               className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors resize-none"
             />
           </div>

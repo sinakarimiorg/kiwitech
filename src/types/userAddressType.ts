@@ -3,6 +3,8 @@ export interface UserAddress {
     title: string
     receiver: string
     phone: string
+    province: string
+    city: string
     fullAddress: string
     isDefault: boolean
 }
