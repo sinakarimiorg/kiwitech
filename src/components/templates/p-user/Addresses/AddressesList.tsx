@@ -5,6 +5,7 @@ import { PiMapPinLight, PiPencilSimpleLight, PiTrashLight, PiPlusCircleLight, Pi
 import Swal from "sweetalert2"
 import AddressModal from "./AddressModal"
 import { UserAddress } from "@root/src/types/userAddressType"
+import { addAddressAction, deleteAddressAction, setDefaultAddressAction, updateAddressAction } from "./actions"
 
 export default function AddressesList({ initialAddresses }: { initialAddresses: UserAddress[] }) {
 
@@ -23,7 +24,59 @@ export default function AddressesList({ initialAddresses }: { initialAddresses: 
         setIsModalOpen(true)
     }
 
-    
+    const saveAddress = (data: Omit<UserAddress, "_id" | "isDefault">) => {
+        startTransition(async () => {
+            const res = editingAddress
+                ? await updateAddressAction(editingAddress._id, data)
+                : await addAddressAction(data)
+
+            if (res.success) {
+                Swal.fire({
+                    icon: "success",
+                    title: "موفقیت‌آمیز",
+                    text: editingAddress ? "آدرس با موفقیت ویرایش شد" : "آدرس با موفقیت افزوده شد",
+                    timer: 1500,
+                    showConfirmButton: false,
+                })
+                setIsModalOpen(false)
+            } else {
+                Swal.fire({ icon: "error", title: "خطا", text: res.error || "مشکلی در ذخیره آدرس پیش آمد" })
+            }
+        })
+    }
+
+    const removeAddress = async (id: string) => {
+        const result = await Swal.fire({
+            title: "حذف آدرس",
+            text: "آیا از حذف این آدرس مطمئن هستید؟",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "بله، حذف شود",
+            cancelButtonText: "انصراف",
+            confirmButtonColor: "#EF4444",
+        })
+        if (!result.isConfirmed) return
+
+        startTransition(async () => {
+            const res = await deleteAddressAction(id);
+            if (res.success) {
+                Swal.fire({ icon: "success", title: "حذف شد", text: "آدرس با موفقیت حذف شد", timer: 1500, showConfirmButton: false })
+            } else {
+                Swal.fire({ icon: "error", title: "خطا", text: res.error || "مشکلی در حذف آدرس پیش آمد" })
+            }
+        })
+    }
+
+    const makeDefault = (id: string) => {
+        startTransition(async () => {
+            const res = await setDefaultAddressAction(id)
+            if (!res.success) {
+                Swal.fire({ icon: "error", title: "خطا", text: res.error })
+            }
+        })
+    }
+
+
     return (
         <div className='flex flex-col gap-5'>
             <div className='flex items-center justify-between'>
