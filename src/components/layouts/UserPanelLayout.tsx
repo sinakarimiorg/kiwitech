@@ -2,10 +2,13 @@ import BreadCrumb from '../modules/BreadCrumb/BreadCrumb'
 import Header from '../modules/Header/Header'
 import Footer from '../modules/Footer/Footer'
 import ProfileSidebar from '../templates/P-user/ProfileSidebar/ProfileSidebar'
+import { ReactNode } from 'react'
 
+type LayoutProps = {
+    children: ReactNode
+}
 
-
-const Layout = async ({ children }: any) => {
+const Layout = async ({ children }: LayoutProps) => {
 
     return (
         <div>
@@ -18,10 +21,10 @@ const Layout = async ({ children }: any) => {
                 ]}
             />
 
-            <div className='container pb-10'>
+            <div className='container pb-11'>
                 <div className='flex flex-col lg:flex-row gap-6'>
 
-                    <ProfileSidebar active='personal-info' />
+                    <ProfileSidebar/>
                         {children}
                 </div>
             </div>

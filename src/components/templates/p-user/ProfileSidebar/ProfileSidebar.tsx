@@ -25,7 +25,7 @@ const navItems: NavItem[] = [
     { key: 'orders', label: 'سفارش‌های من', href: 'p-user/userOrders', icon: PiPackageLight },
     { key: 'favorites', label: 'کالاهای مورد علاقه', href: '/p-user/favorites', icon: PiHeartLight },
     { key: 'addresses', label: 'نشانی‌ها', href: '/p-user/addresses', icon: PiMapPinLight },
-    { key: 'tickets', label: 'تیکت ها', href: '/p-user/tickets', icon: PiEnvelopeSimpleLight },
+    { key: 'tickets', label: 'پیام ها', href: '/p-user/messages', icon: PiEnvelopeSimpleLight },
     { key: 'personal-info', label: 'مشخصات فردی', href: '/p-user/profile', icon: PiUserCircleLight },
     { key: 'wallet', label: 'کیف پول', href: '/p-user/wallet', icon: PiWalletLight },
 ]

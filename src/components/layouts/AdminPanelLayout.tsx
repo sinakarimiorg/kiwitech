@@ -1,9 +1,12 @@
 import AdminSidebar from "../templates/P-admin/AdminSidebar/AdminSidebar";
 import Header from "../templates/P-admin/Header/Header";
+import { ReactNode } from 'react'
 
+type LayoutProps = {
+    children: ReactNode
+}
 
-
-const Layout = async ({ children }: any) => {
+const Layout = async ({ children }: LayoutProps) => {
 
   return (
     <div className='flex bg-background'>
