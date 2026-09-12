@@ -4,9 +4,40 @@ import { getCurrentUser } from "@root/src/lib/auth/session"
 import { connectDB } from "@root/src/lib/mongodb"
 import MessagesModel from "@models/Message"
 import { revalidatePath } from "next/cache"
+import { MessageType } from "@root/src/types/userMessageType"
 
 
 type ActionResult = { success: true } | { success: false, error: string }
+
+// ────────────────────────────────
+// Send a new message (from user to support)
+// ────────────────────────────────
+export async function sendMessageAction(subject: MessageType, body: string): Promise<ActionResult> {
+    const user = await getCurrentUser()
+    if (!user) return { success: false, error: "ابتدا وارد حساب کاربری خود شوید" }
+
+    if (!body.trim()) {
+        return { success: false, error: "متن پیام نمی‌تواند خالی باشد" }
+    }
+
+    await connectDB()
+
+    try {
+        await MessagesModel.create({
+            user: user._id,
+            title: subject,
+            body: body.trim(),
+            type: subject,
+            sender: "user",
+            isRead: true,
+        })
+        revalidatePath("/p-user/messages")
+        return { success: true }
+    } catch (error) {
+        console.log("Error sending message:", error)
+        return { success: false, error: "خطا در ارسال پیام" }
+    }
+}
 
 // ────────────────────────────────
 // Mark A Message As Read
@@ -32,7 +63,6 @@ export async function markMessageAsReadAction(id: string): Promise<ActionResult>
         return { success: false, error: "خطا در بروزرسانی پیام" }
     }
 }
-
 
 // ────────────────────────────────
 // Mark All Messages As Read
