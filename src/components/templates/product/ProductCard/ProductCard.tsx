@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import { LazyLoadImage } from 'react-lazy-load-image-component'
-import 'react-lazy-load-image-component/src/effects/blur.css'
+import Image from 'next/image'
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 
 type ProductCardProps = {
@@ -28,25 +27,23 @@ export default function ProductCard({ shortName, img, img2, title, price, exPric
                 }
 
                 <div className={`absolute inset-0 p-4 sm:p-6 ${img2 ? 'group-hover:opacity-0 group-hover:invisible' : ''} transition-all duration-500`}>
-                    <LazyLoadImage
+                    <Image
                         src={img}
                         alt={title}
-                        height={'100%'}
-                        width={'100%'}
-                        effect='blur'
-                        wrapperClassName='!w-full !h-full'
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover"
                     />
                 </div>
 
                 {img2 &&
                     <div className='absolute inset-0 p-4 sm:p-6 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-500'>
-                        <LazyLoadImage
+                        <Image
                             src={img2}
                             alt={title}
-                            height={'100%'}
-                            width={'100%'}
-                            effect='blur'
-                            wrapperClassName='!w-full !h-full'
+                            fill
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            className="object-cover"
                         />
                     </div>
                 }

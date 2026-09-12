@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback } from 'react'
+import React, { useTransition } from 'react'
 import { useEffect, useState } from 'react'
 import Header from '@root/src/components/modules/Header/Header';
 import Footer from '@root/src/components/modules/Footer/Footer';
@@ -9,7 +9,7 @@ import CommentsSection from '../../../components/templates/Product/CommentsSecti
 import { RiStarFill } from "react-icons/ri";
 import { GoShareAndroid } from "react-icons/go";
 import { LiaComments } from "react-icons/lia";
-import { PiBellRingingLight } from "react-icons/pi";
+import { PiBellRingingLight, PiWarningOctagonThin } from "react-icons/pi";
 import { TbHeartPlus } from "react-icons/tb";
 import { HiMiniChevronLeft } from "react-icons/hi2";
 import { PiTimerLight } from "react-icons/pi";
@@ -17,7 +17,6 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { BsPatchCheck } from "react-icons/bs";
 import { PiStorefront } from "react-icons/pi";
 import { CiBoxes } from "react-icons/ci";
-import { PiWarningOctagonThin } from "react-icons/pi";
 import { FaXmark } from 'react-icons/fa6'
 import { PiPhoneCallLight } from "react-icons/pi";
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
@@ -35,6 +34,11 @@ import 'swiper/css/thumbs';
 
 import styles from '@/styles/product.module.css'
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon';
+import { getCurrentUser } from '@root/src/lib/auth/session';
+import Swal from 'sweetalert2';
+import { redirect } from 'next/navigation';
+import { connectDB } from '@root/src/lib/mongodb';
+import { toggleFavoriteAction } from '@root/src/components/templates/P-user/Favorites/action';
 
 
 
@@ -46,6 +50,7 @@ export default function ProductInfo() {
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentImage, setCurrentImage] = useState("");
+    const [isPending, startTransition] = useTransition()
 
     const openImagesModal = (src: string) => {
         setCurrentImage(src);
@@ -70,6 +75,38 @@ export default function ProductInfo() {
 
         return () => window.removeEventListener('scroll', handleScroll)
     })
+
+    const toggleFavorite = async () => {
+        // const user = await getCurrentUser()
+        // if (!user) {
+        //     const result = await Swal.fire({
+        //         title: 'لطفا ابتدا وارد شوید',
+        //         icon: 'warning',
+        //         showCancelButton: true,
+        //         confirmButtonText: "ورود/ثبت نام",
+        //         cancelButtonText: "انصراف",
+        //         confirmButtonColor: "#EF4444",
+        //     })
+        //     if (result.isConfirmed) return redirect('/login-register')
+        // }
+
+        // await connectDB()
+
+        startTransition(async () => {
+            const res = await toggleFavoriteAction('6a79f3a4c1c776bad632ad3f')
+
+            if (res.success) {
+                Swal.fire({
+                    icon: "success",
+                    text: "مقاله با موفقیت حذف شد",
+                    timer: 1500,
+                    showConfirmButton: false,
+                })
+            } else {
+                Swal.fire({ icon: "error", title: "خطا", text: res.error || "مشکلی پیش آمد" })
+            }
+        })
+    }
 
     return (
         <div>
@@ -164,7 +201,7 @@ export default function ProductInfo() {
                                     <button className={styles.product__actionButton}><GoShareAndroid className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اشتراک گذاری کالا</span></button>
                                     <button className={styles.product__actionButton}><LiaComments className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>نظرات کاربران</span></button>
                                     <button className={styles.product__actionButton}><PiBellRingingLight className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اطلاع‌رسانی موبولند</span></button>
-                                    <button className={styles.product__actionButton}><TbHeartPlus className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>مورد علاقه</span></button>
+                                    <button className={styles.product__actionButton} onClick={toggleFavorite}><TbHeartPlus className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>مورد علاقه</span></button>
                                 </div>
                                 {/* Product Images  */}
                                 <div className='w-full overflow-hidden'>
@@ -207,30 +244,30 @@ export default function ProductInfo() {
                                             } />
                                         </SwiperSlide>
                                     </Swiper>
-                                        <Swiper
-                                            onSwiper={setThumbsSwiper}
-                                            loop={false}
-                                            spaceBetween={1}
-                                            slidesPerView={4}
-                                            width={384}
-                                            freeMode={true}
-                                            watchSlidesProgress={true}
-                                            modules={[FreeMode, Navigation, Thumbs]}
-                                            className={styles.albume_swiper}
-                                        >
-                                            <SwiperSlide>
-                                                <img className={styles.product__albumImg} src='/images/products/airpods.png' />
-                                            </SwiperSlide>
-                                            <SwiperSlide>
-                                                <img className={styles.product__albumImg} src='/images/products/airpods3.png' />
-                                            </SwiperSlide>
-                                            <SwiperSlide>
-                                                <img className={styles.product__albumImg} src='/images/products/airpod2.png' />
-                                            </SwiperSlide>
-                                            <SwiperSlide>
-                                                <img className={styles.product__albumImg} src='/images/products/airpods4.png' />
-                                            </SwiperSlide>
-                                        </Swiper>
+                                    <Swiper
+                                        onSwiper={setThumbsSwiper}
+                                        loop={false}
+                                        spaceBetween={1}
+                                        slidesPerView={4}
+                                        width={384}
+                                        freeMode={true}
+                                        watchSlidesProgress={true}
+                                        modules={[FreeMode, Navigation, Thumbs]}
+                                        className={styles.albume_swiper}
+                                    >
+                                        <SwiperSlide>
+                                            <img className={styles.product__albumImg} src='/images/products/airpods.png' />
+                                        </SwiperSlide>
+                                        <SwiperSlide>
+                                            <img className={styles.product__albumImg} src='/images/products/airpods3.png' />
+                                        </SwiperSlide>
+                                        <SwiperSlide>
+                                            <img className={styles.product__albumImg} src='/images/products/airpod2.png' />
+                                        </SwiperSlide>
+                                        <SwiperSlide>
+                                            <img className={styles.product__albumImg} src='/images/products/airpods4.png' />
+                                        </SwiperSlide>
+                                    </Swiper>
                                     {/* Modal for full-size image */}
                                     {isModalOpen && (
                                         <div
@@ -349,7 +386,7 @@ export default function ProductInfo() {
                                             <span className={styles.cart__exPrice}>2,200,000</span>
                                             <div className='inline-flex gap-1'>
                                                 <span className='font-IranYekanBold text-xl '>1,500,000</span>
-                                                <span><TomanIcon/></span>
+                                                <span><TomanIcon /></span>
                                             </div>
                                         </div>
                                     </div>
@@ -508,7 +545,7 @@ export default function ProductInfo() {
                                             <span className={styles.cart__exPrice}>2,200,000</span>
                                             <div className='inline-flex gap-1'>
                                                 <span className='font-IranYekanBold text-lg lg:text-xl  '>1,500,000</span>
-                                                <span><TomanIcon/></span>
+                                                <span><TomanIcon /></span>
                                             </div>
                                         </div>
                                     </div>
@@ -537,7 +574,7 @@ export default function ProductInfo() {
                                 <span className={styles.cart__exPrice}>2,200,000</span>
                                 <div className='inline-flex gap-1'>
                                     <span className='font-IranYekanBold text-xl  '>1,500,000</span>
-                                    <span><TomanIcon/></span>
+                                    <span><TomanIcon /></span>
                                 </div>
                             </div>
                         </div>

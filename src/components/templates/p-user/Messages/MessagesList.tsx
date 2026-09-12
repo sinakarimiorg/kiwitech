@@ -118,9 +118,9 @@ export default function MessagesList({ messages }: { messages: UserMessage[] }) 
                                     className={`flex items-start gap-3 px-5 sm:px-6 py-4 transition-colors
                                             ${isFromUser ? 'cursor-default' : 'cursor-pointer'}
                                             ${isFromUser
-                                            ? 'bg-sky-50/40 hover:bg-sky-100'
+                                            ? 'bg-sky-50/40 hover:bg-sky-50'
                                             : message.isRead
-                                                ? 'bg-primary-50/50 hover:bg-gray-50/60'
+                                                ? 'bg-gray-100 hover:bg-gray-200/80'
                                                 : 'bg-primary-100/80 hover:bg-primary-100'}`}>
                                     <span className={`flex-center w-9 h-9 shrink-0 rounded-full mt-0.5
                                         ${isFromUser
