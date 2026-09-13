@@ -6,7 +6,7 @@ import {
     PiUsersLight,
     PiPlusCircleLight,
 } from "react-icons/pi"
-import { AdminUser, UserRole, UserStatus } from "@root/src/types/adminUserType"
+import { AdminUser, UserRole, UserStatus } from "@root/src/types/UserType"
 import { addUserAction, deleteUserAction, toggleUserStatusAction, updateUserAction } from "./actions"
 import Swal from "sweetalert2"
 import UserModal from "./UserModal"

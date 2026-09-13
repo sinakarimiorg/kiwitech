@@ -1,21 +1,22 @@
+"use client"
+
+import { UserProfile } from "@root/src/types/UserType";
+import { useState } from "react";
 import { PiUserCircleLight, PiPencilSimpleLight } from "react-icons/pi";
+import EditProfileModal from "./EditProfileModal"
 
-type InfoField = {
-    id: string
-    label: string
-    value: string
-}
 
-const infoFields: InfoField[] = [
-    { id: 'fullname', label: 'نام و نام خانوادگی', value: 'سینا کریمی' },
-    { id: 'email', label: 'پست الکترونیکی', value: 'sina@example.com' },
-    { id: 'phone', label: 'شماره موبایل', value: '۰۹۳۰۰۵۲۵۲۶۲' },
-    { id: 'national-code', label: 'کد ملی', value: '—' },
-    { id: 'newsletter', label: 'دریافت خبرنامه', value: 'خیر' },
-    { id: 'card-number', label: 'شماره کارت', value: '—' },
-]
+export default function PersonalInfoCard({ user }: { user: UserProfile }) {
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
-export default function PersonalInfoCard() {
+    const infoFields = [
+        { id: 'fullname', label: 'نام و نام خانوادگی', value: user.name || '—' },
+        { id: 'email', label: 'پست الکترونیکی', value: user.email || '—' },
+        { id: 'phone', label: 'شماره موبایل', value: user.phone },
+        { id: 'national-code', label: 'کد ملی', value: user.nationalCode || '—' },
+        { id: 'birthDate', label: 'تاریخ تولد', value: user.birthDate || '—' },
+    ]
+
     return (
         <div className='bg-white shadow-lg rounded-2xl p-5 sm:p-7'>
 
@@ -47,10 +48,16 @@ export default function PersonalInfoCard() {
             </div>
 
             {/* Edit Button */}
-            <button className='flex-center gap-1.5 mt-7 py-2.5 px-5 text-sm text-text linear_btn'>
+            <button
+                onClick={() => setIsModalOpen(true)}
+                className='flex-center gap-1.5 mt-7 py-2.5 px-5 text-sm text-text linear_btn'>
                 <PiPencilSimpleLight className='w-4 h-4' />
                 ویرایش اطلاعات
             </button>
+
+            {isModalOpen && (
+                <EditProfileModal user={user} onClose={() => setIsModalOpen(false)} />
+            )}
         </div>
     )
 }

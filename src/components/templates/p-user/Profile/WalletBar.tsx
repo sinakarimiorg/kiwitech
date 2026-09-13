@@ -1,13 +1,14 @@
+import Link from "next/link";
 import { PiPlusCircleLight } from "react-icons/pi";
 
 export default function WalletBar({ balance = 0 }: { balance?: number }) {
     return (
         <div className='flex items-center justify-between gap-3 bg-white shadow-lg rounded-2xl px-5 py-3.5 mb-6'>
 
-            <button className='flex-center gap-1.5 shrink-0 text-primary-600 hover:text-primary-700 text-xs sm:text-sm font-IranYekanMedium transition-colors'>
+            <Link href='/p-user/wallet' className='flex-center gap-1.5 shrink-0 text-primary-600 hover:text-primary-700 text-xs sm:text-sm font-IranYekanMedium transition-colors'>
                 <PiPlusCircleLight className='w-5 h-5' />
                 افزایش موجودی
-            </button>
+            </Link>
 
             <span className='w-px h-6 bg-gray-200 shrink-0' />
 

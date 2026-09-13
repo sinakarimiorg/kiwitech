@@ -5,8 +5,8 @@ import { connectDB } from '@root/src/lib/mongodb'
 import { redirect } from 'next/navigation'
 import { PiHeartLight } from 'react-icons/pi'
 import FavoriteModel from '@models/Favorite'
+import '@models/Product'
 import { FavoriteProduct } from '@root/src/types/userFavoriteType'
-
 
 export const dynamic = "force-dynamic"
 
@@ -22,7 +22,7 @@ async function page() {
 
         await connectDB()
 
-        const favorites = await  FavoriteModel.find({user: user._id})
+        const favorites = await FavoriteModel.find({user: user._id})
         .populate('product', 'name linkName price exPrice discount img')
         .sort({_id: -1})
         .lean()

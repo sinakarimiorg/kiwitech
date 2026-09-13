@@ -30,7 +30,7 @@ const navItems: NavItem[] = [
     { key: 'wallet', label: 'کیف پول', href: '/p-user/wallet', icon: PiWalletLight },
 ]
 
-export default function ProfileSidebar() {
+export default function ProfileSidebar({ userName }: { userName: string }) {
     const pathname = usePathname()
     const router = useRouter()
 
@@ -50,7 +50,7 @@ export default function ProfileSidebar() {
                     </span>
                     <div>
                         <p className='text-xs text-zinc-400'>خوش آمدید</p>
-                        <h2 className='font-IranYekanBold text-sm text-zinc-800'>مشتری گرامی</h2>
+                        <h2 className='font-IranYekanBold text-sm text-zinc-800'>{userName}</h2>
                     </div>
                 </div>
 
