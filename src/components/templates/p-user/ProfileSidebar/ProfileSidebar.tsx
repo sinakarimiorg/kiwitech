@@ -10,6 +10,7 @@ import {
     PiEnvelopeSimpleLight,
     PiWalletLight,
     PiSignOutLight,
+    PiSquaresFourLight
 } from "react-icons/pi";
 import type { IconType } from 'react-icons'
 import { logoutAction } from '../../Auth/action';
@@ -22,15 +23,21 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
+    { key: 'dashboard', label: 'داشبورد', href: '/p-user', icon: PiSquaresFourLight },
     { key: 'orders', label: 'سفارش‌های من', href: 'p-user/userOrders', icon: PiPackageLight },
     { key: 'favorites', label: 'کالاهای مورد علاقه', href: '/p-user/favorites', icon: PiHeartLight },
     { key: 'addresses', label: 'نشانی‌ها', href: '/p-user/addresses', icon: PiMapPinLight },
-    { key: 'tickets', label: 'پیام ها', href: '/p-user/messages', icon: PiEnvelopeSimpleLight },
+    { key: 'messages', label: 'پیام ها', href: '/p-user/messages', icon: PiEnvelopeSimpleLight },
     { key: 'personal-info', label: 'مشخصات فردی', href: '/p-user/profile', icon: PiUserCircleLight },
     { key: 'wallet', label: 'کیف پول', href: '/p-user/wallet', icon: PiWalletLight },
 ]
 
-export default function ProfileSidebar({ userName }: { userName: string }) {
+type ProfileSidebarProps = {
+    userName: string
+    unreadMessagesCount?: number
+}
+
+export default function ProfileSidebar({ userName, unreadMessagesCount = 3 }: ProfileSidebarProps) {
     const pathname = usePathname()
     const router = useRouter()
 
@@ -60,6 +67,7 @@ export default function ProfileSidebar({ userName }: { userName: string }) {
                     {navItems.map(item => {
                         const isActive = pathname === item.href
                         const Icon = item.icon
+                        const showBadge = item.key === 'messages' && unreadMessagesCount > 0
                         return (
                             <Link
                                 key={item.key}
@@ -71,7 +79,14 @@ export default function ProfileSidebar({ userName }: { userName: string }) {
                                         : 'text-zinc-500 hover:bg-primary-50/60 hover:text-primary-600'}`}
                             >
                                 <Icon className='w-5 h-5 lg:w-5 lg:h-5 shrink-0' />
-                                <span className='whitespace-nowrap lg:whitespace-normal'>{item.label}</span>
+                                <span className='flex items-center gap-1.5 whitespace-nowrap lg:whitespace-normal'>
+                                    {item.label}
+                                    {showBadge && (
+                                        <span className='flex-center min-w-4.5 h-4.5 px-1 text-[10px] font-IranYekanBold bg-danger text-white rounded-full'>
+                                            {unreadMessagesCount}
+                                        </span>
+                                    )}
+                                </span>
                             </Link>
                         )
                     })}
