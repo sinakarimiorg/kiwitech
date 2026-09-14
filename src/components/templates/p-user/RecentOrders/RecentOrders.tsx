@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { PiPackageLight } from "react-icons/pi";
 import { HiMiniChevronLeft } from "react-icons/hi2";
+import { AdminOrder } from '@root/src/types/adminOrderType';
 
-export default function RecentOrders() {
+export default function RecentOrders({ orders }: { orders: AdminOrder[] }) {
     return (
         <div className='bg-white shadow-lg rounded-2xl p-5 mt-6'>
 
