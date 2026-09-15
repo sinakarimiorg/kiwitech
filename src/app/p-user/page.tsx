@@ -1,4 +1,4 @@
-import Layout from '@root/src/components/layouts/AdminPanelLayout'
+import Layout from '@root/src/components/layouts/UserPanelLayout'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@root/src/lib/auth/session'
 import { connectDB } from '@root/src/lib/mongodb'

@@ -208,7 +208,7 @@ const Topbar = () => {
                             {currentUser.name}
                             <HiMiniChevronDown />
                             <div className='invisible opacity-0 group-hover:visible absolute -left-4 top-full group-hover:opacity-100 w-32 custom-sc:w-40 bg-dark-secondary border border-border text-text rounded-lg transition-all overflow-hidden z-30'>
-                                <Link href={'/p-user/profile'} className='block w-full text-center hover:bg-navbar-hover py-2 px-4 border-b border-border'>
+                                <Link href={'/p-user'} className='block w-full text-center hover:bg-navbar-hover py-2 px-4 border-b border-border'>
                                     پروفایل من
                                 </Link>
                                 {currentUser.role === 'ادمین' &&

@@ -1,0 +1,658 @@
+"use client"
+
+import React, { useEffect, useState, useTransition } from 'react'
+import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
+import Footer from '@root/src/components/modules/Footer/Footer'
+import Header from '@root/src/components/modules/Header/Header'
+import { AdminProduct } from '@root/src/types/adminProductType'
+import { PublicComment } from '@root/src/types/commentType'
+import CommentsSection from '../CommentsSection/CommentsSection'
+import { RiStarFill } from "react-icons/ri";
+import { GoShareAndroid } from "react-icons/go";
+import { LiaComments } from "react-icons/lia";
+import { PiBellRingingLight } from "react-icons/pi";
+import { TbHeartPlus } from "react-icons/tb";
+import { HiMiniChevronLeft } from "react-icons/hi2";
+import { IoSettingsOutline } from "react-icons/io5";
+import { BsPatchCheck } from "react-icons/bs";
+import { PiStorefront } from "react-icons/pi";
+import { CiBoxes } from "react-icons/ci";
+import { PiWarningOctagonThin } from "react-icons/pi";
+import { FaXmark } from 'react-icons/fa6'
+import { PiPhoneCallLight } from "react-icons/pi";
+
+import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import type { Swiper as SwiperType } from 'swiper';
+
+// Import Swiper styles
+import 'swiper/css';
+import 'swiper/css/free-mode';
+import 'swiper/css/navigation';
+import 'swiper/css/thumbs';
+
+import styles from '@/styles/product.module.css'
+import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
+import ProductFeatureBox from '../ProductFeatureBox/ProductFeatureBox'
+import ProductFeatureBoxLarge from '../ProductFeatureBoxLarge/ProductFeatureBoxLarge'
+import { toggleFavoriteAction } from '../../P-user/Favorites/action'
+
+type ProductInfoClientProps = {
+  product: AdminProduct
+  comments: PublicComment[]
+  ratingAverage: number
+  ratingCount: number
+  initialIsFavorite: boolean
+}
+
+export default function ProductInfoClient({ product, comments, ratingAverage, ratingCount, initialIsFavorite }: ProductInfoClientProps) {
+  ////////// Handle NavBar visiblity
+  const [prevScrollPos, setPrevScrollPos] = useState(0);
+  const [visible, setVisible] = useState(true)
+  ////////// Produc Image States
+  const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // handle Favorite Action
+  const [isFav, setIsFav] = useState(initialIsFavorite);
+  const [isPending, startTransition] = useTransition();
+
+  const toggleFavorite = () => {
+    startTransition(async () => {
+      const result = await toggleFavoriteAction(product._id);
+
+      if (result.success) {
+        setIsFav(result.isFavorite);
+      } else {
+        alert(result.error);
+      }
+    });
+  };
+  ////////////////////////////////
+
+  const openImagesModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+  const handleScroll = () => {
+    const currentScrollPos = window.scrollY
+
+    if (currentScrollPos > prevScrollPos) {
+      setVisible(false)
+    } else {
+      setVisible(true)
+    }
+
+    setPrevScrollPos(currentScrollPos)
+  }
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+
+    return () => window.removeEventListener('scroll', handleScroll)
+  })
+
+  //Set Real info from db
+  const images = [product.img, ...(product.images ?? [])].filter(Boolean)
+  const mainImage = images[0] ?? '/images/logo/logo.png'
+
+  const discountPercent =
+    product.discount && product.discount > 0
+      ? product.discount
+      : product.exPrice && product.exPrice > product.price
+        ? Math.round(((product.exPrice - product.price) / product.exPrice) * 100)
+        : 0
+
+
+  const colorList = product.colors
+    ? product.colors.split(/[،,]/).map(c => c.trim()).filter(Boolean)
+    : []
+
+  const tagList = product.tags ?? []
+  const inStock = product.stock > 0
+
+  const featureItems = [
+    { name: 'دسته‌بندی', status: product.category },
+    { name: 'زیرمجموعه', status: product.subCategory },
+    { name: 'وضعیت موجودی', status: inStock ? `${product.stock.toLocaleString('fa-IR')} عدد موجود` : 'ناموجود' },
+    colorList.length > 0 ? { name: 'رنگ‌های موجود', status: colorList.join('، ') } : null,
+    tagList.length > 0 ? { name: 'برچسب‌ها', status: tagList.join('، ') } : null,
+  ].filter(Boolean) as { name: string; status: string }[]
+
+
+  const PriceBlock = ({ size = 'base' }: { size?: 'base' | 'lg' }) => (
+    <div className={size === 'lg' ? 'flex items-center justify-end gap-6 pt-2 pl-2' : 'flex items-center justify-end gap-x-2 lg:gap-x-4 pt-2 pl-2'}>
+      {discountPercent > 0 && (
+        <div className='inline-flex justify-center items-end h-5 w-10 lg:w-11 text-center text-[10px] bg-linear-to-r from-primary-400 to-neon text-surface rounded-xl'>
+          <span className='text-xs'>{discountPercent}</span>%
+        </div>
+      )}
+      {product.exPrice && product.exPrice > product.price && (
+        <span className={styles.cart__exPrice}>{product.exPrice.toLocaleString()}</span>
+      )}
+      <div className='inline-flex gap-1'>
+        <span className='font-IranYekanBold text-lg lg:text-xl'>{product.price.toLocaleString()}</span>
+        <span><TomanIcon /></span>
+      </div>
+    </div>
+  )
+
+  const AddToCartButton = ({ className = '' }: { className?: string }) => (
+    <div
+      aria-disabled={!inStock}
+      className={`w-full text-center font-IranYekanMedium ${className} ${inStock ? 'linear_btn cursor-pointer' : 'bg-gray-200 text-zinc-400 cursor-not-allowed rounded-lg'}`}
+    >
+      {inStock ? 'افزودن به سبد خرید' : 'ناموجود'}
+    </div>
+  )
+
+  const OfferBar = ({ rounded = 'rounded-t-xl' }: { rounded?: string }) => (
+    discountPercent > 0 ? (
+      <div className={`flex items-center justify-between py-4 px-3 w-full text-text bg-linear-to-r from-lime-900 to-lime-800 border-b border-border-light ${rounded}`}>
+        <span className='font-Morabba'>پیشـنهاد ویـژه</span>
+        <span className='px-2.5 py-1 text-sm bg-white/15 rounded-lg'>{discountPercent}٪ تخفیف</span>
+      </div>
+    ) : null
+  )
+
+  return (
+    <div>
+      {/* Svg Icons  */}
+      <svg className='hidden'>
+        <symbol id="toman" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14">
+          <path fillRule="evenodd" d="M3.057 1.742L3.821 1l.78.75-.776.741-.768-.749zm3.23 2.48c0 .622-.16 1.111-.478 1.467-.201.221-.462.39-.783.505a3.251 3.251 0 01-1.083.163h-.555c-.421 0-.801-.074-1.139-.223a2.045 2.045 0 01-.9-.738A2.238 2.238 0 011 4.148c0-.059.001-.117.004-.176.03-.55.204-1.158.525-1.827l1.095.484c-.257.532-.397 1-.419 1.403-.002.04-.004.08-.004.12 0 .252.055.458.166.618a.887.887 0 00.5.354c.085.028.178.048.278.06.079.01.16.014.243.014h.555c.458 0 .769-.081.933-.244.14-.139.21-.383.21-.731V2.02h1.2v2.202zm5.433 3.184l-.72-.7.709-.706.735.707-.724.7zm-2.856.308c.542 0 .973.19 1.293.569.297.346.445.777.445 1.293v.364h.18v-.004h.41c.221 0 .377-.028.467-.084.093-.055.14-.14.14-.258v-.069c.004-.243.017-1.044 0-1.115L13 8.05v1.574a1.4 1.4 0 01-.287.863c-.306.405-.804.607-1.495.607h-.627c-.061.733-.434 1.257-1.117 1.573-.267.122-.58.21-.937.265a5.845 5.845 0 01-.914.067v-1.159c.612 0 1.072-.082 1.38-.247.25-.132.376-.298.376-.499h-.515c-.436 0-.807-.113-1.113-.339-.367-.273-.55-.667-.55-1.18 0-.488.122-.901.367-1.24.296-.415.728-.622 1.296-.622zm.533 2.226v-.364c0-.217-.048-.389-.143-.516a.464.464 0 00-.39-.187.478.478 0 00-.396.187.705.705 0 00-.136.449.65.65 0 00.003.067c.008.125.066.22.177.283.093.054.21.08.352.08h.533zM9.5 6.707l.72.7.724-.7L10.209 6l-.709.707zm-6.694 4.888h.03c.433-.01.745-.106.937-.29.024.012.065.035.12.068l.074.039.081.042c.135.073.261.133.379.18.345.146.67.22.977.22a1.216 1.216 0 00.87-.34c.3-.285.449-.714.449-1.286a2.19 2.19 0 00-.335-1.145c-.299-.457-.732-.685-1.3-.685-.502 0-.916.192-1.242.575-.113.132-.21.284-.294.456-.032.062-.06.125-.084.191a.504.504 0 00-.03.078 1.67 1.67 0 00-.022.06c-.103.309-.171.485-.205.53-.072.09-.214.14-.427.147-.123-.005-.209-.03-.256-.076-.057-.054-.085-.153-.085-.297V7l-1.201-.5v3.562c0 .261.048.496.143.703.071.158.168.296.29.413.123.118.266.211.43.28.198.084.42.13.665.136v.001h.036zm2.752-1.014a.778.778 0 00.044-.353.868.868 0 00-.165-.47c-.1-.134-.217-.201-.35-.201-.18 0-.33.103-.447.31-.042.071-.08.158-.114.262a2.434 2.434 0 00-.04.12l-.015.053-.015.046c.142.118.323.216.544.293.18.062.325.092.433.092.044 0 .086-.05.125-.152z" clipRule="evenodd" fill="currentColor"></path>
+        </symbol>
+      </svg>
+      <Header />
+      <BreadCrumb
+        links={[
+          { id: 1, title: 'فروشگاه کیوی‌تک', to: '/' },
+          { id: 2, title: product.category || 'همه محصولات', to: '/products/1' },
+          { id: 3, title: product.name, to: `/product-info/${product.linkName}` },
+        ]} />
+
+      {/* Contents For Desctop Size */}
+      <div className='hidden md:block'>
+        <div className='container'>
+          {/* Off timer */}
+          <div className='xl:hidden'>
+            <OfferBar rounded='rounded-t-xl' />
+          </div>
+
+          {/* First & Main Section (Pics, purchase cart, features) */}
+          <div className='flex flex-col xl:flex-row gap-x-12 gap-y-5'>
+            {/* Right Section &  Product Features */}
+            <div className='flex gap-x-5 py-8 px-5 lg:px-7 border border-gray-300 rounded-b-xl xl:rounded-xl bg-white'>
+
+              {/* Rate & Color & Features Col */}
+              <div>
+                <h1 className='font-MorabbaBold lg:text-xl  tracking-wide leading-8'>
+                  {product.name}
+                </h1>
+
+                {/* Product Rating */}
+                <div className='inline-flex items-center gap-2 pt-4 pb-2 border-b border-gray-300'>
+                  <p className='flex gap-1'>
+                    <span><RiStarFill className='h-5 w-5 text-amber-500' /></span>
+                    <span className='text-text-muted'>{ratingAverage.toFixed(1)}</span>
+                  </p>
+                  <a href='#product__comments-section' className='text-text-muted /70 hover:text-primary-500 text-xs cursor-pointer'>(از {ratingCount.toLocaleString('fa-IR')} نظر)</a>
+                </div>
+
+                {/* Product Colors */}
+                {colorList.length > 0 && (
+                  <div className='mt-5 pb-4 border-b border-gray-300'>
+                    <p className='flex gap-1 pb-4'>
+                      <span className='text-text-muted /90'>رنگ‌های موجود:</span>
+                    </p>
+                    <div className='flex flex-wrap items-center gap-2'>
+                      {colorList.map(color => (
+                        <span key={color} className='px-3 py-1.5 text-xs border border-gray-300 rounded-full text-zinc-600'>{color}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Product's Features */}
+                <div className='mt-6'>
+                  <h3 className='font-IranYekanBold pb-6 '>ویژگی‌ها</h3>
+                  <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-2 2xl:grid-cols-3 gap-x-5 gap-y-6 pb-4'>
+                    {featureItems.map(item => (
+                      <ProductFeatureBox key={item.name} name={item.name} status={item.status} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions & Product's Photos Col */}
+              <div>
+                {/* Action Buttons */}
+                <div className='flex-center gap-x-3 lg:gap-x-5'>
+                  <button className={styles.product__actionButton}><GoShareAndroid className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اشتراک گذاری کالا</span></button>
+                  <button className={styles.product__actionButton}><LiaComments className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>نظرات کاربران</span></button>
+                  <button className={styles.product__actionButton}><PiBellRingingLight className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اطلاع‌رسانی کیوی‌تک</span></button>
+                  <button
+                    className={`${styles.product__actionButton} ${isFav ? 'text-red-500' : ''}`}
+                    onClick={toggleFavorite}
+                    disabled={isPending}
+                  >
+                    <TbHeartPlus className={`w-5 h-5 ${isFav ? 'text-red-500 fill-red-500' : 'text-primary-500'}`} />
+                    <span className={styles.tooltiptext}>
+                      {isFav ? 'حذف از علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها'}
+                    </span>
+                  </button>                </div>
+                {/* Product Images  */}
+                <div className='w-full overflow-hidden'>
+                  <Swiper
+                    style={
+                      {
+                        '--swiper-navigation-color': '#2E3642',
+                        '--swiper-pagination-color': '#2E3642',
+                      } as React.CSSProperties
+                    }
+                    loop={images.length > 1}
+                    spaceBetween={10}
+                    slidesPerView={1}
+                    navigation={true}
+                    thumbs={{
+                      swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null,
+                    }}
+                    modules={[FreeMode, Navigation, Thumbs]}
+                    className="mySwiper2 w-100 bg-background backdrop-blur-2xl border border-white/10 shadow-md m-6 rounded-xl"
+                  >
+                    {images.map((src, i) => (
+                      <SwiperSlide key={i}>
+                        <img
+                          className='h-72 lg:h-80 2xl:h-96 scale-125 lg:scale-100 cursor-pointer object-contain mx-auto'
+                          src={src}
+                          alt={product.name}
+                          onClick={openImagesModal}
+                        />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                  {images.length > 1 && (
+                    <Swiper
+                      onSwiper={setThumbsSwiper}
+                      loop={false}
+                      spaceBetween={1}
+                      slidesPerView={Math.min(4, images.length)}
+                      width={384}
+                      freeMode={true}
+                      watchSlidesProgress={true}
+                      modules={[FreeMode, Navigation, Thumbs]}
+                      className={styles.albume_swiper}
+                    >
+                      {images.map((src, i) => (
+                        <SwiperSlide key={i}>
+                          <img className={styles.product__albumImg} src={src} alt={product.name} />
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  )}
+                  {/* Modal for full-size image */}
+                  {isModalOpen && (
+                    <div className="fixed inset-0 bg-black/90 flex justify-center items-center z-50">
+                      <div className="relative">
+                        <Swiper
+                          style={
+                            {
+                              '--swiper-navigation-color': '#fff',
+                              '--swiper-pagination-color': '#fff',
+                            } as React.CSSProperties
+                          }
+                          loop={images.length > 1}
+                          spaceBetween={10}
+                          slidesPerView={1}
+                          navigation={true}
+                          modules={[FreeMode, Navigation, Thumbs]}
+                          className="mySwiper2 w-100"
+                        >
+                          {images.map((src, i) => (
+                            <SwiperSlide key={i}>
+                              <img className='h-72 lg:h-80 2xl:h-96 scale-125 lg:scale-100 object-contain mx-auto' src={src} alt={product.name} />
+                            </SwiperSlide>
+                          ))}
+                        </Swiper>
+                      </div>
+                      <button
+                        onClick={closeModal}
+                        className="absolute top-10 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:top-32 sm:right-56 flex-center gap-x-1 bg-linear-to-r from-primary-400 to-neon text-surface rounded-full px-4 py-2"
+                      >
+                        <FaXmark />
+                        بستن
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Left Section &  Product Price */}
+            <div className='flex flex-row xl:flex-col items-center gap-x-10 w-full xl:w-87.5 mx-auto'>
+              {/* Top section of Cart */}
+              <div className='h-fit w-4/6 xl:w-full bg-white shadow-xl rounded-xl'>
+                <div className='hidden xl:block'>
+                  <OfferBar rounded='rounded-t-xl' />
+                </div>
+                {/* Cart Body */}
+                <div className='py-4 xl:py-6 px-5 bg-white rounded-b-xl'>
+                  {/* Purchase Details */}
+                  <div className='hidden xl:block'>
+
+                    <div className='flex gap-1.5 mb-2.5 py-4 px-3 glass-card rounded-md'>
+                      <div>
+                        <div className='flex items-center gap-2 text-sm'>
+                          <PiStorefront className='w-5 h-5' />
+                          <span className='font-IranYekanMedium text-lg'>کیوی‌تک</span>
+                        </div>
+                        <div className='flex gap-2 text-sm mt-2'>
+                          <CiBoxes className='w-4 h-4' />
+                          <span className='text-xs tracking-tight text-text-muted'>
+                            {inStock ? 'موجود در انبار کیوی‌تک (ارسال فوری)' : 'ناموجود در انبار'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className='flex gap-1.5 mb-2.5 py-4 px-3 glass-card rounded-md'>
+                      <IoSettingsOutline className='w-4 h-4' />
+                      <div className='flex gap-2'>
+                        <span className='text-sm'>دسته‌بندی :</span>
+                        <span className='text-sm font-IranYekanBold text-text-muted'>{product.subCategory}</span>
+                      </div>
+                    </div>
+
+                    <div className='flex gap-1.5 py-4 px-3 glass-card rounded-md'>
+                      <BsPatchCheck className='w-4 h-4' />
+                      <div className='flex gap-2'>
+                        <span className='text-sm'>سرویس کیوی‌تک :</span>
+                        <span className='text-sm font-IranYekanBold text-text-muted'>۷ روز تضمین بازگشت کالا</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Produc Price */}
+                  <div className='mb-0.5 xl:my-5 px-4 xl:text-left'>
+                    <PriceBlock size='lg' />
+                  </div>
+
+                  {/* Cart Actions  */}
+                  <AddToCartButton className='h-10 xl:h-12 text-center xl:text-lg leading-10 xl:leading-12' />
+                </div>
+              </div>
+
+              {/* bottom section of Cart */}
+              <div className='h-fit w-2/6 xl:w-full xl:mt-5 py-6 px-3 bg-white shadow-xl rounded-xl'>
+                <div className='flex items-center gap-1.5 pb-2 border-b border-dotted border-gray-300 cursor-pointer'>
+                  <PiWarningOctagonThin className='w-5 h-5 text-amber-500' />
+                  <span className='text-sm text-text-muted'>گزارش نادرستی مشخصات</span>
+                </div>
+
+                <div className='flex items-center gap-4 pt-3 cursor-pointer'>
+                  <span className='inline-block p-1 text-text-muted border border-zinc-600 rounded-full'><PiPhoneCallLight className='w-6 h-6 text-text-muted' /></span>
+                  <div>
+                    <p className='text-sm text-text-muted tracking-tight'>ارتباط با فروش</p>
+                    <p className='font-IranYekanMedium text-sm'>تماس با کـارشناسان</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Section (All features, description, comments) */}
+          <div className='mt-14 lg:mt-20'>
+            {/* Header Of This Section */}
+            <div className={`sticky ${visible ? 'top-41' : 'top-24'} z-10`}>
+              <ul className='flex gap-8 px-4 rounded-t-md bg-surface-3 text-text'>
+                <li className={styles.productInfo__menuTitle}>
+                  <a href='#product__description-section'>معرفی</a>
+                  <div className={styles.productInfo__underlineBorder}></div>
+                </li>
+                <li className={styles.productInfo__menuTitle}>
+                  <a href='#product__features-section'>مشخصات</a>
+                  <div className='productInfo__underline-border opacity-0'></div>
+                </li>
+                <li className={styles.productInfo__menuTitle}>
+                  <a href='#product__comments-section'>نظرات کاربران</a>
+                  <div className='productInfo__underline-border opacity-0'></div>
+                </li>
+              </ul>
+            </div>
+            {/* Body & Contents of Section */}
+            <div className=' flex gap-x-8 xl:gap-x-16 pt-8'>
+              {/* Right col & Contents */}
+              <div className='w-8/12 xl:w-9/12'>
+                {/* Description */}
+                <div id='product__description-section' className='px-2.5 mb-7'>
+                  <h1 className={styles.productInfo__title}>معرفی</h1>
+                  <p className='text-sm lg:text-base text-text-muted leading-8 lg:leading-9'>
+                    {product.description || 'توضیحاتی برای این محصول ثبت نشده است.'}
+                  </p>
+                </div>
+
+                <div className={styles.dividerBorder}></div>
+
+                {/* All Features */}
+                <div id='product__features-section'>
+                  <h1 className={styles.productInfo__title}>مشـخصات فـنی</h1>
+                  <div className='overflow-hidden'>
+                    {featureItems.map(item => (
+                      <ProductFeatureBoxLarge key={item.name} name={item.name} status={item.status} />
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.dividerBorder}></div>
+
+                {/* Comments */}
+                <div id='product__comments-section'>
+                  <CommentsSection
+                    productId={product._id}
+                    linkName={product.linkName}
+                    comments={comments}
+                    ratingAverage={ratingAverage}
+                    ratingCount={ratingCount}
+                  />
+                </div>
+              </div>
+
+              {/* Left col & Product Purchase Cart */}
+              <div className={`sticky ${visible ? 'top-60' : 'top-44'} h-fit w-4/12 xl:w-3/12 bg-white shadow-xl rounded-xl`}>
+                <OfferBar rounded='rounded-t-xl' />
+
+                {/* Product's Title & Color & Image */}
+                <div className='flex-center gap-4 lg:gap-9 px-4 lg:px-7 pt-5 pb-3'>
+                  <img className='w-14 h-14 object-contain scale-150' src={mainImage} alt={product.name} />
+                  <div>
+                    <h3 className='font-IranYekanMedium text-sm lg:text-base text-wrap'>{product.name}</h3>
+                    {colorList.length > 0 && (
+                      <div className='flex items-center gap-1.5 pt-2'>
+                        <span className='lg:font-IranYekanMedium text-text-muted text-xs lg:text-sm'>{colorList[0]}</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                {/* Cart Body */}
+                <div className='pb-6 px-5 bg-white'>
+                  {/* Purchase Details */}
+                  <div className='py-1 lg:py-3 px-1 lg:px-3 border-y border-dotted border-gray-300'>
+                    <div className='flex items-center gap-1.5 mb-2.5 py-1'>
+                      <CiBoxes className='w-5 h-5' />
+                      <span className='font-IranYekanMedium text-xs lg:text-sm tracking-tight'>
+                        {inStock ? 'موجود در انبار کیوی‌تک (ارسال فوری)' : 'ناموجود در انبار'}
+                      </span>
+                    </div>
+                    <div className='flex items-center gap-1.5 py-1'>
+                      <BsPatchCheck className='w-4 h-4' />
+                      <span className='font-IranYekanMedium text-xs lg:text-sm'>۷ روز تضمین بازگشت کالا</span>
+                    </div>
+                  </div>
+
+                  {/* Produc Price */}
+                  <div className='my-2 lg:my-5 px-2 lg:px-4 text-left'>
+                    <PriceBlock />
+                  </div>
+
+                  {/* Cart Add Basket Button  */}
+                  <AddToCartButton className='h-10 lg:h-12 text-center lg:text-lg leading-10 lg:leading-12' />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      {/* Contents For Mobile Size */}
+      <div className='block md:hidden'>
+
+        {/* Fixed, Buy Actions Button &  Product Price */}
+        <div className='fixed bottom-0 h-fit w-full bg-white shadow-t-lg z-20'>
+          {/* Cart Body */}
+          <div className='py-4 px-6'>
+            {/* Produc Price */}
+            <div className='mb-2.5 px-4 text-end'>
+              <PriceBlock size='lg' />
+            </div>
+
+            {/* Cart Actions  */}
+            <AddToCartButton className='h-10 leading-10' />
+          </div>
+        </div>
+        {/* //////////////////////////////////////////// */}
+        <div className='container'>
+          {/* Off timer */}
+          <OfferBar rounded='rounded-t-xl' />
+
+          {/* First & Main Section (Pics, purchase cart, features) */}
+          <div className='border border-gray-300 rounded-b-xl'>
+
+            {/* Actions & Product's Photos Col */}
+            <div className='my-6'>
+              {/* Action Buttons */}
+              <div className='flex-center gap-x-6 sm:gap-x-10 mb-2 sm:mb-4'>
+                <button className={styles.product__actionButton}><GoShareAndroid className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اشتراک گذاری کالا</span></button>
+                <button className={styles.product__actionButton}><LiaComments className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>نظرات کاربران</span></button>
+                <button className={styles.product__actionButton}><PiBellRingingLight className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اطلاع‌رسانی کیوی‌تک</span></button>
+                <button className={styles.product__actionButton}><TbHeartPlus className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>مورد علاقه</span></button>
+              </div>
+              {/* Product Images  */}
+              <div>
+                <img className='h-48 mx-auto object-contain scale-125' src={mainImage} alt={product.name} />
+                {images.length > 1 && (
+                  <div className='flex-center gap-5 mt-2 sm:mt-4'>
+                    {images.slice(0, 3).map((src, i) => (
+                      <img key={i} className={styles.product__albumImg} src={src} alt={product.name} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/*  Product Features & Details */}
+            <div className='px-3 py-3'>
+              {/* Rate & Color & Features Col */}
+              <div>
+                <h1 className='font-MorabbaBold  tracking-wide'>
+                  {product.name}
+                </h1>
+
+                {/* Product Rating */}
+                <div className='inline-flex items-center gap-2 pt-4 pb-2 border-b border-gray-300'>
+                  <p className='flex gap-1'>
+                    <span><RiStarFill className='h-5 w-5 text-amber-500' /></span>
+                    <span className='text-sm text-text-muted'>{ratingAverage.toFixed(1)}</span>
+                  </p>
+                  <a href='#product__comments-section' className='text-text-muted /70 hover:text-primary-500 text-xs cursor-pointer'>(از {ratingCount.toLocaleString('fa-IR')} نظر)</a>
+                </div>
+
+                {/* Product Colors */}
+                {colorList.length > 0 && (
+                  <div className='mt-4 pb-4 border-b border-gray-300'>
+                    <p className='flex gap-1 pb-1'>
+                      <span className='text-text-muted /90'>رنگ‌های موجود:</span>
+                    </p>
+                    <div className='flex flex-wrap items-center gap-2'>
+                      {colorList.map(color => (
+                        <span key={color} className='px-3 py-1 text-xs border border-gray-300 rounded-full text-zinc-600'>{color}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Product's Features */}
+                <div className='mt-6'>
+                  <h3 className='font-IranYekanBold pb-6 '>ویژگی‌ها</h3>
+                  <div className='grid grid-cols-2 gap-x-5 gap-y-6'>
+                    {featureItems.map(item => (
+                      <ProductFeatureBox key={item.name} name={item.name} status={item.status} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Section (All features, description, comments) */}
+          <div className='mt-10 pb-28'>
+            {/* Header Of This Section */}
+            <div className='sticky top-0 z-10'>
+              <ul className='flex justify-between px-10 border border-border-light rounded-t-md glass-card '>
+                <li className={styles.productInfo__menuTitle}>
+                  <a href='#product__description-section'>معرفی</a>
+                  <div className={styles.productInfo__underlineBorder}></div>
+                </li>
+                <li className={styles.productInfo__menuTitle}>
+                  <a href='#product__features-section'>مشخصات</a>
+                  <div className='productInfo__underline-border opacity-0'></div>
+                </li>
+                <li className={styles.productInfo__menuTitle}>
+                  <a href='#product__comments-section'>نظرات کاربران</a>
+                  <div className='productInfo__underline-border opacity-0'></div>
+                </li>
+              </ul>
+            </div>
+            {/* Body & Contents of Section */}
+            <div className='w-full pt-8'>
+              {/* Description */}
+              <div id='product__description-section' className='px-2.5 mb-7'>
+                <h1 className={styles.productInfo__title}>معرفی</h1>
+                <p className='text-sm lg:text-base text-text-muted leading-8 lg:leading-9'>
+                  {product.description || 'توضیحاتی برای این محصول ثبت نشده است.'}
+                </p>
+              </div>
+
+              <div className={styles.dividerBorder}></div>
+
+              {/* All Features */}
+              <div id='product__features-section'>
+                <h1 className={styles.productInfo__title}>مشـخصات فـنی</h1>
+                <div className='overflow-hidden'>
+                  {featureItems.map(item => (
+                    <ProductFeatureBoxLarge key={item.name} name={item.name} status={item.status} />
+                  ))}
+                </div>
+              </div>
+
+              <div className={styles.dividerBorder}></div>
+
+              {/* Comments */}
+              <div id='product__Comments-section'>
+                <CommentsSection
+                  productId={product._id}
+                  linkName={product.linkName}
+                  comments={comments}
+                  ratingAverage={ratingAverage}
+                  ratingCount={ratingCount}
+                />
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <Footer marginClasses={'mt-32'} />
+    </div>
+  )
+}
