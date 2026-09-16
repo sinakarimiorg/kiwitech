@@ -1,11 +1,9 @@
 "use client"
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { PiArrowUpRightLight } from 'react-icons/pi'
 import { RiFireLine } from 'react-icons/ri'
-import allProducts from '@root/Products'
-import allArticles from '@root/Articles'
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 
 // جستجوهای پرطرفدار - در آینده می‌تواند از API یا آمار واقعی جستجوی کاربران خوانده شود
@@ -25,6 +23,8 @@ type SearchSuggestionsProps = {
 
 export default function SearchSuggestions({ query, onNavigate }: SearchSuggestionsProps) {
     const trimmed = query.trim()
+    const [allProducts, setAllProducts] = useState([])
+    const [allArticles, setAllArticles] = useState([])
 
     const matchedProducts = useMemo(() => {
         if (!trimmed) return []

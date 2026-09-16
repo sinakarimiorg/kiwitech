@@ -10,16 +10,12 @@ import CommentsSection from '../CommentsSection/CommentsSection'
 import { RiStarFill } from "react-icons/ri";
 import { GoShareAndroid } from "react-icons/go";
 import { LiaComments } from "react-icons/lia";
-import { PiBellRingingLight } from "react-icons/pi";
+import { PiBellRingingLight, PiStorefront, PiWarningOctagonThin, PiPhoneCallLight } from "react-icons/pi";
 import { TbHeartPlus } from "react-icons/tb";
-import { HiMiniChevronLeft } from "react-icons/hi2";
 import { IoSettingsOutline } from "react-icons/io5";
 import { BsPatchCheck } from "react-icons/bs";
-import { PiStorefront } from "react-icons/pi";
 import { CiBoxes } from "react-icons/ci";
-import { PiWarningOctagonThin } from "react-icons/pi";
 import { FaXmark } from 'react-icons/fa6'
-import { PiPhoneCallLight } from "react-icons/pi";
 
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';

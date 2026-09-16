@@ -1,4 +1,4 @@
-export interface AdminArticle {
+export default interface AdminArticle {
     _id: string
     title: string
     linkName: string

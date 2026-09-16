@@ -2,8 +2,12 @@ import Link from 'next/link'
 import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
-import allArticles from '@root/Articles'
 import ArticleCard from '@root/src/components/templates/Articles/ArticleCard/ArticleCard'
+import AdminArticle from "@/types/adminArticleType"
+import ArticleModel from "@models/Article"
+import { notFound } from 'next/navigation'
+import { connectDB } from '@root/src/lib/mongodb'
+import { cookies } from "next/headers";
 
 import { PiCalendarBlankLight, PiEyeLight } from 'react-icons/pi'
 import { IoLogoInstagram } from 'react-icons/io'
@@ -11,18 +15,79 @@ import { MdOutlineWhatsapp } from 'react-icons/md'
 import { RiTwitterXFill } from 'react-icons/ri'
 import { HiMiniChevronLeft } from 'react-icons/hi2'
 
-export default function ArticleInfoPage({ params }: { params: { shortName: string } }) {
-    const articles = allArticles as any[]
-    const article = articles.find(a => a.shortName === params.shortName) ?? articles[0]
+export const dynamic = 'force-dynamic'
 
-    const relatedArticles = articles
-        .filter(a => a.id !== article.id && a.category === article.category)
-        .slice(0, 3)
+function getPersianDateParts(dateStr?: string) {
+    const date = dateStr ? new Date(dateStr) : new Date()
+    return {
+        day: date.toLocaleDateString('fa-IR', { day: 'numeric' }),
+        month: date.toLocaleDateString('fa-IR', { month: 'long' }),
+        year: date.toLocaleDateString('fa-IR', { year: 'numeric' }),
+    }
+}
 
-    const fallbackRelated = articles.filter(a => a.id !== article.id).slice(0, 3)
-    const related = relatedArticles.length > 0 ? relatedArticles : fallbackRelated
+export default async function ArticleInfoPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params
 
-    const { day, month, year } = article.date[0]
+    await connectDB()
+
+
+    //for increase article view count
+    const cookieStore = await cookies();
+    const cookieName = `viewed_article_${id}`;
+    const hasViewed = cookieStore.get(cookieName);
+
+    let articleDoc = null;
+
+    if (!hasViewed) {
+        articleDoc = await ArticleModel.findOneAndUpdate(
+            { linkName: id, status: "منتشر شده" },
+            { $inc: { views: 1 } },
+            { new: true }
+        )
+
+        if (articleDoc) {
+            cookieStore.set({
+                name: cookieName,
+                value: 'true',
+                maxAge: 60 * 60 * 24,
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                path: '/',
+            });
+        }
+    } else {
+        articleDoc = await ArticleModel.findOne({ linkName: id, status: "منتشر شده" }).lean();
+    }
+
+    if (!articleDoc) {
+        notFound()
+    }
+
+    const article: AdminArticle = JSON.parse(JSON.stringify(articleDoc))
+
+    const relatedRaw = await ArticleModel.find({
+        _id: { $ne: article._id },
+        status: "منتشر شده",
+        category: article.category,
+    }).sort({ _id: -1 }).limit(3).lean()
+
+    let related: AdminArticle[] = JSON.parse(JSON.stringify(relatedRaw))
+
+    if (related.length === 0) {
+        const fallbackRaw = await ArticleModel.find({
+            _id: { $ne: article._id },
+            status: "منتشر شده",
+        }).sort({ _id: -1 }).limit(3).lean()
+        related = JSON.parse(JSON.stringify(fallbackRaw))
+    }
+
+    const { day, month, year } = getPersianDateParts(article.createdAt)
+
+    const paragraphs = (article.content || article.excerpt || 'محتوایی برای این مقاله ثبت نشده است.')
+        .split(/\n+/)
+        .map(p => p.trim())
+        .filter(Boolean)
 
     return (
         <div>
@@ -32,19 +97,17 @@ export default function ArticleInfoPage({ params }: { params: { shortName: strin
                 links={[
                     { id: 1, title: 'فروشگاه کیوی‌تک', to: '/' },
                     { id: 2, title: 'مطالب خواندنی', to: '/articles/1' },
-                    { id: 3, title: article.title, to: `/article-info/${article.shortName}` },
+                    { id: 3, title: article.title, to: `/article-info/${article.linkName}` },
                 ]}
             />
 
             <div className='container pb-16'>
                 <div className='max-w-4xl mx-auto'>
 
-                    {/* تصویر اصلی */}
                     <div className='w-full h-52 sm:h-72 md:h-96 rounded-2xl overflow-hidden'>
                         <img src={article.img} alt={article.title} className='w-full h-full object-cover' />
                     </div>
 
-                    {/* عنوان و متادیتا */}
                     <div className='mt-6'>
                         <span className='inline-block px-3 py-1 text-xs font-IranYekanMedium text-primary-600 bg-primary-50 rounded-lg'>
                             {article.category}
@@ -61,20 +124,28 @@ export default function ArticleInfoPage({ params }: { params: { shortName: strin
                             </span>
                             <span className='flex items-center gap-1.5'>
                                 <PiEyeLight className='w-4 h-4' />
-                                {(article.id * 137 + 240).toLocaleString('fa-IR')} بازدید
+                                {article.views.toLocaleString('fa-IR')} بازدید
                             </span>
                         </div>
 
-                        {/* محتوا */}
                         <div className='mt-7 flex flex-col gap-5'>
-                            {article.content.map((paragraph: string, index: number) => (
+                            {paragraphs.map((paragraph, index) => (
                                 <p key={index} className='text-sm sm:text-base text-zinc-600 leading-8 sm:leading-9'>
                                     {paragraph}
                                 </p>
                             ))}
                         </div>
 
-                        {/* اشتراک‌گذاری */}
+                        {article.tags && article.tags?.length > 0 && (
+                            <div className='flex flex-wrap items-center gap-2 mt-7'>
+                                {article.tags.map(tag => (
+                                    <span key={tag} className='px-3 py-1 text-xs text-zinc-500 bg-gray-50 border border-gray-100 rounded-full'>
+                                        #{tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+
                         <div className='flex items-center gap-3 mt-8 pt-6 border-t border-gray-100'>
                             <span className='text-sm text-zinc-500 ml-1'>اشتراک‌گذاری:</span>
                             <a className='social-button bg-black hover:bg-white hover:text-black hover:border-2 hover:border-black' href='#'>
@@ -90,7 +161,6 @@ export default function ArticleInfoPage({ params }: { params: { shortName: strin
                     </div>
                 </div>
 
-                {/* مطالب مرتبط */}
                 {related.length > 0 && (
                     <div className='max-w-6xl mx-auto mt-16'>
                         <div className='flex items-center justify-between pb-6'>
@@ -102,17 +172,19 @@ export default function ArticleInfoPage({ params }: { params: { shortName: strin
                         </div>
 
                         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-5'>
-                            {related.map(item => (
-                                <ArticleCard
-                                    key={item.id}
-                                    shortName={item.shortName}
-                                    img={item.img}
-                                    title={item.title}
-                                    date={item.date}
-                                    category={item.category}
-                                />
-                            ))
-                            }
+                            {related.map(item => {
+                                const parts = getPersianDateParts(item.createdAt)
+                                return (
+                                    <ArticleCard
+                                        key={item._id}
+                                        shortName={item.linkName}
+                                        img={item.img}
+                                        title={item.title}
+                                        date={[parts]}
+                                        category={item.category}
+                                    />
+                                )
+                            })}
                         </div>
                     </div>
                 )}
