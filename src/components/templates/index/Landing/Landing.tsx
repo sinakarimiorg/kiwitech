@@ -1,10 +1,11 @@
-import React from 'react'
+"use client"
+
 import { HiMiniChevronLeft } from "react-icons/hi2";
 import { PiShieldCheckLight, PiLightningLight, PiSparkleLight } from "react-icons/pi";
 import Link from 'next/link'
+import TiltCard from './TiltCard';
 
 import './Landing.css'
-import TiltCard from './TiltCard';
 
 export default function Landing() {
     return (

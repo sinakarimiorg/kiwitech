@@ -1,3 +1,5 @@
+"use client"
+
 import Link from 'next/link';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';

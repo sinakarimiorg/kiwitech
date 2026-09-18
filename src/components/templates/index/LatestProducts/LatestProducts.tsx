@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react'
+"use client"
+
 import SectionHeader from '@root/src/components/modules/SectionHeader/SectionHeader'
 import ProductBox from '../ProductBox/ProductBox';
 import { Swiper, SwiperSlide } from 'swiper/react';

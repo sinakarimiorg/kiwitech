@@ -1,8 +1,8 @@
-import React from 'react'
+"use client"
+
 import { BsPatchCheck } from "react-icons/bs";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
-import { FaChevronLeft } from "react-icons/fa6";
 
 import 'swiper/css';
 import 'swiper/css/navigation';

@@ -153,7 +153,7 @@ export default function AboutPage() {
                         تیم کیوی‌تک همیشه آماده‌ی شنیدن پیشنهادها و پاسخگویی به سوالات شماست.
                     </p>
                     <div className='flex flex-col sm:flex-row items-center justify-center gap-3 mt-6'>
-                        <Link href='/cooperation' className='flex-center gap-1.5 px-6 py-3 text-sm sm:text-base text-primary-700 bg-white hover:bg-primary-50 rounded-xl transition-colors'>
+                        <Link href='/contact' className='flex-center gap-1.5 px-6 py-3 text-sm sm:text-base text-primary-700 bg-white hover:bg-primary-50 rounded-xl transition-colors'>
                             همکاری با کیوی‌تک
                             <PiArrowLeftLight className='w-4 h-4' />
                         </Link>

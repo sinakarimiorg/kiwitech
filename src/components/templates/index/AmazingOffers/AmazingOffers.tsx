@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react'
+"use client"
+
 import { FaChevronLeft } from "react-icons/fa6";
 import ProductBox from '../ProductBox/ProductBox';
 import { FaArrowLeft } from "react-icons/fa6";

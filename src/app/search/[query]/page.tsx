@@ -7,8 +7,6 @@ import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import ProductCard from '@root/src/components/templates/Product/ProductCard/ProductCard'
 import ArticleCard from '@root/src/components/templates/Articles/ArticleCard/ArticleCard'
-import allProducts from '@root/Products'
-import allArticles from '@root/Articles'
 
 import { RiSearch2Line } from 'react-icons/ri'
 import { PiMagnifyingGlassLight, PiXCircleLight, PiPackageLight, PiArticleLight } from 'react-icons/pi'
@@ -22,6 +20,8 @@ function getDiscount(item: any) {
 }
 
 export default function SearchPage() {
+    const [allArticles, setallArticles] = useState([])
+    const [allProducts, setallProducts] = useState([])
     const params = useParams<{ query: string }>()
     const initialQuery = decodeURIComponent(params?.query ?? '')
 

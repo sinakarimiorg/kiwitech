@@ -1,3 +1,5 @@
+"use client"
+
 import Link from 'next/link';
 import { FaChevronLeft } from "react-icons/fa6";
 import { LazyLoadImage } from 'react-lazy-load-image-component';

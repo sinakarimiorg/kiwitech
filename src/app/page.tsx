@@ -1,5 +1,3 @@
-"use client"
-
 import Header from "../components/modules/Header/Header";
 import Landing from "../components/templates/Index/Landing/Landing";
 import PopularCategories from "../components/templates/Index/PopularCategories/PopularCategories";
