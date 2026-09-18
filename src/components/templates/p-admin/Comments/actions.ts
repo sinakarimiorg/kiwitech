@@ -13,7 +13,7 @@ export async function approveCommentAction(id: string): Promise<ActionResult> {
     await connectDB()
 
     try {
-        const updated = await CommentModel.findByIdAndUpdate(id, { status: "تایید شده" }, { new: true })
+        const updated = await CommentModel.findByIdAndUpdate(id, { status: "تایید شده" }, { returnDocument: 'after' })
         if (!updated) return { success: false, error: "نظر یافت نشد" }
 
         revalidatePath("/p-admin/comments")
@@ -31,7 +31,7 @@ export async function rejectCommentAction(id: string): Promise<ActionResult> {
     await connectDB()
 
     try {
-        const updated = await CommentModel.findByIdAndUpdate(id, { status: "رد شده" }, { new: true })
+        const updated = await CommentModel.findByIdAndUpdate(id, { status: "رد شده" }, { returnDocument: 'after' })
         if (!updated) return { success: false, error: "نظر یافت نشد" }
 
         revalidatePath("/p-admin/comments")

@@ -115,7 +115,7 @@ export async function toggleBannerStatusAction(id: string, status: BannerStatus)
     await connectDB()
 
     try {
-        const updated = await BannerModel.findByIdAndUpdate(id, { status }, { new: true })
+        const updated = await BannerModel.findByIdAndUpdate(id, { status }, { returnDocument: 'after' })
         if (!updated) return { success: false, error: "بنر یافت نشد" }
 
         revalidatePath("/p-admin/banners")

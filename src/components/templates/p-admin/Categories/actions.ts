@@ -49,7 +49,7 @@ export async function toggleCategoryActiveAction(id: string, active: boolean): P
     await connectDB()
 
     try {
-        const updated = await CategoryModel.findByIdAndUpdate(id, { active }, { new: true })
+        const updated = await CategoryModel.findByIdAndUpdate(id, { active }, { returnDocument: 'after' })
         if (!updated) return { success: false, error: "دسته‌بندی یافت نشد" }
 
         revalidatePath("/p-admin/categories")

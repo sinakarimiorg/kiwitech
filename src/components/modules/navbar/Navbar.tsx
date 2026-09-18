@@ -1,29 +1,20 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { TbCategory } from "react-icons/tb";
 import { CiDiscount1 } from "react-icons/ci";
 import { FaBlog } from "react-icons/fa";
-import { BiStoreAlt } from "react-icons/bi";
 import { HiMiniChevronLeft } from "react-icons/hi2";
 import { FiSmartphone } from "react-icons/fi";
-import { FaComputer } from "react-icons/fa6";
+import { FaComputer, FaEnvelope } from "react-icons/fa6";
 import { FaKitchenSet } from "react-icons/fa6";
 import { VscPackage } from "react-icons/vsc";
+import Link from 'next/link';
+import { RiGroupLine } from 'react-icons/ri';
 
 import './NavBar.css'
-import Link from 'next/link';
 
 export default function NavBar() {
-
-    // const openCategoryFunc = () => {
-    //   const menuElem = document.querySelector('.navbar-menu')
-    //   menuElem.classList.add('visible--elem')
-    // }
-    // const closeCategoryFunc = () => {
-    //   const menuElem = document.querySelector('.navbar-menu')
-    //   menuElem.classList.remove('visible--elem')
-    // }
 
     ////////// Handle NavBar visiblity 
     const [prevScrollPos, setPrevScrollPos] = useState(0);
@@ -95,7 +86,7 @@ export default function NavBar() {
                                     <FaComputer />
                                     لوازم جانبی کامپیوتر
                                 </Link>
-                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'computer'  ? 'flex' : 'hidden'}`}>
+                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'computer' ? 'flex' : 'hidden'}`}>
                                     <Link href={'/'} className='submenu-category-all-btn md:text-sm'>
                                         همه لوازم جانبی کامپیوتر
                                         <HiMiniChevronLeft />
@@ -116,7 +107,7 @@ export default function NavBar() {
                                     <FaKitchenSet />
                                     لوازم خانگی
                                 </Link>
-                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'appliances'  ? 'flex' : 'hidden'}`}>
+                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'appliances' ? 'flex' : 'hidden'}`}>
                                     <Link href={'/'} className='submenu-category-all-btn md:text-sm'>
                                         همه لوازم خانگی
                                         <HiMiniChevronLeft />
@@ -138,7 +129,7 @@ export default function NavBar() {
                                     <VscPackage />
                                     لوازم جانبی متفرقه
                                 </Link>
-                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'stuff'  ? 'flex' : 'hidden'}`}>
+                                <div className={`navbar-submenu space-y-6 md:text-sm transition-all *:transition-colors ${menuNavbarList === 'stuff' ? 'flex' : 'hidden'}`}>
                                     <Link href={'/'} className='submenu-category-all-btn md:text-sm'>
                                         همه لوازم جانبی متفرقه
                                         <HiMiniChevronLeft />
@@ -161,20 +152,17 @@ export default function NavBar() {
                         <CiDiscount1 />
                         شگفت انگیزها
                     </Link>
-                    <Link className='hover:text-neon md:gap-x-2' href={'/'}>
+                    <Link className='hover:text-neon md:gap-x-2' href={'/articles/1'}>
                         <FaBlog />
                         موبولـند بلاگ
                     </Link>
-                    <Link className='hover:text-neon md:gap-x-2' href={'/'}>
-                        <BiStoreAlt />
-                        شعب حضوری
-                    </Link>
 
-                    <Link className='hover:text-neon md:gap-x-2' href={'/'}>
-                        <span className="block w-px h-10 bg-border ml-2"></span>
-                        همکاری با ما
+                    <Link className='hover:text-neon md:gap-x-2' href={'/about'}>
+                        <RiGroupLine />
+                        درباره ما
                     </Link>
                     <Link className='hover:text-neon md:gap-x-2' href={'/contact'}>
+                        <span className="block w-px h-10 bg-border ml-2"></span>
                         ارتباط با ما
                     </Link>
                 </div>

@@ -7,7 +7,6 @@ import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import ArticleCard from '@root/src/components/templates/Articles/ArticleCard/ArticleCard'
 import Pagination from '@root/src/components/modules/Pagination/Pagination'
-import allArticles from '@root/Articles'
 
 import { PiMagnifyingGlassLight, PiXCircleLight, PiArticleLight } from 'react-icons/pi'
 
@@ -15,6 +14,7 @@ const categories = ['راهنمای خرید', 'اخبار تکنولوژی', '�
 const PER_PAGE = 3
 
 export default function ArticlesPage() {
+    const [allArticles, setAllArticles]= useState([])
     const params = useParams<{ page: string }>()
     const currentPage = Math.max(1, Number(params?.page) || 1)
 

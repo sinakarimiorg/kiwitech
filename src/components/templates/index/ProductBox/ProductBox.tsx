@@ -19,27 +19,11 @@ type ProductCardProps = {
 
 export default function ProductBox({ shortName, img, img2, title, classes, price, exPrice, discount }: ProductCardProps) {
 
-    // const MyImage = ({ image }) => {
-    //     <div id='product-box__img' className={`${props.img2 && 'group'}`}>
-    //         <LazyLoadImage
-    //             alt='عکس محصول'
-    //             src={props.img}
-    //             effect="blur"
-    //             wrapperProps={{
-    //                 style: { transitionDelay: "1s" },
-    //             }}
-    //         />
-    //         {props.img2 &&
-    //             <img className='absolute opacity-0 invisible group-hover:block group-hover:opacity-100 group-hover:visible w-full h-full inset-0 cursor-pointer transition-all duration-500' src={props.img2} />}
-    //     </div>
-    // }
     return (
         <>
-            {/* Icons */}
-
             <Link href={`/product-info/${shortName}`}>
-                <div className={classes}>
-                    <div id='product-box__img' className={`${img2 && 'group'}`}>
+                <div className={`${classes} group`}>
+                    <div id='product-box__img' className='transition-transform duration-500 group-hover:scale-105'>
                         <div className='absolute group-hover:opacity-0 group-hover:invisible w-full h-full inset-0 cursor-pointer transition-all duration-500'>
                             <LazyLoadImage
                                 src={img}
@@ -48,7 +32,6 @@ export default function ProductBox({ shortName, img, img2, title, classes, price
                                 effect='blur'
                             />
                         </div>
-                        {/* <img className='absolute group-hover:opacity-0 group-hover:invisible w-full h-full inset-0 cursor-pointer transition-all duration-500' src={img} /> */}
                         {img2 &&
                             <div className='absolute opacity-0 invisible group-hover:block group-hover:opacity-100 group-hover:visible w-full h-full inset-0 cursor-pointer transition-all duration-500'>
                                 <LazyLoadImage
@@ -62,9 +45,13 @@ export default function ProductBox({ shortName, img, img2, title, classes, price
                     </div>
                     {/* Box Body */}
                     <div>
-                        <p className='text-sm leading-6 hover:text-primary-500 cursor-pointer'>{title}</p>
+                        <p className='text-sm leading-6 group-hover:text-primary-600 cursor-pointer transition-colors'>{title}</p>
                         <div className='flex justify-between items-center px-2 pt-2 pb-1'>
-                            {discount && <span className='px-2 xs:px-2.5 pt-0.5 font-DanaMedium xs:font-DanaDemiBold text-xs text-white bg-primary-600  rounded-lg'>{discount}%</span>}
+                            {discount &&
+                                <span className='px-2 xs:px-2.5 pt-0.5 font-DanaMedium xs:font-DanaDemiBold text-xs text-surface bg-linear-to-r from-primary-500 to-neon rounded-lg shadow-[0_0_12px_rgba(215,255,92,0.5)]'>
+                                    {discount}%
+                                </span>
+                            }
                             <p className='flex justify-end items-center xs:gap-1 w-full text-zinc-800'>
                                 <span className='font-DanaDemiBold text-sm sm:text-base md:text-lg'>{price.toLocaleString()}</span>
                                 <span><TomanIcon/></span>

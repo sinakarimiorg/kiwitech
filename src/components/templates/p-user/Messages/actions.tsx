@@ -52,7 +52,7 @@ export async function markMessageAsReadAction(id: string): Promise<ActionResult>
         const updated = await MessagesModel.findOneAndUpdate(
             { _id: id, user: user._id },
             { isRead: true },
-            { new: true }
+            { returnDocument: 'after' }
         )
         if (!updated) return { success: false, error: "پیام یافت نشد!" }
 

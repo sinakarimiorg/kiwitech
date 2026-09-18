@@ -15,7 +15,7 @@ export async function UpdateOrderStatusAction(id: string, status: OrderStatus): 
     await connectDB()
 
     try {
-        const updated = await OrderModel.findByIdAndUpdate(id, { status }, { new: true })
+        const updated = await OrderModel.findByIdAndUpdate(id, { status }, { returnDocument: 'after' })
         if (!updated) return { success: false, error: "سفارش یافت نشد" }
         revalidatePath("p-admin/orders")
         return { success: true }

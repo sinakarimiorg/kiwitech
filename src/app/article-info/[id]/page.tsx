@@ -27,12 +27,13 @@ function getPersianDateParts(dateStr?: string) {
 }
 
 export default async function ArticleInfoPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params
+    const resolvedParams = await params
+    const id = decodeURIComponent(resolvedParams.id)
 
     await connectDB()
 
-
     //for increase article view count
+    // NOTE: I used cookies for handle the fake view counts when user refresh the page frequently
     const cookieStore = await cookies();
     const cookieName = `viewed_article_${id}`;
     const hasViewed = cookieStore.get(cookieName);
@@ -43,19 +44,8 @@ export default async function ArticleInfoPage({ params }: { params: Promise<{ id
         articleDoc = await ArticleModel.findOneAndUpdate(
             { linkName: id, status: "منتشر شده" },
             { $inc: { views: 1 } },
-            { new: true }
+            { returnDocument: 'after' }
         )
-
-        if (articleDoc) {
-            cookieStore.set({
-                name: cookieName,
-                value: 'true',
-                maxAge: 60 * 60 * 24,
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                path: '/',
-            });
-        }
     } else {
         articleDoc = await ArticleModel.findOne({ linkName: id, status: "منتشر شده" }).lean();
     }

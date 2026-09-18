@@ -310,7 +310,7 @@ const Topbar = () => {
                                 </li>
 
                                 <li>
-                                    <Link href={'/'} className="inline-flex gap-2">
+                                    <Link href={'/about'} className="inline-flex gap-2">
                                         <RiGroupLine className="w-5 h-5" />
                                         <span>درباره ما</span>
                                     </Link>

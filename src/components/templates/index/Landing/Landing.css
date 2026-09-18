@@ -1,4 +1,12 @@
+.landing-hero {
+    min-height: 520px;
+}
 
-.swiper-pagination-bullet-active {
-    background-color: greenyellow !important;
-} 
+.landing-grid {
+    background-image:
+        linear-gradient(rgba(215, 255, 92, 0.6) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(215, 255, 92, 0.6) 1px, transparent 1px);
+    background-size: 48px 48px;
+    mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 40%, transparent 100%);
+}

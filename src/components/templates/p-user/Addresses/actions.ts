@@ -105,7 +105,7 @@ export async function setDefaultAddressAction(id: string): Promise<ActionResult>
         const updated = await AddressModel.findOneAndUpdate(
             { user: user._id, _id: id },
             { isDefault: true },
-            { new: true }
+            { returnDocument: 'after' }
         )
         if (!updated) return { success: false, error: "آدرس یافت نشد!" }
         revalidatePath("/p-user/addresses")
