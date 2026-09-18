@@ -113,9 +113,10 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                     <div className='footer-col'>
                         <h2 className='footer-title'>خدمات مشتریان</h2>
                         <div className='footer-col__list'>
-                            <a href='#'>حساب کاربری من</a>
+                            <a href={'/p-user'}>حساب کاربری من</a>
                             <Link href={'/articles/1'}>بلاگ</Link>
-                            <a href='#'>خرید عمده لوازم جانبی موبایل</a>
+                            <a href={'/cooperation'}>خرید عمده لوازم جانبی موبایل</a>
+                            <Link href={'/about'}>درباره ما</Link>
                             <Link href={'/contact'}>ارتباط با ما</Link>
                         </div>
                     </div>
