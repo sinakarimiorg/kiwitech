@@ -40,14 +40,14 @@ const page = async () => {
     return (
         <Layout>
             <main className="flex-1 min-w-0">
-                <div className="p-5 sm:p-6 flex flex-col gap-6">
+                <div className="p-4 sm:p-6 flex flex-col gap-6">
                     <div>
-                        <h1 className="text-xl font-semibold text-zinc-900">کیف پول و تراکنش‌ها</h1>
-                        <p className="text-sm text-zinc-400 mt-1">مدیریت شارژ، برداشت و تراکنش‌های مالی مشتریان کیوی‌تک</p>
+                        <h1 className="text-sm sm:text-base md:text-lg lg:text-xl font-semibold text-zinc-900">کیف پول و تراکنش‌ها</h1>
+                        <p className="text-[10px] md:text-sm text-zinc-400 mt-1">مدیریت شارژ، برداشت و تراکنش‌های مالی مشتریان کیوی‌تک</p>
                     </div>
 
                     {/* Stat Cards */}
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                         <StatCard label="موجودی خالص کیف پول‌ها" value={totalBalance.toLocaleString()} icon={PiWalletLight} accent="primary" />
                         <StatCard label="واریزی امروز" value={depositToday.toLocaleString()} icon={PiArrowLineDownLight} accent="neon" />
                         <StatCard label="برداشت امروز" value={withdrawToday.toLocaleString()} icon={PiArrowLineUpLight} accent="danger" />

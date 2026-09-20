@@ -18,19 +18,19 @@ export default function StatCard({ label, value, icon: Icon, trend, accent }: St
     return (
         <div className="bg-white shadow-lg rounded-2xl p-5 transition-all duration-300
          ease-out hover:-translate-y-2 hover:rotate-2 hover:scale-105 hover:shadow-2xl
-         hover:shadow-zinc-300/60 cursor-pointer">
+         hover:shadow-zinc-300/60 cursor-pointer min-w-0">
             <div className="flex items-start justify-between">
-                <span className={`flex-center w-11 h-11 rounded-xl ${accentMap[accent]}`}>
-                    <Icon className="w-6 h-6" />
+                <span className={`flex-center w-9 h-9 sm:w-11 sm:h-11 rounded-xl shrink-0 ${accentMap[accent]}`}>
+                    <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
                 </span>
                 {trend && (
-                    <span className={`text-xs font-IranYekanMedium ${trend.positive ? 'text-primary-600' : 'text-danger'}`}>
+                    <span className={`text-[11px] sm:text-xs font-IranYekanMedium whitespace-nowrap ${trend.positive ? 'text-primary-600' : 'text-danger'}`}>
                         {trend.positive ? '↑' : '↓'} {trend.value}
                     </span>
                 )}
             </div>
-            <p className="mt-4 font-IranYekanBold text-2xl text-zinc-800">{value}</p>
-            <p className="mt-1 text-sm text-zinc-400">{label}</p>
+            <p className="mt-3 sm:mt-4 font-IranYekanBold text-base sm:text-lg md:text-xl xl:text-2xl text-zinc-800 truncate">{value}</p>
+            <p className="mt-1 text-xs xl:text-sm text-zinc-400 line-clamp-1">{label}</p>
         </div>
     )
 }

@@ -148,8 +148,8 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
     }
 
     return (
-        <div className="fixed inset-0 flex-center bg-black/40 z-50 px-4 py-6">
-            <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
+            <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
 
                 <div className="flex items-center justify-between pb-4 mb-6 border-b border-gray-100">
                     <h2 className="flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800">
@@ -174,7 +174,7 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
                                 {/* Image Uploader */}
                                 <div className='w-full lg:w-56 shrink-0'>
                                     <label className='block mb-2 text-xs text-zinc-500'>تصاویر محصول</label>
-                                    <div className='grid grid-cols-3 lg:grid-cols-2 gap-2'>
+                                    <div className='grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 lg:grid-cols-2 gap-2'>
                                         {existingImages.map((src, index) => (
                                             <div key={`existing-${index}`} className='relative aspect-square rounded-xl overflow-hidden border border-gray-200'>
                                                 <img src={src} className='w-full h-full object-cover' alt={`تصویر ${index + 1}`} />
@@ -363,7 +363,7 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
                             </div>
 
                             {/* Actions */}
-                            <div className='flex items-center justify-end gap-3 mt-7 pt-5 border-t border-gray-100'>
+                            <div className='flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 mt-7 pt-5 border-t border-gray-100'>
                                 <button
                                     type='button'
                                     onClick={onClose}

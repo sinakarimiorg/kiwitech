@@ -66,14 +66,14 @@ export default function ProductsList({ initialProducts }: ProductsListProps) {
     return (
         <div className='bg-white shadow-lg rounded-2xl overflow-hidden'>
             {/* Header */}
-            <div className='flex items-center justify-between gap-4 px-5 sm:px-6 py-4 border-b border-gray-100'>
+            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 px-4 sm:px-6 py-4 border-b border-gray-100'>
                 <h2 className='flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800'>
                     <PiListMagnifyingGlassLight className='w-5 h-5 text-primary-500' />
                     لیست محصولات
                     <span className='text-xs font-IranYekan text-zinc-400'>({filtered.length})</span>
                 </h2>
 
-                <div className='hidden sm:flex items-center gap-2 px-3.5 py-2 w-64 bg-gray-50 border border-gray-200 rounded-xl text-sm text-zinc-400 focus-within:border-primary-400 transition-colors'>
+                <div className='flex items-center gap-2 px-3.5 py-2 w-full sm:w-64 bg-gray-50 border border-gray-200 rounded-xl text-sm text-zinc-400 focus-within:border-primary-400 transition-colors'>
                     <PiMagnifyingGlassLight className='w-4 h-4 shrink-0' />
                     <input
                         value={search}
@@ -85,11 +85,11 @@ export default function ProductsList({ initialProducts }: ProductsListProps) {
                 </div>
             </div>
 
-            {/* Table */}
+            {/* Table / Cards */}
             <div className='overflow-x-auto'>
                 <table className='w-full text-sm'>
                     <thead>
-                        <tr className='text-right text-xs text-zinc-400 border-b border-gray-100'>
+                        <tr className='hidden md:table-row text-right text-xs text-zinc-400 border-b border-gray-100'>
                             <th className='font-IranYekanMedium px-5 sm:px-6 py-3'>محصول</th>
                             <th className='font-IranYekanMedium px-3 py-3'>دسته‌بندی</th>
                             <th className='font-IranYekanMedium px-3 py-3'>قیمت</th>
@@ -98,7 +98,7 @@ export default function ProductsList({ initialProducts }: ProductsListProps) {
                         </tr>
                     </thead>
                     <tbody className='divide-y divide-gray-50'>
-                       {filtered.length > 0 ? (
+                        {filtered.length > 0 ? (
                             filtered.map(product => (
                                 <ProductBox
                                     key={product._id}

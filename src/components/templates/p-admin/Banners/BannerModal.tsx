@@ -54,8 +54,8 @@ export default function BannerModal({ initialData, onClose, onSave, isSaving }: 
     }
 
     return (
-        <div className="fixed inset-0 flex-center bg-black/40 z-50 px-4">
-            <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
+            <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
 
                 <div className="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
                     <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">
@@ -71,7 +71,7 @@ export default function BannerModal({ initialData, onClose, onSave, isSaving }: 
                     {/* Image Upload */}
                     <div>
                         <label className="block mb-1.5 text-xs text-zinc-500">تصویر بنر</label>
-                        <label className="flex-center flex-col gap-2 h-36 border-2 border-dashed border-gray-200 hover:border-primary-400 rounded-xl cursor-pointer transition-colors overflow-hidden relative">
+                        <label className="flex-center flex-col gap-2 h-32 sm:h-36 border-2 border-dashed border-gray-200 hover:border-primary-400 rounded-xl cursor-pointer transition-colors overflow-hidden relative">
                             {imagePreview ? (
                                 <img src={imagePreview} className="w-full h-full object-cover" alt="پیش‌نمایش بنر" />
                             ) : (
@@ -132,17 +132,17 @@ export default function BannerModal({ initialData, onClose, onSave, isSaving }: 
 
                 {error && <p className="mt-3 text-xs text-danger">{error}</p>}
 
-                <div className="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100">
+                <div className="flex flex-col sm:flex-row items-stretch gap-3 mt-6 pt-5 border-t border-gray-100">
                     <button
                         onClick={handleSubmit}
                         disabled={isSaving}
-                        className="flex-1 flex-center h-11 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed"
+                        className=" flex-center h-10 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         {isSaving ? 'در حال ذخیره...' : initialData ? 'ذخیره تغییرات' : 'افزودن بنر'}
                     </button>
                     <button
                         onClick={onClose}
-                        className="flex-1 flex-center h-11 text-sm text-zinc-600 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors cursor-pointer"
+                        className=" flex-center h-10 text-sm text-zinc-600 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors cursor-pointer"
                     >
                         انصراف
                     </button>

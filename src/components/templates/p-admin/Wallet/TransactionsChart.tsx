@@ -48,10 +48,10 @@ export default function TransactionsChart({ transactions }: TransactionsChartPro
     const totalWithdraw = weekData.reduce((sum, d) => sum + d.withdraw, 0)
 
     return (
-        <div className='bg-white shadow-lg rounded-2xl p-5 sm:p-6 h-full'>
-            <div className='flex items-center justify-between pb-4 mb-5 border-b border-gray-100'>
+        <div className='bg-white shadow-lg rounded-2xl p-4 sm:p-5 lg:p-6 h-full'>
+            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-gray-100'>
                 <div>
-                    <h2 className='font-IranYekanBold text-base sm:text-lg text-zinc-800'>واریز و برداشت هفته</h2>
+                    <h2 className='font-IranYekanBold text-sm sm:text-base md:text-lg lg:text-xl text-zinc-800'>واریز و برداشت هفته</h2>
                     <p className='text-xs text-zinc-400 mt-0.5'>مقایسه تراکنش‌های واریزی و برداشتی به تفکیک روز</p>
                 </div>
                 <div className='flex items-center gap-3'>
@@ -66,15 +66,15 @@ export default function TransactionsChart({ transactions }: TransactionsChartPro
                 </div>
             </div>
 
-            <div className='flex items-end justify-between gap-2 sm:gap-3 h-48'>
+            <div className='flex items-end justify-between gap-1.5 xs:gap-2 sm:gap-3 h-40 sm:h-48 overflow-x-auto'>
                 {weekData.map((d, i) => (
                     <div
                         key={d.day}
-                        className='flex-1 flex flex-col items-center gap-2 h-full justify-end cursor-pointer'
+                        className='flex-1 min-w-8 flex flex-col items-center gap-2 h-full justify-end cursor-pointer'
                         onMouseEnter={() => setActive(i)}
                         onMouseLeave={() => setActive(null)}
                     >
-                        <span className={`text-[10px] sm:text-xs font-IranYekanMedium text-zinc-600 transition-opacity ${active === i ? "opacity-100" : "opacity-0"}`}>
+                        <span className={`text-[9px] sm:text-[10px] lg:text-xs font-IranYekanMedium text-zinc-600 transition-opacity whitespace-nowrap ${active === i ? "opacity-100" : "opacity-0"}`}>
                             {d.deposit.toFixed(1)}M / {d.withdraw.toFixed(1)}M
                         </span>
                         <div className='flex items-end gap-1 w-full h-full'>
@@ -87,19 +87,19 @@ export default function TransactionsChart({ transactions }: TransactionsChartPro
                                 style={{ height: `${(d.withdraw / max) * 100}%` }}
                             />
                         </div>
-                        <span className='text-[10px] sm:text-[11px] text-zinc-400 whitespace-nowrap'>{d.day}</span>
+                        <span className='text-[9px] sm:text-[10px] lg:text-[11px] text-zinc-400 whitespace-nowrap'>{d.day}</span>
                     </div>
                 ))}
             </div>
 
             <div className='flex items-center justify-around mt-6 pt-5 border-t border-dashed border-gray-200 text-center'>
                 <div>
-                    <p className='font-IranYekanBold text-lg text-primary-600'>{totalDeposit.toLocaleString(undefined, { maximumFractionDigits: 1 })} میلیون</p>
+                    <p className='font-IranYekanBold text-base sm:text-lg text-primary-600'>{totalDeposit.toLocaleString(undefined, { maximumFractionDigits: 1 })} میلیون</p>
                     <p className='text-xs text-zinc-400 mt-1'>مجموع واریزی هفته</p>
                 </div>
                 <span className='w-px h-10 bg-gray-100' />
                 <div>
-                    <p className='font-IranYekanBold text-lg text-zinc-700'>{totalWithdraw.toLocaleString(undefined, { maximumFractionDigits: 1 })} میلیون</p>
+                    <p className='font-IranYekanBold text-base sm:text-lg text-zinc-700'>{totalWithdraw.toLocaleString(undefined, { maximumFractionDigits: 1 })} میلیون</p>
                     <p className='text-xs text-zinc-400 mt-1'>مجموع برداشت هفته</p>
                 </div>
             </div>

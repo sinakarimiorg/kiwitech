@@ -14,11 +14,11 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
     const itemsTotal = order.items.reduce((sum, item) => sum + item.price * item.count, 0)
 
     return (
-        <div className="fixed inset-0 flex-center bg-black/40 z-50 px-4">
-            <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
+            <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl max-h-[92vh] overflow-y-auto">
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
+                <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
                     <div>
                         <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">جزئیات سفارش</h2>
                         <p className="text-xs text-zinc-400 mt-0.5 tracking-wide" dir='ltr'>#{order._id.slice(-8).toUpperCase()}</p>
@@ -28,10 +28,10 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
                     </button>
                 </div>
 
-                <div className="p-5 sm:p-6 flex flex-col gap-5">
+                <div className="p-4 sm:p-6 flex flex-col gap-5">
 
                     {/* Status */}
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className={`px-3 py-1.5 text-xs rounded-lg ${statusStyle[order.status]}`}>
                             {order.status}
                         </span>
@@ -68,14 +68,14 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
                         <div className="flex flex-col gap-3">
                             {order.items.map((item, index) => (
                                 <div key={index} className="flex items-center gap-3 p-3 border border-gray-100 rounded-xl">
-                                    <div className="w-14 h-14 shrink-0 bg-gray-50 rounded-lg overflow-hidden">
+                                    <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 bg-gray-50 rounded-lg overflow-hidden">
                                         <img src={item.img} className="w-full h-full object-cover" alt={item.title} />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-sm text-zinc-700 line-clamp-1">{item.title}</p>
+                                        <p className="text-xs sm:text-sm text-zinc-700 line-clamp-1">{item.title}</p>
                                         <p className="text-xs text-zinc-400 mt-1">{item.count} عدد × {item.price.toLocaleString()} تومان</p>
                                     </div>
-                                    <span className="inline-flex items-center gap-1 text-sm font-IranYekanMedium text-zinc-700 shrink-0">
+                                    <span className="inline-flex items-center gap-1 text-xs sm:text-sm font-IranYekanMedium text-zinc-700 shrink-0">
                                         {(item.price * item.count).toLocaleString()}
                                         <TomanIcon className="w-3 h-3" />
                                     </span>
@@ -101,7 +101,7 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
                         </div>
                         <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-dashed border-gray-200">
                             <span className="font-IranYekanMedium text-zinc-700">مبلغ نهایی</span>
-                            <span className="inline-flex items-center gap-1 font-IranYekanBold text-lg text-zinc-800">
+                            <span className="inline-flex items-center gap-1 font-IranYekanBold text-base sm:text-lg text-zinc-800">
                                 {getOrderTotal(order).toLocaleString()}
                                 <TomanIcon />
                             </span>

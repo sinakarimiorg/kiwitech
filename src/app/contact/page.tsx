@@ -84,7 +84,7 @@ export default function ContactPage() {
                                 <PiMapPinLight className='w-5 h-5 text-primary-500 shrink-0 mt-0.5' />
                                 <span>تهران، خیابان ولیعصر، بالاتر از میدان ونک، پلاک ۱۲</span>
                             </div>
-                            <div className='flex items-center gap-2 pt-3 border-t border-gray-100'>
+                            <div className='flex items-center gap-2 pt-3 border-t border-gray-100 text-white'>
                                 <a className='social-button bg-black hover:bg-white hover:text-black hover:border-2 hover:border-black' href='https://twitter.com/'><RiTwitterXFill className='social-button__icon' /></a>
                                 <a className='social-button bg-green-600 hover:bg-white hover:text-green-600 hover:border-2 hover:border-green-600' href='https://web.whatsapp.com/'><MdOutlineWhatsapp className='social-button__icon' /></a>
                                 <a className='social-button bg-pink-600 hover:bg-white hover:text-pink-600 hover:border-2 hover:border-pink-600' href='https://www.instagram.com/'><IoLogoInstagram className='social-button__icon' /></a>

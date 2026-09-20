@@ -2,14 +2,14 @@
 
 import { useState } from 'react'
 import { PiXBold } from 'react-icons/pi'
-import type { AdminUser, UserRole, UserStatus } from '@root/src/types/UserType'
+import type { UserType, UserRole, UserStatus } from '@root/src/types/UserType'
 
 type UserModalProps = {
-    initialData: AdminUser | null
+    initialData: UserType | null
     onClose: () => void
     onSave: (data: { name: string; phone: string; email?: string; status: UserStatus; role?: UserRole }) => void
     isSaving?: boolean
-    isEdit: AdminUser | null
+    isEdit: UserType | null
 }
 
 export default function UserModal({ initialData, onClose, onSave, isSaving, isEdit }: UserModalProps) {
@@ -29,8 +29,8 @@ export default function UserModal({ initialData, onClose, onSave, isSaving, isEd
     }
 
     return (
-        <div className="fixed inset-0 flex-center bg-black/40 z-50 px-4">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-5 sm:p-6">
+        <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
 
                 <div className="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
                     <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">
@@ -103,17 +103,17 @@ export default function UserModal({ initialData, onClose, onSave, isSaving, isEd
 
                 {error && <p className="mt-3 text-xs text-danger">{error}</p>}
 
-                <div className="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100">
+                <div className="flex flex-col sm:flex-row items-stretch gap-3 mt-6 pt-5 border-t border-gray-100">
                     <button
                         onClick={handleSubmit}
                         disabled={isSaving}
-                        className="flex-1 flex-center h-11 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="  flex-center h-11 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         {isSaving ? 'در حال ذخیره...' : initialData ? 'ذخیره تغییرات' : 'افزودن مشتری'}
                     </button>
                     <button
                         onClick={onClose}
-                        className="flex-1 flex-center h-11 text-sm text-zinc-600 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors cursor-pointer"
+                        className="  flex-center h-11 text-sm text-zinc-600 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors cursor-pointer"
                     >
                         انصراف
                     </button>

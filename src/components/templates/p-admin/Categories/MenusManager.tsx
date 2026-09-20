@@ -157,16 +157,16 @@ export default function MenusManager({ initialCategories }: MenusManagerProps) {
     return (
         <div className='bg-white shadow-lg rounded-2xl overflow-hidden'>
             {/* Header */}
-            <div className='flex items-center justify-between gap-4 px-5 sm:px-6 py-4 border-b border-gray-100'>
+            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 sm:px-6 py-4 border-b border-gray-100'>
                 <h2 className='flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800'>
                     <PiListBulletsLight className='w-5 h-5 text-primary-500' />
                     منوی دسته‌بندی‌ها
                     <span className='text-xs font-IranYekan text-zinc-400'>({initialCategories.length} دسته اصلی)</span>
                 </h2>
 
-                <button onClick={openAddCategory} className='flex-center gap-1.5 px-4 py-2 text-sm text-text linear_btn'>
+                <button onClick={openAddCategory} className='flex-center gap-1.5 px-4 py-2 text-sm text-text linear_btn shrink-0'>
                     <PiPlusCircleLight className='w-4 h-4' />
-                    <span className='hidden sm:inline'>دسته اصلی جدید</span>
+                    <span>دسته اصلی جدید</span>
                 </button>
             </div>
 
@@ -178,24 +178,24 @@ export default function MenusManager({ initialCategories }: MenusManagerProps) {
                     return (
                         <div key={category._id}>
                             {/* Group Row */}
-                            <div className='flex items-center gap-3 px-5 sm:px-6 py-4'>
-                                <PiDotsSixVerticalLight className='w-5 h-5 text-zinc-300 cursor-grab shrink-0' />
+                            <div className='flex items-center gap-2 sm:gap-3 px-4 sm:px-6 py-4'>
+                                <PiDotsSixVerticalLight className='hidden sm:block w-5 h-5 text-zinc-300 cursor-grab shrink-0' />
 
                                 <button
                                     onClick={() => toggleGroup(category._id)}
-                                    className='flex items-center gap-2.5 flex-1 min-w-0 text-right cursor-pointer'>
-                                    <span className='flex-center w-9 h-9 shrink-0 bg-primary-50 text-primary-600 rounded-lg'>
-                                        <Icon className='w-4.5 h-4.5' />
+                                    className='flex items-center gap-2 sm:gap-2.5 flex-1 min-w-0 text-right cursor-pointer'>
+                                    <span className='flex-center w-8 h-8 sm:w-9 sm:h-9 shrink-0 bg-primary-50 text-primary-600 rounded-lg'>
+                                        <Icon className='w-4 h-4 sm:w-4.5 sm:h-4.5' />
                                     </span>
                                     <span className='font-IranYekanMedium text-sm text-zinc-700 line-clamp-1'>{category.title}</span>
-                                    <span className='text-xs text-zinc-400 shrink-0'>({category.items.length} زیرمجموعه)</span>
+                                    <span className='hidden sm:inline text-xs text-zinc-400 shrink-0'>({category.items.length} زیرمجموعه)</span>
                                     <PiCaretDownLight className={`w-4 h-4 text-zinc-400 shrink-0 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                                 </button>
 
-                                <div className='flex items-center gap-3 shrink-0'>
+                                <div className='flex items-center gap-2 sm:gap-3 shrink-0'>
                                     <button
                                         onClick={() => toggleActive(category._id, category.active)}
-                                        className={`px-2.5 py-1 text-xs rounded-lg transition-colors cursor-pointer
+                                        className={`px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs rounded-lg transition-colors cursor-pointer whitespace-nowrap
                                             ${category.active ? "bg-primary-50 text-primary-600" : "bg-gray-100 text-zinc-400"}`}>
                                         {category.active ? "فعال" : "غیرفعال"}
                                     </button>
@@ -215,20 +215,20 @@ export default function MenusManager({ initialCategories }: MenusManagerProps) {
 
                             {/* Sub Items */}
                             {isOpen && (
-                                <div className='bg-gray-50/60 px-5 sm:px-6 py-4 pr-16 sm:pr-20'>
+                                <div className='bg-gray-50/60 px-4 sm:px-6 py-4 pr-8 sm:pr-20'>
                                     <div className='flex flex-col gap-2'>
                                         {category.items.map(item => (
                                             <div key={item._id} className='flex items-center gap-3 bg-white px-4 py-2.5 border border-gray-100 rounded-lg'>
-                                                <PiDotsSixVerticalLight className='w-4 h-4 text-zinc-300 cursor-grab shrink-0' />
-                                                <span className='flex-1 text-sm text-zinc-600'>{item.title}</span>
+                                                <PiDotsSixVerticalLight className='hidden sm:block w-4 h-4 text-zinc-300 cursor-grab shrink-0' />
+                                                <span className='flex-1 text-sm text-zinc-600 min-w-0 truncate'>{item.title}</span>
                                                 <button
                                                     onClick={() => setItemModalState({ categoryId: category._id, itemId: item._id, title: item.title })}
-                                                    className='flex-center w-7 h-7 text-zinc-400 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-colors cursor-pointer'>
+                                                    className='flex-center w-7 h-7 text-zinc-400 hover:text-primary-600 hover:bg-primary-50 rounded-md transition-colors cursor-pointer shrink-0'>
                                                     <PiPencilSimpleLight className='w-3.5 h-3.5' />
                                                 </button>
                                                 <button
                                                     onClick={() => removeItem(category._id, item._id)}
-                                                    className='flex-center w-7 h-7 text-zinc-400 hover:text-danger hover:bg-danger/10 rounded-md transition-colors cursor-pointer'>
+                                                    className='flex-center w-7 h-7 text-zinc-400 hover:text-danger hover:bg-danger/10 rounded-md transition-colors cursor-pointer shrink-0'>
                                                     <PiTrashLight className='w-3.5 h-3.5' />
                                                 </button>
                                             </div>

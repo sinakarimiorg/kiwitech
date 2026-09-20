@@ -122,10 +122,10 @@ export default function BannersManager({ initialBanners }: BannersManagerProps) 
     }
 
     return (
-        <div className="p-5 sm:p-6 flex flex-col gap-6">
+        <div className="p-4 sm:p-6 flex flex-col gap-6">
 
             {/* Page Header */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <h1 className="font-IranYekanBold text-xl sm:text-2xl text-zinc-800">بنرها و اسلایدر</h1>
                 <button
                     onClick={openAddModal}
@@ -137,7 +137,7 @@ export default function BannersManager({ initialBanners }: BannersManagerProps) 
             </div>
 
             {/* Stat Cards */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                 <StatCard label="بنرهای فعال" value={activeCount.toLocaleString('fa-IR')} icon={PiCheckCircleLight} accent="primary" />
                 <StatCard label="بنرهای غیرفعال" value={disabledCount.toLocaleString('fa-IR')} icon={PiEyeSlashLight} accent="danger" />
                 <StatCard label="مجموع بنرها" value={initialBanners.length.toLocaleString('fa-IR')} icon={PiImagesLight} accent="neon" />
@@ -145,10 +145,10 @@ export default function BannersManager({ initialBanners }: BannersManagerProps) 
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap overflow-x-auto scrollbar-none">
                 <button
                     onClick={() => setFilterPosition('all')}
-                    className={`px-4 py-2 text-xs sm:text-sm rounded-xl transition-colors cursor-pointer
+                    className={`px-4 py-2 text-xs sm:text-sm rounded-xl transition-colors cursor-pointer whitespace-nowrap
                         ${filterPosition === 'all' ? 'bg-primary-600 text-white' : 'bg-white text-zinc-500 hover:bg-primary-50 shadow-sm'}`}
                 >
                     همه
@@ -157,7 +157,7 @@ export default function BannersManager({ initialBanners }: BannersManagerProps) 
                     <button
                         key={pos}
                         onClick={() => setFilterPosition(pos)}
-                        className={`px-4 py-2 text-xs sm:text-sm rounded-xl transition-colors cursor-pointer
+                        className={`px-4 py-2 text-xs sm:text-sm rounded-xl transition-colors cursor-pointer whitespace-nowrap
                             ${filterPosition === pos ? 'bg-primary-600 text-white' : 'bg-white text-zinc-500 hover:bg-primary-50 shadow-sm'}`}
                     >
                         {positionMeta[pos]}
@@ -192,7 +192,7 @@ export default function BannersManager({ initialBanners }: BannersManagerProps) 
                                     <h3 className="font-IranYekanBold text-sm text-zinc-800 line-clamp-1">{banner.title}</h3>
                                     <p className="mt-1 text-xs text-zinc-400 ltr-dir line-clamp-1">{banner.linkUrl}</p>
 
-                                    <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">
+                                    <div className="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-gray-100">
                                         <div className="flex items-center gap-1">
                                             <button
                                                 onClick={() => moveBanner(banner._id, 'up')}

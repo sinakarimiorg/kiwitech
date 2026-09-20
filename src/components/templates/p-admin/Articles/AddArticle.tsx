@@ -122,7 +122,7 @@ export default function AddArticle() {
     }
 
     return (
-        <div className='bg-white shadow-lg rounded-2xl p-5 sm:p-6'>
+        <div className='bg-white shadow-lg rounded-2xl p-4 sm:p-6'>
             {/* Header */}
             <div className='flex items-center gap-2 pb-4 mb-6 border-b border-gray-100'>
                 <PiArticleLight className='w-5 h-5 text-primary-500' />
@@ -134,7 +134,7 @@ export default function AddArticle() {
                 <div className='w-full lg:w-56 shrink-0'>
                     <label className='block mb-2 text-xs text-zinc-500'>تصویر کاور مقاله</label>
                     {imagePreview ? (
-                        <div className='relative w-full h-56 rounded-xl overflow-hidden border border-gray-200'>
+                        <div className='relative w-full h-48 sm:h-56 rounded-xl overflow-hidden border border-gray-200'>
                             <img src={imagePreview} className='w-full h-full object-cover' alt='پیش‌نمایش کاور' />
                             <button
                                 onClick={removeImage}
@@ -143,7 +143,7 @@ export default function AddArticle() {
                             </button>
                         </div>
                     ) : (
-                        <label className='flex flex-col items-center justify-center gap-2 w-full h-56 border-2 border-dashed border-gray-200 hover:border-primary-400 rounded-xl cursor-pointer text-zinc-400 hover:text-primary-500 transition-colors'>
+                        <label className='flex flex-col items-center justify-center gap-2 w-full h-48 sm:h-56 border-2 border-dashed border-gray-200 hover:border-primary-400 rounded-xl cursor-pointer text-zinc-400 hover:text-primary-500 transition-colors'>
                             <PiImageLight className='w-9 h-9' />
                             <span className='text-xs'>برای آپلود کلیک کنید</span>
                             <input
@@ -187,7 +187,7 @@ export default function AddArticle() {
                             <PiLinkSimpleLight className='w-3.5 h-3.5' />
                             آدرس صفحه (Slug)
                         </label>
-                        <div className='flex items-center gap-2'>
+                        <div className='flex flex-col xs:flex-row items-stretch xs:items-center gap-1.5 xs:gap-2'>
                             <span className='text-xs text-zinc-400 whitespace-nowrap'>article-info/</span>
                             <input
                                 value={form.shortName}
@@ -252,7 +252,7 @@ export default function AddArticle() {
             </div>
 
             {/* Actions */}
-            <div className='flex items-center justify-end gap-3 mt-7 pt-5 border-t border-gray-100'>
+            <div className='flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 mt-7 pt-5 border-t border-gray-100'>
                 <button
                     onClick={resetForm}
                     className='px-5 py-2.5 text-sm text-zinc-500 hover:text-zinc-700 border border-gray-200 rounded-lg transition-colors cursor-pointer'>

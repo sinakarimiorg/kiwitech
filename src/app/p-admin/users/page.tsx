@@ -10,14 +10,14 @@ import {
     PiWalletLight,
     PiProhibitLight,
 } from "react-icons/pi";
-import { AdminUser } from "@root/src/types/UserType";
+import { UserType } from "@root/src/types/UserType";
 
 export const dynamic = "force-dynamic"
 
 const page = async () => {
     await connectDB()
     const users = await UserModel.find({}).sort({ _id: -1 }).lean()
-    const initialUsers: AdminUser[] = JSON.parse(JSON.stringify(users))
+    const initialUsers: UserType[] = JSON.parse(JSON.stringify(users))
 
     const totalCount = initialUsers.length
     const blockedCount = initialUsers.filter(u => u.status === "مسدود").length
@@ -61,10 +61,10 @@ const page = async () => {
     return (
         <Layout>
             <main className="flex-1 min-w-0">
-                <div className="p-5 sm:p-6 flex flex-col gap-6">
-                    <h1 className="text-xl font-semibold text-zinc-900">مشتریان</h1>
+                <div className="p-4 sm:p-6 flex flex-col gap-6">
+                    <h1 className="text-lg sm:text-xl font-semibold text-zinc-900">مشتریان</h1>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                         <StatCard label="کل مشتریان" value={totalCount.toLocaleString('fa-IR')} icon={PiUsersLight} accent="primary" />
                         <StatCard label="مشتریان جدید این ماه" value={newThisMonthCount.toLocaleString('fa-IR')} icon={PiUserPlusLight} accent="neon" trend={{ value: `${Math.abs(trendValue).toLocaleString('fa-IR')}٪`, positive: true }} />
                         <StatCard label="مشتریان وفادار (با حداقل ۳ خرید)" value={`${loyalUsersCount} نفر`} trend={{ value: `${loyalUsersPercentage} %`, positive: true }} icon={PiUsersLight} accent="neon" />

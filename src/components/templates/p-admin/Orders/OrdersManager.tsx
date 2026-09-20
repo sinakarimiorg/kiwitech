@@ -38,13 +38,13 @@ export default function OrdersManager({ initialOrders }: OrdersManagerProps) {
         })
     }
     return (
-        <div className="p-5 sm:p-6 flex flex-col gap-6">
+        <div className="p-4 sm:p-6 flex flex-col gap-6">
             <div>
-                <h1 className="text-xl font-semibold text-zinc-900">سفارش‌ها</h1>
-                <p className="text-sm text-zinc-400 mt-1">مدیریت و پیگیری سفارش‌های ثبت‌شده در فروشگاه کیوی‌تک</p>
+                <h1 className="sm:text-lg md:text-xl font-semibold text-zinc-900">سفارش‌ها</h1>
+                <p className="text-xs md:text-sm text-zinc-400 mt-1">مدیریت و پیگیری سفارش‌های ثبت‌شده در فروشگاه کیوی‌تک</p>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                 <StatCard label="کل سفارش‌ها" value={initialOrders.length.toLocaleString('fa-IR')} icon={PiShoppingBagOpenLight} accent="primary" />
                 <StatCard label="در حال پردازش" value={processingCount.toLocaleString('fa-IR')} icon={PiHourglassLight} accent="danger" />
                 <StatCard label="ارسال شده" value={shippedCount.toLocaleString('fa-IR')} icon={PiTruckLight} accent="neon" />

@@ -6,7 +6,7 @@ import {
     PiUsersLight,
     PiPlusCircleLight,
 } from "react-icons/pi"
-import { AdminUser, UserRole, UserStatus } from "@root/src/types/UserType"
+import { UserType, UserRole, UserStatus } from "@root/src/types/UserType"
 import { addUserAction, deleteUserAction, toggleUserStatusAction, updateUserAction } from "./actions"
 import Swal from "sweetalert2"
 import UserModal from "./UserModal"
@@ -15,14 +15,14 @@ import UserBox from "./UserBox"
 const filters: ("همه" | UserStatus)[] = ["همه", "فعال", "مسدود"]
 
 type UsersListProps = {
-    initialUsers: AdminUser[]
+    initialUsers: UserType[]
 }
 
 export default function UsersList({ initialUsers }: UsersListProps) {
     const [search, setSearch] = useState("")
     const [activeFilter, setActiveFilter] = useState<"همه" | UserStatus>("همه")
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [editingUser, setEditingUser] = useState<AdminUser | null>(null)
+    const [editingUser, setEditingUser] = useState<UserType | null>(null)
     const [isPending, startTransition] = useTransition()
 
     const filtered = initialUsers.filter(u => {
@@ -36,7 +36,7 @@ export default function UsersList({ initialUsers }: UsersListProps) {
         setIsModalOpen(true)
     }
 
-    const openEditModal = (user: AdminUser) => {
+    const openEditModal = (user: UserType) => {
         setEditingUser(user)
         setIsModalOpen(true)
     }
@@ -96,21 +96,26 @@ export default function UsersList({ initialUsers }: UsersListProps) {
     return (
         <div className='bg-white shadow-lg rounded-2xl overflow-hidden'>
             {/* Header */}
-            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 sm:px-6 py-4 border-b border-gray-100'>
-                <h2 className='flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800'>
-                    <PiUsersLight className='w-5 h-5 text-primary-500' />
-                    لیست مشتریان
-                    <span className='text-xs font-IranYekan text-zinc-400'>({filtered.length})</span>
-                </h2>
+            <div className='flex flex-col gap-3 px-4 sm:px-6 py-4 border-b border-gray-100'>
+                <div className='flex items-center justify-between gap-3'>
+                    <h2 className='flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800'>
+                        <PiUsersLight className='w-5 h-5 text-primary-500' />
+                        لیست مشتریان
+                        <span className='text-xs font-IranYekan text-zinc-400'>({filtered.length})</span>
+                    </h2>
+                    <button onClick={openAddModal} className='flex sm:hidden flex-center w-9 h-9 text-text bg-primary-500 rounded-lg shrink-0'>
+                        <PiPlusCircleLight className='w-5 h-5' />
+                    </button>
+                </div>
 
-                <div className='flex items-center gap-3'>
+                <div className='flex flex-col sm:flex-row sm:items-center gap-3'>
                     {/* Status Filter */}
-                    <div className='flex items-center gap-1 p-1 bg-gray-50 border border-gray-200 rounded-xl text-xs'>
+                    <div className='flex items-center gap-1 p-1 bg-gray-50 border border-gray-200 rounded-xl text-xs w-fit'>
                         {filters.map(f => (
                             <button
                                 key={f}
                                 onClick={() => setActiveFilter(f)}
-                                className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer
+                                className={`px-3 py-1.5 rounded-lg transition-colors cursor-pointer whitespace-nowrap
                                     ${activeFilter === f
                                         ? "bg-primary-500 text-white font-IranYekanMedium"
                                         : "text-zinc-500 hover:text-zinc-700"}`}>
@@ -120,7 +125,7 @@ export default function UsersList({ initialUsers }: UsersListProps) {
                     </div>
 
                     {/* Search */}
-                    <div className='hidden sm:flex items-center gap-2 px-3.5 py-2 w-56 bg-gray-50 border border-gray-200 rounded-xl text-sm text-zinc-400 focus-within:border-primary-400 transition-colors'>
+                    <div className='flex items-center gap-2 px-3.5 py-2 w-full sm:w-56 bg-gray-50 border border-gray-200 rounded-xl text-sm text-zinc-400 focus-within:border-primary-400 transition-colors'>
                         <PiMagnifyingGlassLight className='w-4 h-4 shrink-0' />
                         <input
                             value={search}
@@ -131,9 +136,9 @@ export default function UsersList({ initialUsers }: UsersListProps) {
                         />
                     </div>
 
-                    <button onClick={openAddModal} className='flex-center gap-1.5 px-4 py-2 text-sm text-text linear_btn shrink-0'>
+                    <button onClick={openAddModal} className='hidden sm:flex flex-center gap-1.5 px-4 py-2 text-sm text-text linear_btn shrink-0'>
                         <PiPlusCircleLight className='w-4 h-4' />
-                        <span className='hidden sm:inline'>مشتری جدید</span>
+                        <span>مشتری جدید</span>
                     </button>
                 </div>
             </div>
@@ -142,7 +147,7 @@ export default function UsersList({ initialUsers }: UsersListProps) {
             <div className='overflow-x-auto'>
                 <table className='w-full text-sm'>
                     <thead>
-                        <tr className='text-xs text-zinc-400 border-b border-gray-100'>
+                        <tr className='hidden md:table-row text-xs text-zinc-400 border-b border-gray-100'>
                             <th className='font-IranYekanMedium px-5 sm:px-10 py-3 text-right'>مشتری</th>
                             <th className='font-IranYekanMedium px-5 sm:px-6 py-3'>نقش</th>
                             <th className='font-IranYekanMedium px-3 py-3'>شماره تماس</th>
@@ -167,7 +172,7 @@ export default function UsersList({ initialUsers }: UsersListProps) {
 
                         {filtered.length === 0 &&
                             <tr>
-                                <td colSpan={7} className='py-10 text-center text-zinc-400'>مشتری‌ای یافت نشد.</td>
+                                <td colSpan={8} className='py-10 text-center text-zinc-400'>مشتری‌ای یافت نشد.</td>
                             </tr>
                         }
                     </tbody>

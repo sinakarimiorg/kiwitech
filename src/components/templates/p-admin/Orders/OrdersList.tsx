@@ -33,20 +33,22 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
     return (
         <div className='bg-white shadow-lg rounded-2xl overflow-hidden'>
             {/* Header */}
-            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 sm:px-6 py-4 border-b border-gray-100'>
-                <h2 className='flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800'>
-                    <PiShoppingBagOpenLight className='w-5 h-5 text-primary-500' />
-                    لیست سفارش‌ها
-                    <span className='text-xs font-IranYekan text-zinc-400'>({filtered.length})</span>
-                </h2>
+            <div className='flex flex-col gap-3 px-4 sm:px-6 py-4 border-b border-gray-100'>
+                <div className='flex items-center justify-between gap-3'>
+                    <h2 className='flex items-center gap-2 font-IranYekanBold text-sm sm:text-base md:text-lg lg:text-xl text-zinc-800'>
+                        <PiShoppingBagOpenLight className='w-5 h-5 text-primary-500' />
+                        لیست سفارش‌ها
+                        <span className='text-xs font-IranYekan text-zinc-400'>({filtered.length})</span>
+                    </h2>
+                </div>
 
-                <div className='flex items-center gap-3'>
-                    <div className='flex items-center gap-1 p-1 bg-gray-50 border border-gray-200 rounded-xl text-xs overflow-x-auto'>
+                <div className='flex flex-col sm:flex-row sm:items-center gap-3'>
+                    <div className='flex items-center gap-1 p-1 bg-gray-50 border border-gray-200 rounded-xl text-xs overflow-x-auto scrollbar-none'>
                         {filters.map(f => (
                             <button
                                 key={f}
                                 onClick={() => setActiveFilter(f)}
-                                className={`px-3 py-1.5 whitespace-nowrap rounded-lg transition-colors cursor-pointer
+                                className={`px-1.5 md:px-3 py-0.75 md:py-1.5 whitespace-nowrap rounded-md md:rounded-lg transition-colors cursor-pointer text-[10px] md:text-base
                                     ${activeFilter === f
                                         ? "bg-primary-500 text-white font-IranYekanMedium"
                                         : "text-zinc-500 hover:text-zinc-700"}`}>
@@ -55,7 +57,7 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
                         ))}
                     </div>
 
-                    <div className='hidden lg:flex items-center gap-2 px-3.5 py-2 w-56 bg-gray-50 border border-gray-200 rounded-xl text-sm text-zinc-400 focus-within:border-primary-400 transition-colors'>
+                    <div className='flex items-center gap-2 px-3.5 py-2 w-full sm:w-56 text-xs md:text-sm bg-gray-50 border border-gray-200 rounded-xl text-zinc-400 focus-within:border-primary-400 transition-colors shrink-0'>
                         <PiMagnifyingGlassLight className='w-4 h-4 shrink-0' />
                         <input
                             value={search}
@@ -68,8 +70,8 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
                 </div>
             </div>
 
-            {/* Table */}
-            <div className='overflow-x-auto'>
+            {/* Table - md+ */}
+            <div className='hidden md:block overflow-x-auto'>
                 <table className='w-full text-sm'>
                     <thead>
                         <tr className='text-right text-xs text-zinc-400 border-b border-gray-100'>
@@ -125,11 +127,58 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
 
                         {filtered.length === 0 &&
                             <tr>
-                                <td colSpan={8} className='py-10 text-center text-zinc-400'>سفارشی یافت نشد.</td>
+                                <td colSpan={7} className='py-10 text-center text-zinc-400'>سفارشی یافت نشد.</td>
                             </tr>
                         }
                     </tbody>
                 </table>
+            </div>
+
+            {/* Cards - below md */}
+            <div className='md:hidden divide-y divide-gray-50'>
+                {filtered.length === 0 ? (
+                    <div className='py-10 text-center text-zinc-400'>سفارشی یافت نشد.</div>
+                ) : (
+                    filtered.map(order => (
+                        <div key={order._id} className='flex flex-col gap-2.5 px-4 py-4'>
+                            <div className='flex items-center justify-between gap-2'>
+                                <span className='font-IranYekanMedium text-[10px] text-zinc-700 tracking-wide'>
+                                    #{order._id.slice(-8).toUpperCase()}
+                                </span>
+                                <span className='text-[10px] text-zinc-400 whitespace-nowrap'>
+                                    {order.createdAt ? new Date(order.createdAt).toLocaleDateString('fa-IR') : '—'}
+                                </span>
+                            </div>
+
+                            <div className='flex items-center gap-1 text-xs text-zinc-600'>
+                                <PiUserCircleLight className='w-4 h-4 text-zinc-400 shrink-0' />
+                                {order.customer}
+                            </div>
+
+                            <div className='flex items-center justify-between gap-2'>
+                                <span className='text-xs text-zinc-400'>{order.items.reduce((s, i) => s + i.count, 0)} عدد کالا</span>
+                                <span className='font-IranYekanMedium text-xs text-zinc-700'>{getOrderTotal(order).toLocaleString()} تومان</span>
+                            </div>
+
+                            <div className='flex items-center justify-between gap-1 pt-2 mt-1 border-t border-dashed border-gray-100'>
+                                <select
+                                    value={order.status}
+                                    onChange={e => onStatusChange(order._id, e.target.value as OrderStatus)}
+                                    className={`px-1.25 py-0.5 text-[10px] rounded-md outline-none cursor-pointer border-0 ${statusStyle[order.status]}`}>
+                                    {statusOptions.map(s => (
+                                        <option key={s} value={s}>{s}</option>
+                                    ))}
+                                </select>
+                                <button
+                                    onClick={() => onView(order)}
+                                    className='flex-center gap-1 px-1.5 py-1 text-[10px] text-primary-600 bg-primary-50 rounded-lg cursor-pointer'>
+                                    <PiEyeLight className='w-3.5 h-3.5' />
+                                    مشاهده
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     )

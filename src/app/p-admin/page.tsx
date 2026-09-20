@@ -85,8 +85,8 @@ const page = async () => {
     return (
         <Layout>
             <main className='flex-1 min-w-0'>
-                <div className="p-5 sm:p-6 flex flex-col gap-6">
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                <div className="p-4 sm:p-6 flex flex-col gap-6">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
                         <StatCard
                             label="فروش امروز"
                             value={`${todaySales.toLocaleString()} تومان`}
@@ -111,7 +111,7 @@ const page = async () => {
                         </div>
 
                         {/* Low Stock */}
-                        <div className="bg-white shadow-lg rounded-2xl p-5 sm:p-6">
+                        <div className="bg-white shadow-lg rounded-2xl p-4 sm:p-5 lg:p-6">
                             <div className="flex items-center gap-2 pb-4 mb-4 border-b border-gray-100">
                                 <PiWarningCircleLight className="w-5 h-5 text-amber-500" />
                                 <h2 className="font-IranYekanBold text-base text-zinc-800">موجودی رو به اتمام</h2>
@@ -138,14 +138,15 @@ const page = async () => {
 
                     {/* Recent Orders */}
                     <div className="bg-white shadow-lg rounded-2xl overflow-hidden">
-                        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-gray-100">
+                        <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100">
                             <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">آخرین سفارش‌ها</h2>
-                            <Link href="/p-admin/orders" className="text-sm text-primary-600 hover:text-primary-700 transition-colors">
+                            <Link href="/p-admin/orders" className="text-xs md:text-sm text-primary-600 hover:text-primary-700 transition-colors">
                                 مشاهده همه
                             </Link>
                         </div>
 
-                        <div className="overflow-x-auto">
+                        {/* Table - md+ */}
+                        <div className="hidden md:block overflow-x-auto">
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="text-right text-xs text-zinc-400 border-b border-gray-100">
@@ -160,7 +161,7 @@ const page = async () => {
                                     {recentOrders.length > 0 ? (
                                         recentOrders.map(order => (
                                             <tr key={order._id} className="hover:bg-primary-50/30 transition-colors">
-                                                <td className="px-5 sm:px-6 py-3.5 font-IranYekanMedium text-zinc-700 tracking-wide" dir='ltr'>
+                                                <td className="px-5 sm:px-6 py-3.5 font-IranYekanMedium text-zinc-700 tracking-wide">
                                                     #{order._id.slice(-8).toUpperCase()}
                                                 </td>
                                                 <td className="px-3 py-3.5 text-zinc-600">{order.customer}</td>
@@ -187,6 +188,36 @@ const page = async () => {
                                     )}
                                 </tbody>
                             </table>
+                        </div>
+
+                        {/* Cards - below md */}
+                        <div className="md:hidden divide-y divide-gray-50">
+                            {recentOrders.length > 0 ? (
+                                recentOrders.map(order => (
+                                    <div key={order._id} className="flex flex-col gap-2 px-4 py-4">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="font-IranYekanMedium text-[10px] text-zinc-700 tracking-wide">
+                                                #{order._id.slice(-8).toUpperCase()}
+                                            </span>
+                                            <span className={`px-2.5 py-1 text-[10px] rounded-md ${statusStyle[order.status]}`}>
+                                                {order.status}
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center justify-between gap-2 text-sm">
+                                            <span className="text-sm text-zinc-600">{order.customer}</span>
+                                            <span className="inline-flex items-center gap-1 text-sm text-zinc-700 font-IranYekanMedium">
+                                                {getOrderTotal(order).toLocaleString()}
+                                                <TomanIcon className="w-3 h-3" />
+                                            </span>
+                                        </div>
+                                        <span className="text-xs text-zinc-400">
+                                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString('fa-IR') : '—'}
+                                        </span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="py-10 text-center text-zinc-400">سفارشی ثبت نشده است.</div>
+                            )}
                         </div>
                     </div>
                 </div>

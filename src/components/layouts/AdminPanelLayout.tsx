@@ -9,11 +9,11 @@ type LayoutProps = {
 const Layout = async ({ children }: LayoutProps) => {
 
   return (
-    <div className='flex bg-background'>
+    <div className='flex bg-background min-h-screen'>
       <div>
         <AdminSidebar />
       </div>
-      <div className='flex-1'>
+      <div className='flex-1 min-w-0'>
         <Header />
         {children}
       </div>
