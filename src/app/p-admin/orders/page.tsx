@@ -4,6 +4,8 @@ import { connectDB } from "@root/src/lib/mongodb";
 import OrderModel from "@models/Order"
 import { AdminOrder } from "@root/src/types/adminOrderType"
 
+export const dynamic = "force-dynamic"
+
 const page = async () => {
     await connectDB()
     const orders = await OrderModel.find({}).sort({ _id: -1 }).lean()

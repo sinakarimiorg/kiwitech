@@ -25,15 +25,16 @@ export interface UserType {
     addresses: UserAddress[]
     favorites: string[]
     walletBalance: number
+    isSeenByAdmin: Boolean
 }
 
-export interface UserProfile  {
+export interface UserProfile {
     _id: string
     name: string
     phone: string
-    email ?: string
-    nationalCode ?: string
-    birthDate ?: string
+    email?: string
+    nationalCode?: string
+    birthDate?: string
     walletBalance: number
     status: UserStatus
 }

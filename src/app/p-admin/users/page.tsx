@@ -22,6 +22,9 @@ const page = async () => {
     const totalCount = initialUsers.length
     const blockedCount = initialUsers.filter(u => u.status === "مسدود").length
 
+    //reset new users badge count
+    await UserModel.updateMany({ isSeenByAdmin: false }, { isSeenByAdmin: true })
+
     // ----------------------- Calculating avrage of new users in this month and last one------------------------
     const now = new Date()
     const currentYear = now.getFullYear()

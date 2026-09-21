@@ -35,7 +35,7 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
             {/* Header */}
             <div className='flex flex-col gap-3 px-4 sm:px-6 py-4 border-b border-gray-100'>
                 <div className='flex items-center justify-between gap-3'>
-                    <h2 className='flex items-center gap-2 font-IranYekanBold text-sm sm:text-base md:text-lg lg:text-xl text-zinc-800'>
+                    <h2 className='flex items-center gap-2 font-IranYekanBold text-sm sm:text-base md:text-lg text-zinc-800'>
                         <PiShoppingBagOpenLight className='w-5 h-5 text-primary-500' />
                         لیست سفارش‌ها
                         <span className='text-xs font-IranYekan text-zinc-400'>({filtered.length})</span>
@@ -48,7 +48,7 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
                             <button
                                 key={f}
                                 onClick={() => setActiveFilter(f)}
-                                className={`px-1.5 md:px-3 py-0.75 md:py-1.5 whitespace-nowrap rounded-md md:rounded-lg transition-colors cursor-pointer text-[10px] md:text-base
+                                className={`px-1.5 md:px-3 py-0.75 md:py-1.5 whitespace-nowrap rounded-md md:rounded-lg transition-colors cursor-pointer text-[10px] sm:text-xs lg:text-sm
                                     ${activeFilter === f
                                         ? "bg-primary-500 text-white font-IranYekanMedium"
                                         : "text-zinc-500 hover:text-zinc-700"}`}>

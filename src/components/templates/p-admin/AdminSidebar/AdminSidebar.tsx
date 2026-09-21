@@ -15,14 +15,13 @@ import {
     PiGearLight,
     PiSignOutLight,
     PiCaretRightLight,
-    PiArticle,
-    PiWallet,
     PiWalletLight,
     PiArticleLight,
     PiListLight,
     PiXBold,
 } from 'react-icons/pi'
 import type { IconType } from 'react-icons'
+import { AdminSidebarBadges } from '@root/src/lib/admin/sidebarBadges'
 
 type NavItem = {
     key: string
@@ -32,23 +31,28 @@ type NavItem = {
     badge?: number
 }
 
-const navItems: NavItem[] = [
-    { key: 'dashboard', label: 'داشبورد', href: '/p-admin', icon: PiSquaresFourLight },
-    { key: 'wallet', label: 'کیف پول و تراکنش‌ها', href: '/p-admin/wallet', icon: PiWalletLight },
-    { key: 'orders', label: 'سفارش‌ها', href: '/p-admin/orders', icon: PiShoppingBagOpenLight, badge: 12 },
-    { key: 'products', label: 'محصولات', href: '/p-admin/products', icon: PiPackageLight },
-    { key: 'categories', label: 'دسته‌بندی‌ها', href: '/p-admin/categories', icon: PiTagLight },
-    { key: 'customers', label: 'کاربران', href: '/p-admin/users', icon: PiUsersLight },
-    { key: 'comments', label: 'نظرات کاربران', href: '/p-admin/comments', icon: PiChatCircleTextLight, badge: 5 },
-    { key: 'discounts', label: 'کدهای تخفیف', href: '/p-admin/discounts', icon: PiPercentLight },
-    { key: 'articles', label: 'مقالات', href: '/p-admin/articles', icon: PiArticleLight },
-    { key: 'banners', label: 'بنرها و اسلایدر', href: '/p-admin/banners', icon: PiImagesLight },
-]
 
-export default function AdminSidebar() {
+type AdminSidebarProps = {
+    badges?: AdminSidebarBadges
+}
+
+export default function AdminSidebar({ badges }: AdminSidebarProps) {
     const pathname = usePathname()
     const [collapsed, setCollapsed] = useState(false)
     const [mobileOpen, setMobileOpen] = useState(false)
+
+    const navItems: NavItem[] = [
+        { key: 'dashboard', label: 'داشبورد', href: '/p-admin', icon: PiSquaresFourLight },
+        { key: 'wallet', label: 'کیف پول و تراکنش‌ها', href: '/p-admin/wallet', icon: PiWalletLight },
+        { key: 'orders', label: 'سفارش‌ها', href: '/p-admin/orders', icon: PiShoppingBagOpenLight, badge: badges?.orders },
+        { key: 'products', label: 'محصولات', href: '/p-admin/products', icon: PiPackageLight },
+        { key: 'categories', label: 'دسته‌بندی‌ها', href: '/p-admin/categories', icon: PiTagLight },
+        { key: 'users', label: 'کاربران', href: '/p-admin/users', icon: PiUsersLight, badge: badges?.users },
+        { key: 'comments', label: 'نظرات کاربران', href: '/p-admin/comments', icon: PiChatCircleTextLight, badge: badges?.comments },
+        { key: 'discounts', label: 'کدهای تخفیف', href: '/p-admin/discounts', icon: PiPercentLight },
+        { key: 'articles', label: 'مقالات', href: '/p-admin/articles', icon: PiArticleLight },
+        { key: 'banners', label: 'بنرها و اسلایدر', href: '/p-admin/banners', icon: PiImagesLight },
+    ]
 
     const renderNav = (forceExpanded: boolean) => (
         <nav className="flex flex-col gap-1 px-3 py-5 overflow-x-hidden overflow-y-auto">
@@ -56,6 +60,8 @@ export default function AdminSidebar() {
                 const isActive = pathname === item.href
                 const Icon = item.icon
                 const showLabel = forceExpanded || !collapsed
+
+                const hasBadge = typeof item.badge === "number" && item.badge > 0
                 return (
                     <Link
                         key={item.key}
@@ -69,13 +75,13 @@ export default function AdminSidebar() {
                         }
                     >
                         <Icon className="w-5 h-5 shrink-0" />
-                        {showLabel && <span className="whitespace-nowrap">{item.label}</span>}
-                        {item.badge && showLabel && (
+                        { showLabel && <span className="whitespace-nowrap">{item.label}</span>}
+                        {hasBadge && showLabel && (
                             <span className="mr-auto flex-center min-w-5 h-5 px-1 text-[11px] bg-neon text-surface font-IranYekanBold rounded-full">
                                 {item.badge}
                             </span>
                         )}
-                        {item.badge && !showLabel && (
+                        {hasBadge && !showLabel && (
                             <span className="absolute top-1 left-1 w-2 h-2 bg-neon rounded-full" />
                         )}
                     </Link>

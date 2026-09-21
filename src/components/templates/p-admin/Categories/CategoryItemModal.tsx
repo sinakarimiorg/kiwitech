@@ -49,13 +49,13 @@ export default function CategoryItemModal({ initialTitle, onClose, onSave, isSav
                     <button
                         onClick={handleSubmit}
                         disabled={isSaving}
-                        className="  flex-center h-11 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="md:flex-1 flex-center h-11 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                         {isSaving ? 'در حال ذخیره...' : 'ذخیره'}
                     </button>
                     <button
                         onClick={onClose}
-                        className="  flex-center h-11 text-sm text-zinc-600 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors cursor-pointer"
+                        className="md:flex-1 flex-center h-11 text-sm text-zinc-600 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors cursor-pointer"
                     >
                         انصراف
                     </button>

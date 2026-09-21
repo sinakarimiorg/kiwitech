@@ -30,6 +30,7 @@ const UserSchema = new Schema<IUser>(
         addresses: { type: [AddressSchema], default: [] },
         favorites: [{ type: Schema.Types.ObjectId, ref: "Product" }],
         walletBalance: { type: Number, default: 0 },
+        isSeenByAdmin: { type: Boolean, default: false },
     },
     { timestamps: true }
 );

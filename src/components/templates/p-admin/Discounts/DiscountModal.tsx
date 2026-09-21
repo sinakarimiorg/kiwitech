@@ -162,13 +162,13 @@ export default function DiscountModal({ initialData, onClose, onSave, isSaving }
                 <div className="flex flex-col sm:flex-row items-stretch gap-3 mt-6 pt-5 border-t border-gray-100">
                     <button
                         onClick={handleSubmit}
-                        className="  flex-center h-11 text-sm text-text linear_btn"
+                        className="md:flex-1  flex-center h-11 text-sm text-text linear_btn"
                     >
                         {isSaving ? 'در حال ذخیره...' : initialData ? 'ذخیره تغییرات' : 'افزودن کد تخفیف'}
                     </button>
                     <button
                         onClick={onClose}
-                        className="  flex-center h-11 text-sm text-zinc-600 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors cursor-pointer"
+                        className="md:flex-1 flex-center h-11 text-sm text-zinc-600 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors cursor-pointer"
                     >
                         انصراف
                     </button>

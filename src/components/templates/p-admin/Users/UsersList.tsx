@@ -132,7 +132,7 @@ export default function UsersList({ initialUsers }: UsersListProps) {
                             onChange={e => setSearch(e.target.value)}
                             type='text'
                             placeholder='نام یا شماره موبایل...'
-                            className='w-full bg-transparent outline-none placeholder:text-zinc-400'
+                            className='w-full bg-transparent outline-none text-xs md:text-sm placeholder:text-zinc-400'
                         />
                     </div>
 
