@@ -15,6 +15,7 @@ export interface AdminOrder {
     items: OrderItem[]
     shippingCost: number
     status: OrderStatus
+    isRead?: boolean
     createdAt?: string
 }
 

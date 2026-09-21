@@ -3,7 +3,7 @@ import OrderModel from "@root/src/models/Order"
 import CommentModel from "@root/src/models/Comment"
 import ProductModel from "@root/src/models/Product"
 
-export type NotificationType = "order" | "comment" | "product"
+export type NotificationType = "order" | "comment" | "product" | "message"
 
 export type AdminNotificationItem = {
     _id: string
@@ -21,6 +21,9 @@ export type AdminNotificationsData = {
     totalCount: number
 }
 
+const LOW_STOCK_THRESHOLD = 5
+const LIST_LIMIT = 8
+
 export async function getAdminNotifications(): Promise<AdminNotificationsData> {
     try {
         await connectDB()
@@ -28,14 +31,14 @@ export async function getAdminNotifications(): Promise<AdminNotificationsData> {
         const [pendingOrdersRaw, pendingCommentsRaw, lowStockRaw] = await Promise.all([
             OrderModel.find({ status: "در حال پردازش" })
                 .sort({ _id: -1 })
-                .limit(5)
+                .limit(LIST_LIMIT)
                 .lean(),
             CommentModel.find({ status: "در انتظار بررسی" })
                 .populate("product", "name")
                 .sort({ _id: -1 })
-                .limit(5)
+                .limit(LIST_LIMIT)
                 .lean(),
-            ProductModel.find({ stock: { $lte: 3 } })
+            ProductModel.find({ stock: { $lte: LOW_STOCK_THRESHOLD } })
                 .sort({ stock: 1 })
                 .limit(5)
                 .lean(),
@@ -47,7 +50,7 @@ export async function getAdminNotifications(): Promise<AdminNotificationsData> {
             type: "order",
             subtitle: `${o.items?.length ?? 0} قلم کالا`,
             createdAt: o.createdAt ? new Date(o.createdAt).toISOString() : undefined,
-            read: false,
+            read: o.isRead === true,
         }))
 
         const pendingComments: AdminNotificationItem[] = pendingCommentsRaw.map((c: any) => ({
@@ -56,7 +59,7 @@ export async function getAdminNotifications(): Promise<AdminNotificationsData> {
             type: "comment",
             subtitle: c.product?.name ?? "محصول حذف‌شده",
             createdAt: c.createdAt ? new Date(c.createdAt).toISOString() : undefined,
-            read: false,
+            read: c.isRead === true,
         }))
 
         const lowStockProducts: AdminNotificationItem[] = lowStockRaw.map((p: any) => ({

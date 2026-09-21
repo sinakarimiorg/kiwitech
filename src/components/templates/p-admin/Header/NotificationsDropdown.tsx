@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, useTransition } from "react"
 import Link from "next/link"
 import {
     PiBellLight,
@@ -8,21 +8,36 @@ import {
     PiPackageLight,
     PiChatCircleTextLight,
     PiWarningCircleLight,
+    PiEnvelopeSimpleLight,
 } from "react-icons/pi"
-import { AdminNotificationsData, AdminNotificationItem } from "@root/src/lib/admin/notifications"
+import type { IconType } from "react-icons"
+import { AdminNotificationsData, AdminNotificationItem, NotificationType } from "@root/src/lib/admin/notifications"
+import {
+    markOrderNotificationReadAction,
+    markCommentNotificationReadAction,
+    markAllNotificationsReadAction,
+} from "./actions"
 import NotifictionBox from "./NotifictionBox"
 
 type NotificationsDropdownProps = {
     notifications: AdminNotificationsData
 }
 
+const sectionMeta: Record<NotificationType, { label: string; icon: IconType; color: string }> = {
+    order: { label: "سفارش‌های در حال پردازش", icon: PiPackageLight, color: "text-primary-500" },
+    comment: { label: "نظرات در انتظار بررسی", icon: PiChatCircleTextLight, color: "text-amber-500" },
+    product: { label: "موجودی رو به اتمام", icon: PiWarningCircleLight, color: "text-danger" },
+    message: { label: "پیام‌های تماس با ما", icon: PiEnvelopeSimpleLight, color: "text-sky-500" },
+}
+
 export default function NotificationsDropdown({ notifications: initialData }: NotificationsDropdownProps) {
     const [isOpen, setIsOpen] = useState(false)
-    const [notificationsData, setNotificationsData] = useState<AdminNotificationsData>(initialData)
+    const [data, setData] = useState<AdminNotificationsData>(initialData)
+    const [isPending, startTransition] = useTransition()
     const wrapperRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        setNotificationsData(initialData)
+        setData(initialData)
     }, [initialData])
 
     useEffect(() => {
@@ -36,35 +51,56 @@ export default function NotificationsDropdown({ notifications: initialData }: No
     }, [])
 
     const allItems = [
-        ...notificationsData.pendingOrders,
-        ...notificationsData.pendingComments,
-        ...notificationsData.lowStockProducts,
+        ...data.pendingOrders,
+        ...data.pendingComments,
+        ...data.lowStockProducts,
     ]
     const unreadCount = allItems.filter(item => !item.read).length
 
-    const markAsRead = (id: string) => {
-        const updateList = (list: AdminNotificationItem[]) =>
-            list.map(item => (item._id === id ? { ...item, read: true } : item))
-
-        setNotificationsData(prev => ({
+    const updateItemInState = (id: string, patch: Partial<AdminNotificationItem>) => {
+        setData(prev => ({
             ...prev,
-            pendingOrders: updateList(prev.pendingOrders),
-            pendingComments: updateList(prev.pendingComments),
-            lowStockProducts: updateList(prev.lowStockProducts),
+            pendingOrders: prev.pendingOrders.map(i => (i._id === id ? { ...i, ...patch } : i)),
+            pendingComments: prev.pendingComments.map(i => (i._id === id ? { ...i, ...patch } : i)),
         }))
+    }
+
+    const handleItemClick = (item: AdminNotificationItem) => {
+        setIsOpen(false)
+        if (item.read || item.type === "product") return
+
+        updateItemInState(item._id, { read: true })
+
+        startTransition(async () => {
+            const action = item.type === "order" ? markOrderNotificationReadAction : markCommentNotificationReadAction
+            const res = await action(item._id)
+            if (!res.success) updateItemInState(item._id, { read: false })
+        })
     }
 
     const markAllAsRead = () => {
-        const markList = (list: AdminNotificationItem[]) =>
-            list.map(item => ({ ...item, read: true }))
+        const orderIds = data.pendingOrders.filter(o => !o.read).map(o => o._id)
+        const commentIds = data.pendingComments.filter(c => !c.read).map(c => c._id)
+        if (!orderIds.length && !commentIds.length) return
 
-        setNotificationsData(prev => ({
+        const snapshot = data
+        setData(prev => ({
             ...prev,
-            pendingOrders: markList(prev.pendingOrders),
-            pendingComments: markList(prev.pendingComments),
-            lowStockProducts: markList(prev.lowStockProducts),
+            pendingOrders: prev.pendingOrders.map(i => ({ ...i, read: true })),
+            pendingComments: prev.pendingComments.map(i => ({ ...i, read: true })),
         }))
+
+        startTransition(async () => {
+            const res = await markAllNotificationsReadAction(orderIds, commentIds)
+            if (!res.success) setData(snapshot)
+        })
     }
+
+    const sections: { type: NotificationType; items: AdminNotificationItem[]; href: string }[] = [
+        { type: "order", items: data.pendingOrders, href: "/p-admin/orders" },
+        { type: "comment", items: data.pendingComments, href: "/p-admin/comments" },
+        { type: "product", items: data.lowStockProducts, href: "/p-admin/products" },
+    ]
 
     return (
         <div ref={wrapperRef} className="relative">
@@ -92,10 +128,11 @@ export default function NotificationsDropdown({ notifications: initialData }: No
                                 </span>
                             )}
                         </h3>
-                        {unreadCount > 0 && (
+                        {(data.pendingOrders.some(i => !i.read) || data.pendingComments.some(i => !i.read)) && (
                             <button
                                 onClick={markAllAsRead}
-                                className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 transition-colors cursor-pointer"
+                                disabled={isPending}
+                                className="flex items-center gap-1 text-xs text-primary-600 hover:text-primary-700 transition-colors cursor-pointer disabled:opacity-50"
                             >
                                 <PiCheckCircleLight className="w-3.5 h-3.5" />
                                 خواندن همه
@@ -107,47 +144,29 @@ export default function NotificationsDropdown({ notifications: initialData }: No
                         <div className="py-10 text-center text-sm text-zinc-400">اعلان جدیدی وجود ندارد.</div>
                     ) : (
                         <div className="flex flex-col">
-                            {/* Pending Orders Section---------------------------------------- */}
-                            {notificationsData.pendingOrders.length > 0 && (
-                                <div className="px-4 py-3 border-b border-gray-50">
-                                    <p className="flex items-center gap-1.5 mb-2 text-xs font-IranYekanMedium text-zinc-400">
-                                        <PiPackageLight className="w-4 h-4 text-primary-500" />
-                                        سفارش‌های در حال پردازش
-                                    </p>
-                                    <div className="flex flex-col gap-1">
-                                        {notificationsData.pendingOrders.map(item => (
-                                            <NotifictionBox key={item._id} item={item} markAsRead={markAsRead} setIsOpen={setIsOpen} href="/p-admin/orders"/>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                            {/* Comments Section---------------------------------------- */}
-                            {notificationsData.pendingComments.length > 0 && (
-                                <div className="px-4 py-3 border-b border-gray-50">
-                                    <p className="flex items-center gap-1.5 mb-2 text-xs font-IranYekanMedium text-zinc-400">
-                                        <PiChatCircleTextLight className="w-4 h-4 text-amber-500" />
-                                        نظرات در انتظار بررسی
-                                    </p>
-                                    <div className="flex flex-col gap-1">
-                                        {notificationsData.pendingComments.map(item => (
-                                            <NotifictionBox key={item._id} item={item} markAsRead={markAsRead} setIsOpen={setIsOpen} href="/p-admin/comments"/>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                            {/* Low Stock Products Section---------------------------------------- */}
-                            {notificationsData.lowStockProducts.length > 0 && (
-                                <div className="px-4 py-3">
-                                    <p className="flex items-center gap-1.5 mb-2 text-xs font-IranYekanMedium text-zinc-400">
-                                        <PiWarningCircleLight className="w-4 h-4 text-danger" />
-                                        موجودی رو به اتمام
-                                    </p>
-                                    <div className="flex flex-col gap-1">
-                                        {notificationsData.lowStockProducts.map(item => (
-                                            <NotifictionBox key={item._id} item={item} markAsRead={markAsRead} setIsOpen={setIsOpen} href="/p-admin/products"/>
-                                        ))}
-                                    </div>
-                                </div>
+                            {sections.map(
+                                section =>
+                                    section.items.length > 0 && (
+                                        <div key={section.type} className="px-4 py-3 border-b border-gray-50 last:border-b-0">
+                                            <p className="flex items-center gap-1.5 mb-2 text-xs font-IranYekanMedium text-zinc-400">
+                                                {(() => {
+                                                    const Icon = sectionMeta[section.type].icon
+                                                    return <Icon className={`w-4 h-4 ${sectionMeta[section.type].color}`} />
+                                                })()}
+                                                {sectionMeta[section.type].label}
+                                            </p>
+                                            <div className="flex flex-col gap-1">
+                                                {section.items.map(item => (
+                                                    <NotifictionBox
+                                                        key={item._id}
+                                                        item={item}
+                                                        href={section.href}
+                                                        onClick={() => handleItemClick(item)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )
                             )}
                         </div>
                     )}

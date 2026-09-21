@@ -1,33 +1,28 @@
 "use client"
+
 import Link from "next/link";
 import { AdminNotificationItem } from "@root/src/lib/admin/notifications";
 
 type NotificationBoxProps = {
     item: AdminNotificationItem
-    markAsRead: (id: string) => void
-    setIsOpen: (isOpen: boolean) => void
-    href?: string
+    href: string
+    onClick: () => void
 }
 
-const NotifictionBox = ({
-    item,
-    markAsRead,
-    setIsOpen,
-    href,
-}: NotificationBoxProps) => {
+const NotifictionBox = ({ item, href, onClick }: NotificationBoxProps) => {
 
     return (
         <Link
-            href= {href ?? "#"}
-            onClick={() => {
-                markAsRead(item._id)
-                setIsOpen(false)
-            }}
-            className={`flex-col items-center justify-between gap-2 mt-1 px-2.5 py-2 rounded-lg transition-colors ${item.read ? "hover:bg-gray-50/20" : "bg-primary-50/90 hover:bg-primary-50"
-                }`}
+            href={href}
+            onClick={onClick}
+            className={`flex flex-col gap-0.5 px-2.5 py-2 rounded-lg transition-colors
+                ${item.read ? "hover:bg-gray-50" : "bg-primary-50/80 hover:bg-primary-50"}`}
         >
-            <span className="text-xs sm:text-sm text-zinc-700 line-clamp-1">{item.title}</span>
-            <span className="text-[11px] text-zinc-400 shrink-0">{item.subtitle}</span>
+            <span className="flex items-center gap-1.5 text-xs sm:text-sm text-zinc-700 line-clamp-1">
+                {!item.read && <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />}
+                {item.title}
+            </span>
+            <span className="text-[11px] text-zinc-400 pr-3">{item.subtitle}</span>
         </Link>
     )
 }

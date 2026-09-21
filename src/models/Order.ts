@@ -26,6 +26,7 @@ const OrderSchema = new Schema<IOrder>(
             enum: ["در حال پردازش", "ارسال شده", "تحویل شده", "لغو شده"],
             default: "در حال پردازش",
         },
+        isRead: { type: Boolean, default: false },
     },
     {
         timestamps: true

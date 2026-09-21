@@ -12,5 +12,6 @@ export interface AdminComment {
     text: string
     rating: number
     status: CommentStatus
+    isRead?: boolean
     createdAt?: string
 }
