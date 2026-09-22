@@ -1,5 +1,4 @@
 import Layout from '@root/src/components/layouts/UserPanelLayout'
-import ProductCard from '@root/src/components/templates/Product/ProductCard/ProductCard'
 import { getCurrentUser } from '@root/src/lib/auth/session'
 import { connectDB } from '@root/src/lib/mongodb'
 import { redirect } from 'next/navigation'
@@ -7,29 +6,24 @@ import { PiHeartLight } from 'react-icons/pi'
 import FavoriteModel from '@models/Favorite'
 import '@models/Product'
 import { FavoriteProduct } from '@root/src/types/userFavoriteType'
+import FavoriteProductCard from '@root/src/components/templates/P-user/Favorites/FavoriteProductCard'
 
 export const dynamic = "force-dynamic"
 
-function getDiscount(price: number, exPrice?: number) {
-    if (!exPrice || exPrice <= price) return undefined
-    return Math.round(((exPrice - price) / exPrice) * 100)
-}
-
-
 async function page() {
     const user = await getCurrentUser()
-    if(!user) redirect('/login-register')
+    if (!user) redirect('/login-register')
 
-        await connectDB()
+    await connectDB()
 
-        const favorites = await FavoriteModel.find({user: user._id})
-        .populate('product', 'name linkName price exPrice discount img')
-        .sort({_id: -1})
+    const favorites = await FavoriteModel.find({ user: user._id })
+        .populate('product', 'name linkName price exPrice discount img stock')
+        .sort({ _id: -1 })
         .lean()
 
-        const products: FavoriteProduct[] = JSON.parse(JSON.stringify(favorites.map((f: any)=> f.product).filter(Boolean)))
+    const products: FavoriteProduct[] = JSON.parse(JSON.stringify(favorites.map((f: any) => f.product).filter(Boolean)))
 
-        return (
+    return (
         <Layout>
             <main className='flex-1 min-w-0'>
                 {products.length === 0 ? (
@@ -45,15 +39,7 @@ async function page() {
                 ) : (
                     <div className='grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4'>
                         {products.map(product => (
-                            <ProductCard
-                                key={product._id}
-                                shortName={product.linkName || product._id}
-                                img={product.img}
-                                title={product.name}
-                                price={product.price}
-                                exPrice={product.exPrice}
-                                discount={getDiscount(product.price, product.exPrice)}
-                            />
+                            <FavoriteProductCard key={product._id} product={product} />
                         ))}
                     </div>
                 )}

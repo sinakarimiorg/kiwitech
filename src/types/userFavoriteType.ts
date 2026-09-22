@@ -6,4 +6,5 @@ export interface FavoriteProduct {
     exPrice?: number
     discount?: number
     img: string
+    stock?: number
 }
