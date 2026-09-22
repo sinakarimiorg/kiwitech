@@ -47,7 +47,7 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
                                 <PiUserCircleLight className="w-4 h-4" />
                                 مشتری
                             </div>
-                            <p className="text-sm font-IranYekanMedium text-zinc-800">{order.customer}</p>
+                            <p className="text-sm font-IranYekanMedium text-zinc-800">{order.user?.name ?? 'کاربر حذف‌شده'}</p>
                             <p className="text-xs text-zinc-500 mt-1 tracking-wide">{order.phone}</p>
                         </div>
                         <div className="p-4 bg-gray-50 rounded-xl">

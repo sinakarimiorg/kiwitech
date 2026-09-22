@@ -1,6 +1,6 @@
 "use client"
 
-import { UserProfile } from "@root/src/types/UserType";
+import { UserProfile } from "@root/src/types/userType";
 import { useState } from "react";
 import { PiUserCircleLight, PiPencilSimpleLight } from "react-icons/pi";
 import EditProfileModal from "./EditProfileModal"

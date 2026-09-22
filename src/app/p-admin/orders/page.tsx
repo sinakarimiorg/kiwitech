@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic"
 
 const page = async () => {
     await connectDB()
-    const orders = await OrderModel.find({}).sort({ _id: -1 }).lean()
+    const orders = await OrderModel.find({}).populate("user", "name phone").sort({ _id: -1 }).lean()
     const initialOrders: AdminOrder[] = JSON.parse(JSON.stringify(orders))
 
     return (

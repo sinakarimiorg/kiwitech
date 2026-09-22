@@ -164,7 +164,7 @@ const page = async () => {
                                                 <td className="px-5 sm:px-6 py-3.5 font-IranYekanMedium text-zinc-700 tracking-wide">
                                                     #{order._id.slice(-8).toUpperCase()}
                                                 </td>
-                                                <td className="px-3 py-3.5 text-zinc-600">{order.customer}</td>
+                                                <td className="px-3 py-3.5 text-zinc-600">{order.user?.name ?? '—'}</td>
                                                 <td className="px-3 py-3.5">
                                                     <span className="inline-flex items-center gap-1 text-zinc-700">
                                                         {getOrderTotal(order).toLocaleString()}
@@ -204,7 +204,7 @@ const page = async () => {
                                             </span>
                                         </div>
                                         <div className="flex items-center justify-between gap-2 text-sm">
-                                            <span className="text-sm text-zinc-600">{order.customer}</span>
+                                            <span className="text-sm text-zinc-600">{order.user?.name ?? '—'}</span>
                                             <span className="inline-flex items-center gap-1 text-sm text-zinc-700 font-IranYekanMedium">
                                                 {getOrderTotal(order).toLocaleString()}
                                                 <TomanIcon className="w-3 h-3" />

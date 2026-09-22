@@ -1,20 +1,20 @@
 "use client"
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import CheckoutSteps from '@root/src/components/templates/Checkout/CheckoutSteps/CheckoutSteps'
-import allProducts from '@root/Products'
+import { showSwal } from '@/utils/helpers'
 
 import { HiMiniChevronLeft } from 'react-icons/hi2'
 import { PiMapPinLight, PiCreditCardLight, PiMoneyLight, PiCheckCircleFill } from 'react-icons/pi'
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 import AsideBox from '@root/src/components/templates/P-user/AsideBox/AsideBox'
+import { createOrderAction } from '@root/src/components/templates/P-user/Orders/actions'
 
-// آدرس انتخاب‌شده در مرحله‌ی قبل - در پروژه‌ی واقعی از state مشترک (context/ردوکس) خوانده می‌شود
 const selectedAddress = {
     title: 'خانه',
     receiver: 'سینا کریمی',
@@ -22,7 +22,12 @@ const selectedAddress = {
     fullAddress: 'تهران، خیابان ولیعصر، بالاتر از میدان ونک، پلاک ۱۲، واحد ۳',
 }
 
-const seedCart = (allProducts as any[]).slice(0, 4).map((p, index) => ({
+const allProducts: any = []
+
+const cartItems = (allProducts as any[]).slice(0, 4).map((p, index) => ({
+    id: p.id,
+    title: p.title,
+    img1: p.img1,
     price: p.price,
     exPrice: p.exPrice,
     count: index === 1 ? 2 : 1,
@@ -30,19 +35,40 @@ const seedCart = (allProducts as any[]).slice(0, 4).map((p, index) => ({
 
 export default function CheckoutPaymentPage() {
     const router = useRouter()
-    const [paymentMethod, setPaymentMethod] = useState<'online' | 'cod'>('online')
+    const [isSubmitting, startTransition] = useTransition()
 
-    const totalCount = seedCart.reduce((sum, item) => sum + item.count, 0)
-    const subtotal = seedCart.reduce((sum, item) => sum + item.price * item.count, 0)
-    const originalTotal = seedCart.reduce((sum, item) => sum + (item.exPrice ?? item.price) * item.count, 0)
-    const totalDiscount = originalTotal - subtotal
-    const shippingCost = subtotal > 0 && subtotal < 1000000 ? 45000 : 0
-    const codFee = paymentMethod === 'cod' ? 25000 : 0
-    const payable = subtotal + shippingCost + codFee
+    const FREE_SHIPPING_THRESHOLD = 2000000;
+    const STANDARD_SHIPPING_COST = 45000;
+
+    const totalCount = cartItems.reduce((sum, item) => sum + item.count, 0)
+    const itemsTotalPrice = cartItems.reduce((sum, item) => sum + item.price * item.count, 0)
+
+    const originalTotal = cartItems.reduce((sum, item) => sum + (item.exPrice ?? item.price) * item.count, 0)
+    const totalDiscount = originalTotal - itemsTotalPrice
+
+    const shippingCost = itemsTotalPrice > 0 && itemsTotalPrice < FREE_SHIPPING_THRESHOLD ? STANDARD_SHIPPING_COST : 0
+    const finalPayableAmount = itemsTotalPrice + shippingCost
 
     const submitOrder = () => {
-        // در پروژه‌ی واقعی: ارسال سفارش به سرور و اتصال به درگاه پرداخت
-        router.push('/checkout/success')
+        startTransition(async () => {
+            const result = await createOrderAction({
+                items: cartItems.map(item => ({
+                    title: item.title,
+                    img: item.img1,
+                    price: item.price,
+                    count: item.count,
+                })),
+                address: `${selectedAddress.title} - ${selectedAddress.fullAddress}`,
+                phone: selectedAddress.phone,
+                shippingCost: shippingCost,
+            })
+
+            if (result.success) {
+                router.push('/checkout/success')
+            } else {
+                showSwal(result.error, 'error', 'متوجه شدم')
+            }
+        })
     }
 
     return (
@@ -65,7 +91,6 @@ export default function CheckoutPaymentPage() {
 
                     <div className='flex-1 min-w-0 flex flex-col gap-6'>
 
-                        {/* آدرس انتخاب‌شده - خلاصه‌ی فقط خواندنی */}
                         <div className='bg-white shadow-lg rounded-2xl p-5 sm:p-6'>
                             <div className='flex items-center justify-between pb-4 mb-4 border-b border-gray-100'>
                                 <h2 className='flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800'>
@@ -94,28 +119,15 @@ export default function CheckoutPaymentPage() {
 
                             <div className='flex flex-col gap-3'>
                                 <button
-                                    onClick={() => setPaymentMethod('online')}
-                                    className={`relative flex items-center gap-3 w-full text-right p-4 rounded-xl border transition-colors cursor-pointer
-                                        ${paymentMethod === 'online' ? 'border-primary-500 bg-primary-50/60' : 'border-gray-200 hover:border-primary-300'}`}>
+                                    className='relative flex items-center gap-3 w-full text-right p-4 rounded-xl border transition-colors cursor-pointer border-primary-500 bg-primary-50/60 hover:border-primary-300'>
                                     <PiCreditCardLight className='w-6 h-6 text-zinc-500 shrink-0' />
                                     <span className='flex-1'>
                                         <span className='block font-IranYekanMedium text-sm text-zinc-800'>پرداخت آنلاین (درگاه بانکی)</span>
                                         <span className='block text-xs text-zinc-400 mt-0.5'>پرداخت امن از طریق تمامی کارت‌های بانکی عضو شتاب</span>
                                     </span>
-                                    {paymentMethod === 'online' && <PiCheckCircleFill className='w-5 h-5 text-primary-500 shrink-0' />}
+                                    <PiCheckCircleFill className='w-5 h-5 text-primary-500 shrink-0' />
                                 </button>
 
-                                <button
-                                    onClick={() => setPaymentMethod('cod')}
-                                    className={`relative flex items-center gap-3 w-full text-right p-4 rounded-xl border transition-colors cursor-pointer
-                                        ${paymentMethod === 'cod' ? 'border-primary-500 bg-primary-50/60' : 'border-gray-200 hover:border-primary-300'}`}>
-                                    <PiMoneyLight className='w-6 h-6 text-zinc-500 shrink-0' />
-                                    <span className='flex-1'>
-                                        <span className='block font-IranYekanMedium text-sm text-zinc-800'>پرداخت در محل</span>
-                                        <span className='block text-xs text-zinc-400 mt-0.5'>پرداخت نقدی یا کارت‌خوان هنگام تحویل سفارش (۲۵,۰۰۰ تومان هزینه اضافه)</span>
-                                    </span>
-                                    {paymentMethod === 'cod' && <PiCheckCircleFill className='w-5 h-5 text-primary-500 shrink-0' />}
-                                </button>
                             </div>
                         </div>
 
@@ -125,14 +137,16 @@ export default function CheckoutPaymentPage() {
                         </Link>
                     </div>
 
-                        <AsideBox
-                            totalCount={totalCount}
-                            originalTotal={originalTotal}
-                            totalDiscount={totalDiscount}
-                            shippingCost={shippingCost}
-                            payable={payable}
-                            href='success'
-                        />
+                    <AsideBox
+                        totalCount={totalCount}
+                        originalTotal={originalTotal}
+                        totalDiscount={totalDiscount}
+                        shippingCost={shippingCost}
+                        finalPayableAmount={finalPayableAmount}
+                        onSubmit={submitOrder}
+                        submitLabel='ثبت نهایی و پرداخت'
+                        isSubmitting={isSubmitting}
+                    />
                 </div>
             </div>
 

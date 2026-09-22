@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react"
 import { PiXBold } from "react-icons/pi"
 import Swal from "sweetalert2"
-import type { UserProfile } from "@root/src/types/UserType"
+import type { UserProfile } from "@root/src/types/userType"
 import { updateProfileAction } from "./actions"
 
 type EditProfileModalProps = {

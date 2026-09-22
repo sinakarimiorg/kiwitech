@@ -1,15 +1,22 @@
 export type OrderStatus = "در حال پردازش" | "ارسال شده" | "تحویل شده" | "لغو شده"
 
 export interface OrderItem {
+    _id?: string
     title: string
     img: string
     price: number
     count: number
 }
 
+export interface AdminOrderUser {
+    _id: string
+    name: string
+    phone?: string
+}
+
 export interface AdminOrder {
     _id: string
-    customer: string
+    user: AdminOrderUser | null
     phone: string
     address: string
     items: OrderItem[]

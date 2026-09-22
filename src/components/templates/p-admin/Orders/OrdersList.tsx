@@ -25,7 +25,8 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
     const [activeFilter, setActiveFilter] = useState<"همه" | OrderStatus>("همه")
 
     const filtered = orders.filter(o => {
-        const matchesSearch = o.customer.includes(search) || o._id.includes(search) || o.phone.includes(search)
+        const customerName = o.user?.name ?? ""
+        const matchesSearch = customerName.includes(search) || o._id.includes(search) || o.phone.includes(search)
         const matchesFilter = activeFilter === "همه" || o.status === activeFilter
         return matchesSearch && matchesFilter
     })
@@ -93,7 +94,7 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
                                 <td className='px-3 py-3.5'>
                                     <div className='flex items-center gap-2'>
                                         <PiUserCircleLight className='w-5 h-5 text-zinc-400' />
-                                        <span className='text-zinc-600'>{order.customer}</span>
+                                        <span className='text-zinc-600'>{order.user?.name ?? 'کاربر حذف‌شده'}</span>
                                     </div>
                                 </td>
                                 <td className='px-3 py-3.5 text-zinc-500'>
@@ -152,7 +153,7 @@ export default function OrdersList({ orders, onView, onStatusChange }: OrdersLis
 
                             <div className='flex items-center gap-1 text-xs text-zinc-600'>
                                 <PiUserCircleLight className='w-4 h-4 text-zinc-400 shrink-0' />
-                                {order.customer}
+                                {order.user?.name ?? 'کاربر حذف‌شده'}
                             </div>
 
                             <div className='flex items-center justify-between gap-2'>

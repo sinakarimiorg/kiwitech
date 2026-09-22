@@ -3,7 +3,7 @@ import WalletBar from '@root/src/components/templates/P-user/Profile/WalletBar'
 import PersonalInfoCard from '@root/src/components/templates/P-user/Profile/PersonalInfoCard'
 import { redirect } from 'next/navigation'
 import { getCurrentUser } from '@root/src/lib/auth/session'
-import { UserProfile } from '@root/src/types/UserType'
+import { UserProfile } from '@root/src/types/userType'
 
 export const dynamic = 'force-dynamic'
 

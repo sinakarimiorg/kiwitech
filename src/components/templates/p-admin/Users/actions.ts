@@ -1,7 +1,7 @@
 "use server"
 
 import { connectDB } from "@root/src/lib/mongodb"
-import { UserStatus } from "@root/src/types/UserType"
+import { UserStatus } from "@root/src/types/userType"
 import UserModel from "@root/src/models/User"
 import { revalidatePath } from "next/cache"
 

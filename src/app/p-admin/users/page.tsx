@@ -10,7 +10,7 @@ import {
     PiWalletLight,
     PiProhibitLight,
 } from "react-icons/pi";
-import { UserType } from "@root/src/types/UserType";
+import { UserType } from "@root/src/types/userType";
 
 export const dynamic = "force-dynamic"
 

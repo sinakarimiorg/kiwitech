@@ -9,8 +9,10 @@ type AsideBoxProps = {
     originalTotal: number;
     totalDiscount: number;
     shippingCost: number;
-    payable: number;
-    href: string
+    finalPayableAmount: number;
+    submitLabel: string
+    onSubmit: () => void;
+    isSubmitting: boolean;
 };
 
 export default function AsideBox(
@@ -18,8 +20,10 @@ export default function AsideBox(
         originalTotal,
         totalDiscount,
         shippingCost,
-        payable,
-        href }: AsideBoxProps
+        finalPayableAmount,
+        submitLabel,
+        onSubmit,
+        isSubmitting }: AsideBoxProps
 ) {
 
     return (
@@ -59,12 +63,12 @@ export default function AsideBox(
                 <div className='flex items-center justify-between mt-5 pt-4 border-t border-dashed border-gray-200'>
                     <span className='font-IranYekanMedium text-zinc-700'>مبلغ قابل پرداخت</span>
                     <span className='inline-flex items-center gap-1 font-IranYekanBold text-lg text-zinc-800'>
-                        {payable.toLocaleString()}
+                        {finalPayableAmount.toLocaleString()}
                         <TomanIcon />
                     </span>
                 </div>
 
-                <Link href={`/checkout/${href}`} className='flex-center w-full h-12 mt-6 font-IranYekanMedium text-base linear_btn'>
+                <Link href={`/checkout`} className='flex-center w-full h-12 mt-6 font-IranYekanMedium text-base linear_btn'>
                     ادامه و ثبت آدرس
                 </Link>
 

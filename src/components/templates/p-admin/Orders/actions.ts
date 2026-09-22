@@ -1,7 +1,7 @@
 "use server"
 
 import { connectDB } from "@root/src/lib/mongodb";
-import { OrderStatus } from "./OrdersList";
+import { OrderStatus } from "@/types/adminOrderType";
 import OrderModel from "@root/src/models/Order"
 import { revalidatePath } from "next/cache";
 

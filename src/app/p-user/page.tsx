@@ -7,7 +7,7 @@ import MessageModel from '@root/src/models/Message'
 import FavoriteModel from '@root/src/models/Favorite'
 import StatCard from '@root/src/components/templates/P-user/Index/StatCard'
 import RecentOrders from '@root/src/components/templates/P-user/RecentOrders/RecentOrders'
-import type { AdminOrder } from '@root/src/types/adminOrderType'
+import type { UserOrder } from "@/types/userOrderType"
 
 import {
   PiWalletLight,
@@ -31,7 +31,7 @@ export default async function UserDashboardPage() {
     FavoriteModel.countDocuments({ user: currentUser._id }),
   ])
 
-  const recentOrders: AdminOrder[] = JSON.parse(JSON.stringify(ordersRaw))
+  const recentOrders: UserOrder[] = JSON.parse(JSON.stringify(ordersRaw))
 
   return (
     <Layout>

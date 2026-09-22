@@ -1,5 +1,5 @@
 import { Schema, model, models } from "mongoose";
-import { UserType, UserAddress } from "../types/UserType";
+import { UserType, UserAddress } from "../types/userType";
 
 type IAddress = Omit<UserAddress, "_id">
 type IUser = Omit<UserType, "_id" | "createdAt">

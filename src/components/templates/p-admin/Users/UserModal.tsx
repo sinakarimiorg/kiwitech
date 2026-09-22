@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { PiXBold } from 'react-icons/pi'
-import type { UserType, UserRole, UserStatus } from '@root/src/types/UserType'
+import type { UserType, UserRole, UserStatus } from '@root/src/types/userType'
 
 type UserModalProps = {
     initialData: UserType | null

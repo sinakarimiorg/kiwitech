@@ -1,4 +1,4 @@
-import { UserType, UserStatus } from "@root/src/types/UserType"
+import { UserType, UserStatus } from "@root/src/types/userType"
 import {
     PiUserCircleLight,
     PiProhibitLight,
