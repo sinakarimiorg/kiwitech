@@ -1,4 +1,3 @@
-import BreadCrumb from '../modules/BreadCrumb/BreadCrumb'
 import Header from '../modules/Header/Header'
 import Footer from '../modules/Footer/Footer'
 import ProfileSidebar from '../templates/P-user/ProfileSidebar/ProfileSidebar'
@@ -7,6 +6,7 @@ import { getCurrentUser } from '@root/src/lib/auth/session'
 import { redirect } from 'next/navigation'
 import { connectDB } from '@root/src/lib/mongodb'
 import MessageModel from '../../models/Message'
+import UserBreadCrumb from '../templates/P-user/UserBreadCrumb/UserBreadCrumb'
 
 type LayoutProps = {
     children: ReactNode
@@ -27,12 +27,7 @@ const Layout = async ({ children }: LayoutProps) => {
         <div>
             <Header />
 
-            <BreadCrumb
-                links={[
-                    { id: 1, title: 'فروشگاه کیوی‌تک', to: '/' },
-                    { id: 2, title: 'پروفایل من', to: '/profile' },
-                ]}
-            />
+            <UserBreadCrumb />
 
             <div className='container pb-11'>
                 <div className='flex flex-col lg:flex-row gap-6'>
