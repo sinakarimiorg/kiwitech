@@ -24,7 +24,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
     { key: 'dashboard', label: 'داشبورد', href: '/p-user', icon: PiSquaresFourLight },
-    { key: 'orders', label: 'سفارش‌های من', href: 'p-user/userOrders', icon: PiPackageLight },
+    { key: 'orders', label: 'سفارش‌های من', href: '/p-user/userOrders', icon: PiPackageLight },
     { key: 'favorites', label: 'کالاهای مورد علاقه', href: '/p-user/favorites', icon: PiHeartLight },
     { key: 'addresses', label: 'نشانی‌ها', href: '/p-user/addresses', icon: PiMapPinLight },
     { key: 'messages', label: 'پیام ها', href: '/p-user/messages', icon: PiEnvelopeSimpleLight },

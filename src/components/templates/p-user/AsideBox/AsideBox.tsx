@@ -1,30 +1,34 @@
 import TomanIcon from "@root/src/components/modules/Icons/TomanIcon";
-import { log } from "console";
 import Link from "next/link";
 import { PiShieldCheckLight, PiTruckLight } from "react-icons/pi";
-
 
 type AsideBoxProps = {
     totalCount: number;
     originalTotal: number;
     totalDiscount: number;
     shippingCost: number;
-    finalPayableAmount: number;
-    submitLabel: string
-    onSubmit: () => void;
-    isSubmitting: boolean;
+    payable?: number;
+    href?: string;
+    finalPayableAmount?: number;
+    submitLabel?: string
+    onSubmit?: () => void;
+    isSubmitting?: boolean;
 };
 
-export default function AsideBox(
-    { totalCount,
-        originalTotal,
-        totalDiscount,
-        shippingCost,
-        finalPayableAmount,
-        submitLabel,
-        onSubmit,
-        isSubmitting }: AsideBoxProps
-) {
+export default function AsideBox({ 
+    totalCount,
+    originalTotal,
+    totalDiscount,
+    shippingCost,
+    payable,
+    href,
+    finalPayableAmount,
+    submitLabel,
+    onSubmit,
+    isSubmitting
+}: AsideBoxProps) {
+
+    const amount = finalPayableAmount ?? payable ?? 0
 
     return (
         <aside className='w-full lg:w-87.5 shrink-0'>
@@ -63,14 +67,23 @@ export default function AsideBox(
                 <div className='flex items-center justify-between mt-5 pt-4 border-t border-dashed border-gray-200'>
                     <span className='font-IranYekanMedium text-zinc-700'>مبلغ قابل پرداخت</span>
                     <span className='inline-flex items-center gap-1 font-IranYekanBold text-lg text-zinc-800'>
-                        {finalPayableAmount.toLocaleString()}
+                        {amount.toLocaleString()}
                         <TomanIcon />
                     </span>
                 </div>
 
-                <Link href={`/checkout`} className='flex-center w-full h-12 mt-6 font-IranYekanMedium text-base linear_btn'>
-                    ادامه و ثبت آدرس
-                </Link>
+                {onSubmit ? (
+                    <button
+                        onClick={onSubmit}
+                        disabled={isSubmitting}
+                        className='flex-center w-full h-12 mt-6 font-IranYekanMedium text-base linear_btn disabled:opacity-60 disabled:cursor-not-allowed'>
+                        {isSubmitting ? 'در حال ثبت سفارش...' : (submitLabel || 'ثبت نهایی و پرداخت')}
+                    </button>
+                ) : (
+                    <Link href={`/checkout/${href ?? 'cart'}`} className='flex-center w-full h-12 mt-6 font-IranYekanMedium text-base linear_btn'>
+                        ادامه و ثبت آدرس
+                    </Link>
+                )}
 
                 <div className='flex flex-col gap-3 mt-6 pt-5 border-t border-gray-100 text-xs text-zinc-400'>
                     <div className='flex items-center gap-2'>
