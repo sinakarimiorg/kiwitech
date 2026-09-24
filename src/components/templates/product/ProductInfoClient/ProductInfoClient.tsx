@@ -88,6 +88,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
         price: product.price,
         exPrice: product.exPrice,
         stock: product.stock,
+        linkName: product.linkName
       },
     }))
 

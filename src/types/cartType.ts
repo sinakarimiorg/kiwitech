@@ -6,4 +6,5 @@ export interface CartItem {
     exPrice?: number
     count: number
     stock?: number
+    linkName: string
 }

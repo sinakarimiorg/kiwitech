@@ -86,6 +86,7 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
                 price: product.price,
                 exPrice: product.exPrice,
                 stock: product.stock,
+                linkName: product.linkName
             },
         }))
         toast.fire({ icon: 'success', title: 'به سبد خرید اضافه شد' })
