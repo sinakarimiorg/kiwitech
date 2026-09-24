@@ -4,18 +4,23 @@ import React, { useEffect, useState, useTransition } from 'react'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import Header from '@root/src/components/modules/Header/Header'
+import CommentsSection from '../CommentsSection/CommentsSection'
 import { AdminProduct } from '@root/src/types/adminProductType'
 import { PublicComment } from '@root/src/types/commentType'
-import CommentsSection from '../CommentsSection/CommentsSection'
-import { RiStarFill } from "react-icons/ri";
-import { GoShareAndroid } from "react-icons/go";
+import { RiStarFill, RiShareLine } from "react-icons/ri";
 import { LiaComments } from "react-icons/lia";
-import { PiBellRingingLight, PiStorefront, PiWarningOctagonThin, PiPhoneCallLight } from "react-icons/pi";
+import {
+  PiBellRingingLight,
+  PiStorefront,
+  PiWarningOctagonThin,
+  PiPhoneCallLight
+} from "react-icons/pi";
 import { TbHeartPlus } from "react-icons/tb";
 import { IoSettingsOutline } from "react-icons/io5";
 import { BsPatchCheck } from "react-icons/bs";
 import { CiBoxes } from "react-icons/ci";
-import { FaXmark } from 'react-icons/fa6'
+import { FaXmark, FaPlus, FaMinus } from 'react-icons/fa6'
+import Swal from 'sweetalert2'
 
 import { FreeMode, Navigation, Thumbs } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -32,6 +37,8 @@ import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 import ProductFeatureBox from '../ProductFeatureBox/ProductFeatureBox'
 import ProductFeatureBoxLarge from '../ProductFeatureBoxLarge/ProductFeatureBoxLarge'
 import { toggleFavoriteAction } from '../../P-user/Favorites/action'
+import { useAppDispatch, useAppSelector } from '@root/src/store/hooks'
+import { addToCart, incrementItem, decrementItem } from '@root/src/store/reducers/cartSlice'
 
 type ProductInfoClientProps = {
   product: AdminProduct
@@ -64,6 +71,45 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
       }
     });
   };
+  ////////////////////////////////
+
+  // handle Add To Cart Action
+  const dispatch = useAppDispatch()
+  const cartItem = useAppSelector(state => state.cart.items.find(i => i.id === product._id))
+
+  const handleAddToCart = () => {
+    if (product.stock <= 0) return
+
+    dispatch(addToCart({
+      item: {
+        id: product._id,
+        title: product.name,
+        img: product.img,
+        price: product.price,
+        exPrice: product.exPrice,
+        stock: product.stock,
+      },
+    }))
+
+    Swal.fire({
+      toast: true,
+      position: 'top-start',
+      icon: 'success',
+      title: 'به سبد خرید اضافه شد',
+      showConfirmButton: false,
+      timer: 1500,
+      timerProgressBar: true,
+    })
+  }
+
+  const handleIncrementCart = () => {
+    if (cartItem?.stock && cartItem.count >= cartItem.stock) return
+    dispatch(incrementItem(product._id))
+  }
+
+  const handleDecrementCart = () => {
+    dispatch(decrementItem(product._id))
+  }
   ////////////////////////////////
 
   const openImagesModal = () => setIsModalOpen(true);
@@ -132,14 +178,45 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
     </div>
   )
 
-  const AddToCartButton = ({ className = '' }: { className?: string }) => (
-    <div
-      aria-disabled={!inStock}
-      className={`w-full text-center font-IranYekanMedium ${className} ${inStock ? 'linear_btn cursor-pointer' : 'bg-gray-200 text-zinc-400 cursor-not-allowed rounded-lg'}`}
-    >
-      {inStock ? 'افزودن به سبد خرید' : 'ناموجود'}
-    </div>
-  )
+  const AddToCartButton = ({ className = '' }: { className?: string }) => {
+    if (!inStock) {
+      return (
+        <div className={`w-full text-center font-IranYekanMedium bg-gray-200 text-zinc-400 cursor-not-allowed rounded-lg ${className}`}>
+          ناموجود
+        </div>
+      )
+    }
+
+    if (cartItem) {
+      return (
+        <div className={`flex items-center justify-between gap-2 w-full border border-primary-200 bg-primary-50/50 rounded-lg ${className}`}>
+          <button
+            type='button'
+            onClick={handleIncrementCart}
+            disabled={!!cartItem.stock && cartItem.count >= cartItem.stock}
+            className='flex-center h-full px-4 text-primary-600 hover:bg-primary-100 rounded-lg transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed'>
+            <FaPlus className='w-3.5 h-3.5' />
+          </button>
+          <span className='font-IranYekanBold text-zinc-800'>{cartItem.count.toLocaleString('fa-IR')}</span>
+          <button
+            type='button'
+            onClick={handleDecrementCart}
+            className='flex-center h-full px-4 text-zinc-600 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer'>
+            <FaMinus className='w-3.5 h-3.5' />
+          </button>
+        </div>
+      )
+    }
+
+    return (
+      <button
+        type='button'
+        onClick={handleAddToCart}
+        className={`w-full text-center font-IranYekanMedium linear_btn cursor-pointer ${className}`}>
+        افزودن به سبد خرید
+      </button>
+    )
+  }
 
   const OfferBar = ({ rounded = 'rounded-t-xl' }: { rounded?: string }) => (
     discountPercent > 0 ? (
@@ -223,7 +300,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
               <div>
                 {/* Action Buttons */}
                 <div className='flex-center gap-x-3 lg:gap-x-5'>
-                  <button className={styles.product__actionButton}><GoShareAndroid className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اشتراک گذاری کالا</span></button>
+                  <button className={styles.product__actionButton}><RiShareLine className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اشتراک گذاری کالا</span></button>
                   <button className={styles.product__actionButton}><LiaComments className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>نظرات کاربران</span></button>
                   <button className={styles.product__actionButton}><PiBellRingingLight className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اطلاع‌رسانی کیوی‌تک</span></button>
                   <button
@@ -528,7 +605,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
             <div className='my-6'>
               {/* Action Buttons */}
               <div className='flex-center gap-x-6 sm:gap-x-10 mb-2 sm:mb-4'>
-                <button className={styles.product__actionButton}><GoShareAndroid className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اشتراک گذاری کالا</span></button>
+                <button className={styles.product__actionButton}><RiShareLine className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اشتراک گذاری کالا</span></button>
                 <button className={styles.product__actionButton}><LiaComments className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>نظرات کاربران</span></button>
                 <button className={styles.product__actionButton}><PiBellRingingLight className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>اطلاع‌رسانی کیوی‌تک</span></button>
                 <button className={styles.product__actionButton}><TbHeartPlus className='w-5 h-5 text-primary-500' /><span className={styles.tooltiptext}>مورد علاقه</span></button>

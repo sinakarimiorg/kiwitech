@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from 'react'
 import Link from 'next/link'
 import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import CheckoutSteps from '@root/src/components/templates/Checkout/CheckoutSteps/CheckoutSteps'
-import allProducts from '@root/Products'
+import { useAppDispatch, useAppSelector } from '@root/src/store/hooks'
+import { incrementItem, decrementItem, removeFromCart } from '@root/src/store/reducers/cartSlice'
 
 import { FaPlus, FaMinus } from 'react-icons/fa6'
 import { MdDeleteOutline } from 'react-icons/md'
@@ -14,36 +14,21 @@ import { HiOutlineShoppingCart, HiMiniChevronLeft } from 'react-icons/hi2'
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 import AsideBox from '@root/src/components/templates/P-user/AsideBox/AsideBox'
 
-type CartItem = {
-    id: number
-    title: string
-    price: number
-    exPrice?: number
-    count: number
-    img1: string
-}
-
-// نمونه دیتای اولیه سبد خرید - در آینده با state واقعی (ردوکس/context) جایگزین می‌شود
-const seedCart: CartItem[] = (allProducts as any[]).slice(0, 4).map((p, index) => ({
-    id: p.id,
-    title: p.title,
-    price: p.price,
-    exPrice: p.exPrice,
-    count: index === 1 ? 2 : 1,
-    img1: p.img1,
-}))
 
 export default function CheckoutCartPage() {
-    const [cart, setCart] = useState<CartItem[]>(seedCart)
+    const dispatch = useAppDispatch()
+    const cart = useAppSelector(state => state.cart.items)
 
-    const increment = (id: number) => {
-        setCart(prev => prev.map(item => item.id === id ? { ...item, count: item.count + 1 } : item))
+    const increment = (id: string) => {
+        const item = cart.find(i => i.id === id)
+        if (item?.stock && item.count >= item.stock) return
+        dispatch(incrementItem(id))
     }
-    const decrement = (id: number) => {
-        setCart(prev => prev.map(item => item.id === id && item.count > 1 ? { ...item, count: item.count - 1 } : item))
+    const decrement = (id: string) => {
+        dispatch(decrementItem(id))
     }
-    const removeItem = (id: number) => {
-        setCart(prev => prev.filter(item => item.id !== id))
+    const removeItem = (id: string) => {
+        dispatch(removeFromCart(id))
     }
 
     const totalCount = cart.reduce((sum, item) => sum + item.count, 0)
@@ -87,7 +72,7 @@ export default function CheckoutCartPage() {
 
                                         <div className='flex items-center gap-4 flex-1 min-w-0'>
                                             <div className='shrink-0 w-20 h-20 sm:w-24 sm:h-24 bg-gray-50 rounded-xl overflow-hidden'>
-                                                <img src={item.img1} className='w-full h-full object-cover' alt={item.title} />
+                                                <img src={item.img} className='w-full h-full object-cover' alt={item.title} />
                                             </div>
                                             <div className='min-w-0'>
                                                 <p className='text-sm sm:text-base text-zinc-700 leading-6 line-clamp-2'>{item.title}</p>

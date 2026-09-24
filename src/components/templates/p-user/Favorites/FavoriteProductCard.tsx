@@ -3,17 +3,20 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { FavoriteProduct } from "@root/src/types/userFavoriteType"
-import { useState, useTransition } from "react"
+import { useTransition } from "react"
 import Swal from "sweetalert2"
 import {
     PiShoppingCartSimpleLight,
-    PiCheckBold,
     PiTrashLight,
     PiEyeLight,
     PiShareNetworkLight,
+    PiPlusCircleLight,
+    PiMinusCircleLight,
 } from 'react-icons/pi'
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 import { toggleFavoriteAction } from "./action"
+import { useAppDispatch, useAppSelector } from "@root/src/store/hooks"
+import { addToCart, incrementItem, decrementItem } from "@root/src/store/reducers/cartSlice"
 
 const toast = Swal.mixin({
     toast: true,
@@ -29,7 +32,10 @@ type FavoriteProductCardProps = {
 
 export default function FavoriteProductCard({ product }: FavoriteProductCardProps) {
     const [isPending, startTransition] = useTransition()
-    const [justAdded, setJustAdded] = useState(false)
+
+    // handle Add To Cart Action
+    const dispatch = useAppDispatch()
+    const cartItem = useAppSelector(state => state.cart.items.find(i => i.id === product._id))
 
     const productHref = `/product-info/${product.linkName || product._id}`
 
@@ -68,13 +74,30 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
         })
     }
 
-    /* ───────── Add To Favorite Products ───────── */
+    /* ───────── Add To Cart ───────── */
     const handleAddToCart = () => {
         if (!inStock) return
 
-        setJustAdded(true)
+        dispatch(addToCart({
+            item: {
+                id: product._id,
+                title: product.name,
+                img: product.img,
+                price: product.price,
+                exPrice: product.exPrice,
+                stock: product.stock,
+            },
+        }))
         toast.fire({ icon: 'success', title: 'به سبد خرید اضافه شد' })
-        setTimeout(() => setJustAdded(false), 1800)
+    }
+
+    const handleIncrementCart = () => {
+        if (cartItem?.stock && cartItem.count >= cartItem.stock) return
+        dispatch(incrementItem(product._id))
+    }
+
+    const handleDecrementCart = () => {
+        dispatch(decrementItem(product._id))
     }
 
     /* ───────── Share The Favorite Products ───────── */
@@ -167,29 +190,37 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
                     </div>
                 </div>
 
-                <button
-                    type='button'
-                    onClick={handleAddToCart}
-                    disabled={!inStock}
-                    className={`flex-center gap-2 w-full h-11 mt-4 text-sm font-IranYekanMedium transition-all
-                        ${!inStock
-                            ? 'bg-gray-100 text-zinc-400 rounded-lg cursor-not-allowed'
-                            : justAdded
-                                ? 'bg-primary-50 text-primary-700 border border-primary-300 rounded-lg'
-                                : 'linear_btn'}`}
-                >
-                    {!inStock ? 'ناموجود' : justAdded ? (
-                        <>
-                            <PiCheckBold className='w-4 h-4' />
-                            به سبد اضافه شد
-                        </>
-                    ) : (
-                        <>
-                            <PiShoppingCartSimpleLight className='w-5 h-5' />
-                            افزودن به سبد خرید
-                        </>
-                    )}
-                </button>
+                {!inStock ? (
+                    <div className='flex-center gap-2 w-full h-11 mt-4 text-sm font-IranYekanMedium bg-gray-100 text-zinc-400 rounded-lg cursor-not-allowed'>
+                        ناموجود
+                    </div>
+                ) : cartItem ? (
+                    <div className='flex items-center justify-between gap-2 w-full h-11 mt-4 px-1.5 border border-primary-200 bg-primary-50/50 rounded-lg'>
+                        <button
+                            type='button'
+                            onClick={handleIncrementCart}
+                            disabled={!!cartItem.stock && cartItem.count >= cartItem.stock}
+                            className='flex-center w-9 h-9 text-primary-600 hover:bg-primary-100 rounded-md transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed'>
+                            <PiPlusCircleLight className='w-5 h-5' />
+                        </button>
+                        <span className='font-IranYekanBold text-sm text-zinc-800'>{cartItem.count.toLocaleString('fa-IR')}</span>
+                        <button
+                            type='button'
+                            onClick={handleDecrementCart}
+                            className='flex-center w-9 h-9 text-zinc-500 hover:bg-gray-100 rounded-md transition-colors cursor-pointer'>
+                            <PiMinusCircleLight className='w-5 h-5' />
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        type='button'
+                        onClick={handleAddToCart}
+                        className='flex-center gap-2 w-full h-11 mt-4 text-sm font-IranYekanMedium linear_btn'
+                    >
+                        <PiShoppingCartSimpleLight className='w-5 h-5' />
+                        افزودن به سبد خرید
+                    </button>
+                )}
 
                 {/* اکشن‌های ثانویه */}
                 <div className='flex items-center justify-between mt-3 pt-3 border-t border-gray-100'>

@@ -7,11 +7,10 @@ import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import CheckoutSteps from '@root/src/components/templates/Checkout/CheckoutSteps/CheckoutSteps'
-import allProducts from '@root/Products'
+import { useAppSelector } from '@root/src/store/hooks'
 
 import { HiMiniChevronLeft } from 'react-icons/hi2'
 import { PiMapPinLight, PiPlusCircleLight, PiCheckCircleFill } from 'react-icons/pi'
-import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 import AsideBox from '@root/src/components/templates/P-user/AsideBox/AsideBox'
 
 type Address = {
@@ -39,20 +38,14 @@ const addresses: Address[] = [
     },
 ]
 
-// نمونه‌ی خلاصه‌ی سبد خرید برای نمایش کنار صفحه (تا اتصال state واقعی)
-const seedCart = (allProducts as any[]).slice(0, 4).map((p, index) => ({
-    price: p.price,
-    exPrice: p.exPrice,
-    count: index === 1 ? 2 : 1,
-}))
-
 export default function CheckoutShippingPage() {
     const router = useRouter()
     const [selectedAddress, setSelectedAddress] = useState<number>(addresses[0].id)
+    const cart = useAppSelector(state => state.cart.items)
 
-    const totalCount = seedCart.reduce((sum, item) => sum + item.count, 0)
-    const subtotal = seedCart.reduce((sum, item) => sum + item.price * item.count, 0)
-    const originalTotal = seedCart.reduce((sum, item) => sum + (item.exPrice ?? item.price) * item.count, 0)
+    const totalCount = cart.reduce((sum, item) => sum + item.count, 0)
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.count, 0)
+    const originalTotal = cart.reduce((sum, item) => sum + (item.exPrice ?? item.price) * item.count, 0)
     const totalDiscount = originalTotal - subtotal
     const shippingCost = subtotal > 0 && subtotal < 1000000 ? 45000 : 0
     const payable = subtotal + shippingCost
