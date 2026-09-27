@@ -39,6 +39,7 @@ import ProductFeatureBoxLarge from '../ProductFeatureBoxLarge/ProductFeatureBoxL
 import { toggleFavoriteAction } from '../../P-user/Favorites/action'
 import { useAppDispatch, useAppSelector } from '@root/src/store/hooks'
 import { addToCart, incrementItem, decrementItem } from '@root/src/store/reducers/cartSlice'
+import { toast } from '@/utils/helpers'
 
 type ProductInfoClientProps = {
   product: AdminProduct
@@ -76,31 +77,19 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
   // handle Add To Cart Action
   const dispatch = useAppDispatch()
   const cartItem = useAppSelector(state => state.cart.items.find(i => i.id === product._id))
+  const countInCart = useAppSelector(s => s.cart.items.find(i => i.id === product._id)?.count ?? 0)
 
   const handleAddToCart = () => {
-    if (product.stock <= 0) return
-
+    if (!inStock) return
+    if (countInCart >= product.stock) {
+      toast.fire({ icon: 'warning', title: 'به حداکثر موجودی این کالا رسیده‌اید' })
+      return
+    }
     dispatch(addToCart({
-      item: {
-        id: product._id,
-        title: product.name,
-        img: product.img,
-        price: product.price,
-        exPrice: product.exPrice,
-        stock: product.stock,
-        linkName: product.linkName
-      },
+      id: product._id, linkName: product.linkName, title: product.name,
+      img: mainImage, price: product.price, exPrice: product.exPrice, stock: product.stock,
     }))
-
-    Swal.fire({
-      toast: true,
-      position: 'top-start',
-      icon: 'success',
-      title: 'به سبد خرید اضافه شد',
-      showConfirmButton: false,
-      timer: 1500,
-      timerProgressBar: true,
-    })
+    toast.fire({ icon: 'success', title: 'به سبد خرید اضافه شد' })
   }
 
   const handleIncrementCart = () => {
@@ -213,6 +202,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
       <button
         type='button'
         onClick={handleAddToCart}
+        disabled={!inStock}
         className={`w-full text-center font-IranYekanMedium linear_btn cursor-pointer ${className}`}>
         افزودن به سبد خرید
       </button>

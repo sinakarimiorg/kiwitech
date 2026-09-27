@@ -16,12 +16,12 @@ import { MdOutlineShoppingBag } from "react-icons/md";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { BiPhone } from "react-icons/bi";
 import { RiGroupLine } from "react-icons/ri";
-import { HiMiniChevronLeft } from "react-icons/hi2";
 import Overlay from '../overlay/Overlay';
 import { useEffect } from "react";
 import SearchSuggestions from './SearchSuggestions/SearchSuggestions'
 import { getSessionUserAction, logoutAction } from '@root/src/components/templates/Auth/action'
-
+import CartDropdown from './CartDropdown'
+import { CartBadge, CartMiniList, CartMiniFooter } from './CartMiniPanel'
 
 type SessionUser = { name: string; phone: string; role: string } | null
 
@@ -150,52 +150,7 @@ const Topbar = () => {
                     {/* <!-- Cart & Theme Toggle --> */}
                     <div className="flex items-center gap-x-2 md:gap-x-4 lg:gap-x-5">
 
-                        <div className="relative group cursor-pointer hover:text-neon transition-colors">
-                            <Link href={'/checkout/cart'}>
-                                <HiOutlineShoppingCart className='w-5 custom-sc:w-8 h-5 custom-sc:h-8' />
-                            </Link>
-                            {/* <!-- Cart Box --> */}
-                            <div className="absolute top-full left-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible w-100 p-5 border border-border border-t-[3px] shadow-custom border-t-primary-500 rounded-2xl
-                        bg-dark-secondary text-text transition-all delay-75 overflow-hidden z-30">
-
-                                {/* <!-- Cart Box Header --> */}
-                                <div className="flex items-center justify-between font-IranYekan text-xs tracking-tighter">
-                                    <span className="text-text-muted">1 مورد</span>
-                                    <a href="/checkout/cart" className="flex items-center text-primary-500 ">
-                                        مشاهده سبد خرید
-                                        <HiMiniChevronLeft className='w-5 h-5' />
-                                    </a>
-                                </div>
-
-                                {/* <!-- Cart Box Body --> */}
-                                <div
-                                    className="my-2 border-b border-b-gray-300 divide-y divide-gray-100 max-h-82.5 overflow-hidden hover:overflow-y-auto *:flex *:gap-x-2.5 *:py-5 *:pl-1">
-                                    {/* <CartProductBox img={'/images/products/airpods.png'} title={'هندزفری بلوتوثی کربی مدل CR-T107'} off={93500} price={790000} />
-                                    <CartProductBox img={'/images/products/cover.png'} title={'کیف کلاسوری کربی مدل Pattern مناسب برای گوشی موبایل سامسونگ Galaxy J5 Pro'} off={35200} price={149000} />
-                                    <CartProductBox img={'/images/products/car-charger.png'} title={'شارژر فندکی 35 وات مدل QC 3'} off={10000} price={70000} />
-                                    <CartProductBox img={'/images/products/power-bank2.png'} title={'پاوربانک انکر مدل PowerCore Metro A1246 ظرفیت 10000 میلی آمپر ساعت'} off={130000} price={2200000} />
-                                    <CartProductBox img={'/images/products/charge-cable.png'} title={'کابل تبدیل USB و USB-C به لایتنینگ و USB-C مدل 2in2-Fast-100W طول 1 متر'} price={490000} />
-                                    <CartProductBox img={'/images/products/holder.png'} title={'پایه نگهدارنده گوشی موبایل الدینیو مدل MG01'} off={33000} price={277000} />
-                                    <CartProductBox img={'/images/products/glass.png'} title={'محافظ صفحه نمایش حریم شخصی مات مدل m2m مناسب برای گوشی موبایل اپل iPhone 7Plus/ 8Plus'} price={27700} />                  <!-- Cart Box Product --> */}
-                                </div>
-
-                                {/* <!-- Cart Box Footer --> */}
-                                <div className="flex justify-between mt-5">
-                                    <div>
-                                        <span className="font-IranYekan text-xs text-text-muted leading-5 tracking-tighter">مبلغ
-                                            قابل پرداخت</span>
-                                        <div className="font-IranYekanBold text-xl text-text">
-                                            350,000
-                                            <span className="font-Dana text-sm">تومان</span>
-                                        </div>
-                                    </div>
-
-                                    <a className="w-26 h-12 flex items-center justify-center font-IranYekan text-base bg-primary-500 hover:bg-primary-400  text-black rounded-xl tracking-tightest"
-                                        href="#">ثبت سفارش</a>
-                                </div>
-
-                            </div>
-                        </div>
+                        <CartDropdown />
                     </div>
 
                     {/* <!-- Divide Border --> */}
@@ -246,8 +201,9 @@ const Topbar = () => {
                         </h5>
                     </div>
 
-                    <button className='text-white' onClick={() => openCartBar()}>
+                    <button className='relative text-white' onClick={() => openCartBar()}>
                         <IoCartOutline className='w-6 h-6' />
+                        <CartBadge className='-top-1.5 -right-2' />
                     </button>
 
                     {/* <!-- Mobile Nav(menu) -------> */}
@@ -370,35 +326,12 @@ const Topbar = () => {
                             <span>سبد خرید</span>
                         </div>
 
-                        {/* <!-- Cart Body --> */}
-                        {/* <div
-                            className="text-sm divide-y divide-gray-100 overflow-hidden overflow-y-auto *:py-5 *:flex *:gap-x-1">
-                            <CartProductBox img={'/images/products/airpods.png'} title={'هندزفری بلوتوثی کربی مدل CR-T107'} off={93500} price={790000} />
-                            <CartProductBox img={'/images/products/cover.png'} title={'کیف کلاسوری کربی مدل Pattern مناسب برای گوشی موبایل سامسونگ Galaxy J5 Pro'} off={35200} price={149000} />
-                            <CartProductBox img={'/images/products/car-charger.png'} title={'شارژر فندکی 35 وات مدل QC 3'} off={10000} price={70000} />
-                            <CartProductBox img={'/images/products/power-bank2.png'} title={'پاوربانک انکر مدل PowerCore Metro A1246 ظرفیت 10000 میلی آمپر ساعت'} off={130000} price={2200000} />
-                            <CartProductBox img={'/images/products/charge-cable.png'} title={'کابل تبدیل USB و USB-C به لایتنینگ و USB-C مدل 2in2-Fast-100W طول 1 متر'} price={490000} />
-                            <CartProductBox img={'/images/products/holder.png'} title={'پایه نگهدارنده گوشی موبایل الدینیو مدل MG01'} off={33000} price={277000} />
-                            <CartProductBox img={'/images/products/glass.png'} title={'محافظ صفحه نمایش حریم شخصی مات مدل m2m مناسب برای گوشی موبایل اپل iPhone 7Plus/ 8Plus'} price={27700} />
-
-                        </div> */}
-
-                        {/* <!-- Cart Box Footer --> */}
-                        <div
-                            className="flex items-end justify-start gap-x-4 pt-4 pb-8 mt-auto border-t border-t-gray-100 ">
-
-                            <a className="w-28 h-11 flex items-center justify-center font-IranYekan text-base bg-primary-500 hover:bg-primary-400  text-black rounded-xl"
-                                href="#">ثبت سفارش</a>
-
-                            <div>
-                                <span className="font-IranYekan text-xs text-text-muted leading-6 tracking-tighter">مبلغ
-                                    قابل پرداخت</span>
-                                <div className="font-IranYekanBold text-base text-text">
-                                    350,000
-                                    <span className="font-Dana text-xs">تومان</span>
-                                </div>
-                            </div>
-
+                        {/* <!-- Cart Body and Footer --> */}
+                        <div className='flex-1 overflow-y-auto'>
+                            <CartMiniList />
+                        </div>
+                        <div className='pb-8'>
+                            <CartMiniFooter />
                         </div>
 
                     </div>

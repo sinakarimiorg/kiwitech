@@ -14,4 +14,8 @@ const showSwal = (
   });
 };
 
-export { showSwal };
+const toast = Swal.mixin({
+  toast: true, position: 'top-start', showConfirmButton: false, timer: 1800, timerProgressBar: true,
+})
+
+export { showSwal, toast }

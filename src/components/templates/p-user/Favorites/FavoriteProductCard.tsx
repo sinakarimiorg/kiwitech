@@ -79,15 +79,8 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
         if (!inStock) return
 
         dispatch(addToCart({
-            item: {
-                id: product._id,
-                title: product.name,
-                img: product.img,
-                price: product.price,
-                exPrice: product.exPrice,
-                stock: product.stock,
-                linkName: product.linkName
-            },
+            id: product._id, linkName: product.linkName, title: product.name,
+            img: product.img, price: product.price, exPrice: product.exPrice, stock: product.stock,
         }))
         toast.fire({ icon: 'success', title: 'به سبد خرید اضافه شد' })
     }

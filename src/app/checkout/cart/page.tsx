@@ -6,13 +6,14 @@ import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import CheckoutSteps from '@root/src/components/templates/Checkout/CheckoutSteps/CheckoutSteps'
 import { useAppDispatch, useAppSelector } from '@root/src/store/hooks'
-import { incrementItem, decrementItem, removeFromCart } from '@root/src/store/reducers/cartSlice'
+import { incrementItem, decrementItem, removeFromCart, selectCartHydrated } from '@root/src/store/reducers/cartSlice'
 
 import { FaPlus, FaMinus } from 'react-icons/fa6'
 import { MdDeleteOutline } from 'react-icons/md'
 import { HiOutlineShoppingCart, HiMiniChevronLeft } from 'react-icons/hi2'
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 import AsideBox from '@root/src/components/templates/P-user/AsideBox/AsideBox'
+import PageLoader from '@root/src/components/modules/Loader/PageLoader'
 
 const UNIT_COL = 'sm:w-32 lg:w-36'
 const QTY_COL = 'sm:w-28'
@@ -30,18 +31,11 @@ function Price({ value, className = '' }: { value: number; className?: string })
 export default function CheckoutCartPage() {
     const dispatch = useAppDispatch()
     const cart = useAppSelector(state => state.cart.items)
+    const hydrated = useAppSelector(selectCartHydrated)
 
-    const increment = (id: string) => {
-        const item = cart.find(i => i.id === id)
-        if (item?.stock && item.count >= item.stock) return
-        dispatch(incrementItem(id))
-    }
-    const decrement = (id: string) => {
-        dispatch(decrementItem(id))
-    }
-    const removeItem = (id: string) => {
-        dispatch(removeFromCart(id))
-    }
+    const increment = (id: string) => dispatch(incrementItem(id))
+    const decrement = (id: string) => dispatch(decrementItem(id))
+    const removeItem = (id: string) => dispatch(removeFromCart(id))
 
     const totalCount = cart.reduce((sum, item) => sum + item.count, 0)
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.count, 0)
@@ -64,7 +58,9 @@ export default function CheckoutCartPage() {
             <div className='container pb-16'>
                 <CheckoutSteps current='cart' />
 
-                {cart.length === 0 ? (
+                {
+                !hydrated ? <PageLoader /> :
+                cart.length === 0 ? (
                     <EmptyCart />
                 ) : (
                     <div className='flex flex-col lg:flex-row gap-6 xl:gap-10'>
