@@ -36,6 +36,7 @@ export async function addProductAction(formData: FormData): Promise<ActionResult
 
         await ProductModel.create({
             name: formData.get("name"),
+            isFeatured: formData.get("isFeatured"),
             linkName: formData.get("linkName"),
             price: Number(formData.get("price")),
             exPrice: exPriceInput ? Number(exPriceInput) : null,
@@ -94,6 +95,7 @@ export async function updateProductAction(id: string, formData: FormData): Promi
             id,
             {
                 name: formData.get("name"),
+                isFeatured: formData.get("isFeatured"),
                 linkName: formData.get("linkName"),
                 price: Number(formData.get("price")),
                 exPrice: exPriceInput ? Number(exPriceInput) : null,

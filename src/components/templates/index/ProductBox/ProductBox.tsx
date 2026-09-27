@@ -62,7 +62,7 @@ export default function ProductBox({ shortName, img, img2, title, classes, price
                         {
                             exPrice &&
                             <div className='flex justify-end items-center w-full'>
-                                <span className='relative inline-flex ml-2 pl-5 xs:pl-7 pr-2 xs:font-medium text-xs xs:text-sm text-gray-500 overflow-hidden'>{exPrice.toLocaleString()}</span>
+                                <span className='relative inline-flex ml-2 pl-5 xs:pl-7 pr-2 xs:font-medium text-xs xs:text-sm text-gray-500 overflow-hidden ex-price'>{exPrice.toLocaleString()}</span>
                             </div>
                         }
                     </div>

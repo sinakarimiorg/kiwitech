@@ -43,6 +43,7 @@ interface FormValues {
     description: string
     colors: string
     tags: string
+    isFeatured: Boolean
 }
 
 const initialValues: FormValues = {
@@ -57,6 +58,7 @@ const initialValues: FormValues = {
     description: "",
     colors: "",
     tags: "",
+    isFeatured: false
 }
 
 const validationSchema = Yup.object({
@@ -78,6 +80,7 @@ const validationSchema = Yup.object({
     description: Yup.string(),
     colors: Yup.string(),
     tags: Yup.string(),
+    isFeatured: Yup.boolean(),
 })
 
 export default function AddProduct() {
@@ -328,6 +331,20 @@ export default function AddProduct() {
                                             placeholder='هندزفری، بلوتوث، کربی'
                                             className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
                                         />
+                                    </div>
+
+                                    <div>
+                                        <label className='flex items-center gap-2 mb-1.5 text-xs text-zinc-500'>
+                                            محصول ویژه
+                                        </label>
+                                        <label className='flex items-center gap-3 px-3.5 py-2.5 border border-gray-200 rounded-lg cursor-pointer hover:border-primary-400 transition-colors'>
+                                            <Field
+                                                type="checkbox"
+                                                name="isFeatured"
+                                                className='w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-400 accent-primary-500 cursor-pointer'
+                                            />
+                                            <span className='text-sm text-zinc-700'>نمایش به عنوان محصول ویژه در صفحه اصلی</span>
+                                        </label>
                                     </div>
 
                                     <div className='sm:col-span-2'>

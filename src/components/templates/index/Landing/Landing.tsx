@@ -1,15 +1,25 @@
-"use client"
-
-import { HiMiniChevronLeft } from "react-icons/hi2";
-import { PiShieldCheckLight, PiLightningLight, PiSparkleLight } from "react-icons/pi";
-import Link from 'next/link'
-import TiltCard from './TiltCard';
+import { PiShieldCheckLight, PiLightningLight, PiArrowsCounterClockwiseLight, PiCreditCardLight } from 'react-icons/pi'
+import { getFeaturedProducts, getLandingBanners } from '@root/src/lib/home/homeData'
+import LandingBannerSlider from './LandingBannerSlider'
+import FeaturedProductsSwiper from './FeaturedProductsSwiper'
 
 import './Landing.css'
 
-export default function Landing() {
+const trustItems = [
+    { icon: PiShieldCheckLight, label: 'ضمانت اصالت کالا' },
+    { icon: PiLightningLight, label: 'ارسال فوری تهران' },
+    { icon: PiArrowsCounterClockwiseLight, label: '۷ روز ضمانت بازگشت' },
+    { icon: PiCreditCardLight, label: 'پرداخت امن' },
+]
+
+export default async function Landing() {
+    const [banners, featuredProducts] = await Promise.all([
+        getLandingBanners(),
+        getFeaturedProducts(6),
+    ])
+
     return (
-        <div className='landing-hero relative overflow-hidden sm:mt-40 sm:pt-20 bg-linear-to-br from-dark via-dark-secondary to-dark'>
+        <div className='landing-hero relative overflow-hidden sm:mt-40 bg-linear-to-br from-dark via-dark-secondary to-dark'>
 
             {/* Ambient neon blobs */}
             <div className='pointer-events-none absolute -top-24 -right-24 w-72 h-72 md:w-96 md:h-96 bg-neon/25 rounded-full blur-3xl animate-float-blob' />
@@ -18,49 +28,33 @@ export default function Landing() {
             {/* Subtle tech-grid texture */}
             <div className='landing-grid pointer-events-none absolute inset-0 opacity-[0.07]' />
 
-            <div className='container relative z-10 flex flex-col md:flex-row items-center gap-10 md:gap-6 py-16 sm:py-20 md:py-28'>
+            <div className='container relative z-10 px-3 sm:px-0 py-6 sm:py-10'>
 
-                {/* Text Column */}
-                <div className='flex-1 text-center md:text-right animate-fade-up'>
-                    <span className='inline-flex items-center gap-2 px-3.5 py-1.5 mb-5 text-xs sm:text-sm text-neon bg-white/5 border border-neon/25 rounded-full'>
-                        <PiSparkleLight className='w-4 h-4' />
-                        نسل جدید لوازم جانبی موبایل
-                    </span>
+                <h1 className='sr-only'>کیوی‌تک؛ فروشگاه لوازم جانبی موبایل</h1>
 
-                    <h1 className='font-MorabbaBold text-3xl sm:text-4xl md:text-5xl xl:text-6xl leading-tight text-text'>
-                        تکنولوژی رو
-                        <span className='block text-neon neon-text-glow mt-1'>یه‌جور دیگه تجربه کن</span>
-                    </h1>
-
-                    <p className='mt-5 max-w-md mx-auto md:mx-0 text-sm sm:text-base text-text-muted leading-8'>
-                        از هندزفری‌های بی‌سیم تا پاوربانک‌های پرقدرت؛ کیوی‌تک هرچی که برای گوشیت لازم داری رو با اصالت کامل و ارسال سریع میاره جلوی درت.
-                    </p>
-
-                    <div className='flex flex-wrap items-center justify-center md:justify-start gap-3 mt-8'>
-                        <Link href='/products/1' className='group flex-center gap-2 px-6 py-3 text-sm sm:text-base font-DanaMedium bg-neon text-surface rounded-2xl shadow-[0_0_30px_rgba(215,255,92,0.35)] hover:shadow-[0_0_45px_rgba(215,255,92,0.55)] transition-shadow'>
-                            شروع خرید
-                            <HiMiniChevronLeft className='w-5 h-5 group-hover:-translate-x-1 transition-transform' />
-                        </Link>
-                        <Link href='/articles/1' className='px-6 py-3 text-sm sm:text-base text-text border border-white/15 hover:border-neon/50 rounded-2xl transition-colors'>
-                            بلاگ موبولند
-                        </Link>
+                <div className='grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-6'>
+                    <div className={`min-w-0 ${featuredProducts.length > 0 ? 'lg:col-span-8' : 'lg:col-span-12'}`}>
+                        <LandingBannerSlider banners={banners} />
                     </div>
 
-                    <div className='flex items-center justify-center md:justify-start gap-6 mt-10 text-text-muted text-xs sm:text-sm'>
-                        <span className='flex items-center gap-1.5'>
-                            <PiShieldCheckLight className='w-5 h-5 text-neon' />
-                            ضمانت اصالت کالا
-                        </span>
-                        <span className='flex items-center gap-1.5'>
-                            <PiLightningLight className='w-5 h-5 text-neon' />
-                            ارسال فوری تهران
-                        </span>
-                    </div>
+                    {featuredProducts.length > 0 &&
+                        <div className='min-w-0 lg:col-span-4'>
+                            <FeaturedProductsSwiper products={featuredProducts} />
+                        </div>
+                    }
                 </div>
 
-                {/* Tilt Spotlight Card */}
-                <div className='flex-1 flex-center w-full max-w-xs sm:max-w-sm'>
-                    <TiltCard />
+                {/* Trust Line*/}
+                <div className='grid grid-cols-2 md:grid-cols-4 gap-3 mt-5 lg:mt-6'>
+                    {trustItems.map(item => {
+                        const Icon = item.icon
+                        return (
+                            <div key={item.label} className='flex items-center justify-center gap-2 py-3 px-2 text-xs sm:text-sm text-text-muted bg-white/5 border border-white/10 rounded-2xl'>
+                                <Icon className='w-5 h-5 text-neon shrink-0' />
+                                {item.label}
+                            </div>
+                        )
+                    })}
                 </div>
             </div>
         </div>

@@ -17,6 +17,7 @@ const ProductSchema = new Schema<IProduct>(
         colors: { type: String, required: false },
         tags: { type: [String], required: false },
         img: { type: String, required: true },
+        isFeatured: { type: Boolean, default: false },
         images: { type: [String], default: [] },
     },
     { timestamps: true }

@@ -12,5 +12,6 @@ export interface AdminProduct {
     colors: string
     tags: string[]
     img: string
+    isFeatured: Boolean
     images?: string[]
 }

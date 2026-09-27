@@ -1,111 +1,64 @@
-"use client"
+import Link from 'next/link'
+import { PiLightningFill, PiArrowLeftLight } from 'react-icons/pi'
+import { getOfferProducts } from '@root/src/lib/home/homeData'
+import AmazingOffersSlider from './AmazingOffersSlider'
+import OfferCountdown from './OfferCountdown'
 
-import { FaChevronLeft } from "react-icons/fa6";
-import ProductBox from '../ProductBox/ProductBox';
-import { FaArrowLeft } from "react-icons/fa6";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
+const IRAN_OFFSET_MS = 3.5 * 60 * 60 * 1000
+const DAY_MS = 24 * 60 * 60 * 1000
 
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/effect-fade';
+function getEndOfIranDay() {
+    const iranNow = Date.now() + IRAN_OFFSET_MS
+    const iranEndOfDay = (Math.floor(iranNow / DAY_MS) + 1) * DAY_MS
+    return iranEndOfDay - IRAN_OFFSET_MS
+}
 
-import './AmazingOffers.css'
+export default async function AmazingOffers() {
+    const products = await getOfferProducts(10)
 
-export default function AmazingOffers() {
+    if (products.length === 0) return null
+
     return (
-        <div className='lg:h-82.5 my-14 sm:my-20 md:my-24'>
-            <div className='xl:container m-auto h-full'>
-                <div className='flex-center flex-col lg:flex-row gap-2 lg:gap-8 xl:gap-10 w-full h-full px-5'>
-                    <div className='w-full lg:w-2/12 lg:h-full bg-neon/10 border-4 border-primary-500 rounded-xl overflow-hidden'>
-                        <img src='/images/percentage.png' className='w-full object-cover h-10 lg:h-16 opacity-50 lg:opacity-95' />
-                        <div className='flex-center lg:flex-col sm:pr-4 lg:pr-0 gap-x-3'>
-                        <img src='/images/discount.png' className='hidden sm:block w-12 h-12 lg:w-auto lg:h-auto lg:mx-auto -mt-2 lg:-mt-11 z-10' />
-                        <p className='font-MorabbaBold text-3xl text-center my-3 lg:my-5 tracking-wide'>تـخـفیـفات شــگفــت انـــگـیــــــز</p>
-                        </div>
-                        {/* Offer Timer */}
-                        <div className='flex items-center justify-around gap-y-5 lg:flex-col mb-3 lg:mb-0'>
-                            <div className='flex-center gap-1.5 lg:gap-1 xl:gap-1.5 text-center lg:text-lg xl:text-xl font-DanaDemiBold'>
-                                <span className='px-1.5 xl:px-2 pt-0.5 xl:pt-1 bg-zinc-700 text-white rounded-md'>52</span>
-                                :
-                                <span className='px-1.5 xl:px-2 pt-0.5 xl:pt-1 bg-zinc-700 text-white rounded-md'>05</span>
-                                :
-                                <span className='px-1.5 xl:px-2 pt-0.5 xl:pt-1 bg-zinc-700 text-white rounded-md'>12</span>
-                            </div>
-                            <button className='flex-center gap-0.5 font-DanaMedium text-sm tracking-tighter'>
-                                مشاهده همه
-                                <FaChevronLeft className='w-3 h-3 mb-0.5' />
-                            </button>
-                        </div>
-                    </div>
+        <section className='container px-3 sm:px-0 my-14 sm:my-20 md:my-24'>
+            <div className='relative overflow-hidden rounded-3xl bg-linear-to-br from-dark via-dark-secondary to-dark p-4 sm:p-6 lg:p-8 shadow-[0_20px_50px_rgba(15,17,21,0.25)]'>
 
-                    {/* Products */}
-                    <div className='relative w-full lg:w-10/12 h-full py-5 pr-3 bg-neon/10 border-4 border-primary-500 rounded-2xl overflow-hidden'>
-                        <button className='prev absolute top-1/2 right-6 md:right-5 p-2 bg-white/95 rounded-full shadow-black shadow-custom z-10'>
-                            <FaChevronLeft className='w-3 md:w-4 h-3 md:h-4 rotate-180 text-zinc-800' />
-                        </button>
+                <div className='pointer-events-none absolute -top-24 -left-16 w-72 h-72 bg-neon/20 rounded-full blur-3xl' />
+                <div className='pointer-events-none absolute -bottom-28 right-1/3 w-72 h-72 bg-primary-500/20 rounded-full blur-3xl' />
 
-                        <Swiper
-                            spaceBetween={2}
-                            slidesPerView={2}
-                            speed={1200}
-                            navigation={{
-                                prevEl: '.prev',
-                                nextEl: '.next',
-                            }}
-                            breakpoints={{
-                                640: { slidesPerView: 3, spaceBetween: 2 },
-                                1280: { slidesPerView: 4, spaceBetween: 2 },
-                                1536: { slidesPerView: 5, spaceBetween: 2 },
-                            }}
-                            grabCursor={true}
-                            modules={[Navigation]}
-                            className='h-64 xs:h-auto overflow-visible'
+                <div className='relative z-10 flex flex-col lg:flex-row lg:items-stretch gap-6 lg:gap-8'>
+
+                    <div className='lg:w-60 xl:w-64 shrink-0 flex flex-col items-center lg:items-start justify-between gap-6 text-center lg:text-right'>
+                        <div>
+                            <span className='inline-flex items-center gap-1.5 px-3 py-1 mb-4 text-xs text-neon bg-white/5 border border-neon/25 rounded-full'>
+                                <PiLightningFill className='w-4 h-4' />
+                                پیشنهاد لحظه‌ای
+                            </span>
+                            <h2 className='font-MorabbaBold text-2xl sm:text-3xl leading-relaxed text-text'>
+                                تخفیفات
+                                <span className='block text-neon neon-text-glow'>شگفت‌انگیز</span>
+                            </h2>
+                            <p className='mt-2 text-xs sm:text-sm leading-7 text-text-muted'>
+                                بهترین تخفیف‌های امروز، تا وقتی موجود است
+                            </p>
+                        </div>
+
+                        <div>
+                            <p className='mb-2 text-xs text-text-muted'>زمان باقی‌مانده تا پایان امروز</p>
+                            <OfferCountdown endsAt={getEndOfIranDay()} />
+                        </div>
+
+                        <Link
+                            href='/products/1'
+                            className='group flex items-center justify-center gap-2 px-5 py-2.5 text-sm bg-neon text-surface rounded-xl shadow-[0_0_24px_rgba(215,255,92,0.3)] hover:shadow-[0_0_36px_rgba(215,255,92,0.5)] transition-shadow'
                         >
-                            <SwiperSlide>
-                                <ProductBox shortName={'headphone-cerby'} img={'/images/products/airpods.png'} title={'هندزفری بلوتوثی کربی مدل CR-T107'} classes={'product-box__sm'} price={565000} discount={10} exPrice={850000} />
-                            </SwiperSlide>
-
-                            <SwiperSlide>
-                                <ProductBox shortName={'headphone-cerby'} img={'/images/products/charge-cable.png'} title={'هندزفری بلوتوثی کربی مدل CR-T107'} classes={'product-box__sm'} price={765000} discount={10} exPrice={850000} />
-                            </SwiperSlide>
-
-                            <SwiperSlide>
-                                <ProductBox shortName={'headphone-cerby'} img={'/images/products/cover.png'} title={'هندزفری بلوتوثی کربی مدل CR-T107'} classes={'product-box__sm'} price={765000} discount={27} exPrice={850000} />
-                            </SwiperSlide>
-
-                            <SwiperSlide>
-                                <ProductBox shortName={'headphone-cerby'} img={'/images/products/power-bank3.png'} title={'هندزفری بلوتوثی کربی مدل CR-T107'} classes={'product-box__sm'} price={765000} />
-                            </SwiperSlide>
-                            <SwiperSlide>
-                                <ProductBox shortName={'headphone-cerby'} img={'/images/products/power-bank1.png'} title={'هندزفری بلوتوثی کربی مدل CR-T107'} classes={'product-box__sm'} price={765000} discount={88} exPrice={970000} />
-                            </SwiperSlide>
-                            <SwiperSlide>
-                                <ProductBox shortName={'headphone-cerby'} img={'/images/products/cover.png'} title={'هندزفری بلوتوثی کربی مدل CR-T107'} classes={'product-box__sm'} price={765000} />
-                            </SwiperSlide>
-                            <SwiperSlide>
-                                <ProductBox shortName={'headphone-cerby'} img={'/images/products/airpods.png'} title={'هندزفری بلوتوثی کربی مدل CR-T107'} classes={'product-box__sm'} price={765000} discount={88} exPrice={970000} />
-                            </SwiperSlide>
-
-                            <SwiperSlide>
-                                <ProductBox shortName={'headphone-cerby'} img={'/images/products/charge-cable.png'} title={'هندزفری بلوتوثی کربی مدل CR-T107'} classes={'product-box__sm'} price={765000} discount={10} exPrice={850000} />
-                            </SwiperSlide>
-
-                            <SwiperSlide>
-                                <div className='flex-center flex-col gap-4 w-44 h-72 px-2 py-3 bg-white shadow-lg rounded-lg'>
-                                    <span className='p-2.5 border-2 border-purple-custom rounded-full cursor-pointer'><FaArrowLeft className='w-7 h-7 text-purple-custom' /></span>
-                                    <p className='text-center cursor-pointer'>مشاهده همه</p>
-                                </div>
-                            </SwiperSlide>
-                        </Swiper>
-
-                        <button className='next absolute top-1/2 left-6 md:left-5 p-2 bg-white/95 rounded-full shadow-black shadow-custom z-10'>
-                            <FaChevronLeft className='w-3 md:w-4 h-3 md:h-4 text-zinc-800' />
-                        </button>
-
+                            مشاهده همه
+                            <PiArrowLeftLight className='w-4 h-4 group-hover:-translate-x-1 transition-transform' />
+                        </Link>
                     </div>
+
+                    <AmazingOffersSlider products={products} />
                 </div>
             </div>
-        </div>
+        </section>
     )
 }
