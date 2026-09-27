@@ -126,10 +126,10 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                         <h2 className='footer-title'>دسترسی سریع</h2>
                         <div className='footer-col__list'>
                             <Link href={'/contact'}>ثبت شکایت</Link>
-                            <a href='#'>قوانین و مقررات</a>
-                            <a href='#'>روش های ارسال</a>
-                            <a href='#'>روش های پرداخت</a>
-                            <a href='#'>رویه بازگشت کالا</a>
+                            <a href='/rules'>قوانین و مقررات</a>
+                            <a href='/rules#shipping'>روش های ارسال</a>
+                            <a href='/rules#payment'>روش های پرداخت</a>
+                            <a href='/rules#returns'>رویه بازگشت کالا</a>
                         </div>
                     </div>
 

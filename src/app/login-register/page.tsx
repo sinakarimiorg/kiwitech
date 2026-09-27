@@ -370,11 +370,11 @@ const login_register = () => {
                 {/* //////////// Terms and Caonditions */}
                 <p className="px-10 text-xs font-medium text-gray-600 leading-6">
                     ورود | ثبت نام شما به معنای پذیرش &nbsp;
-                    <Link target="_blank" className="text-xs text-blue-500" href="/rules">
+                    <Link target="/rules" className="text-xs text-blue-500" href="/rules">
                         قوانین و مقررات
                     </Link>
                     &nbsp; و &nbsp;
-                    <Link target="_blank" className="text-xs text-blue-500" href="/rules">
+                    <Link target="/rules#privacy" className="text-xs text-blue-500" href="/rules">
                         حریم خصوصی کاربران
                     </Link>
                     &nbsp; کیـوی‌تـــک است.
