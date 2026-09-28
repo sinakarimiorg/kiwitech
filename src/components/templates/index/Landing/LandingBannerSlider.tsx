@@ -16,6 +16,11 @@ import 'swiper/css/pagination'
 
 const frameClasses = 'relative w-full h-full overflow-hidden rounded-3xl aspect-video lg:aspect-auto lg:min-h-105 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.35)]'
 
+const navButtonClasses =
+    `hidden sm:flex items-center justify-center absolute top-1/2 -translate-y-1/2 z-10 w-11 h-11 text-white
+    bg-white/10 backdrop-blur-md border border-white/25 rounded-full shadow-lg
+    opacity-0 group-hover/slider:opacity-100 hover:bg-white/20 hover:border-white/40 transition-all cursor-pointer`
+
 function DefaultSlide() {
     return (
         <div className={`${frameClasses} flex flex-col justify-center px-6 sm:px-12 bg-linear-to-br from-primary-700 via-primary-600 to-dark-secondary`}>
@@ -84,21 +89,19 @@ export default function LandingBannerSlider({ banners }: { banners: HomeBanner[]
                 ))}
             </Swiper>
 
-            {/* دکمه‌های قبلی و بعدی؛ فقط روی دسکتاپ و با هاور */}
             {isMulti && (
                 <>
                     <button
                         type='button'
                         aria-label='بنر قبلی'
-                        className='landing-banner-prev hidden sm:flex items-center justify-center absolute top-1/2 right-3 -translate-y-1/2 z-10 w-10 h-10 text-zinc-800 bg-white/90 hover:bg-neon rounded-full shadow-lg opacity-0 group-hover/slider:opacity-100 transition-all cursor-pointer'
+                        className={`landing-banner-prev right-3 ${navButtonClasses}`}
                     >
                         <FaChevronLeft className='w-4 h-4 rotate-180' />
                     </button>
                     <button
                         type='button'
                         aria-label='بنر بعدی'
-                        className='landing-banner-next hidden sm:flex items-center justify-center absolute top-1/2 left-3 -translate-y-1/2 z-10 w-10 h-10 text-zinc-800 bg-white/90 hover:bg-neon rounded-full shadow-lg opacity-0 group-hover/slider:opacity-100 transition-all cursor-pointer'
-                    >
+                        className={`landing-banner-next left-3 ${navButtonClasses}`}                    >
                         <FaChevronLeft className='w-4 h-4' />
                     </button>
                 </>

@@ -55,7 +55,7 @@ export default function ProductCard({ shortName, img, img2, title, price, exPric
 
                 <div className='mt-2.5 sm:mt-3'>
                     {exPrice && exPrice > price &&
-                        <div className='relative inline-flex mb-1 text-xs text-gray-400 ex-price'>
+                        <div className='mb-1 text-xs text-gray-400 line-through decoration-gray-400/80'>
                             {exPrice.toLocaleString()}
                         </div>
                     }

@@ -12,7 +12,7 @@ import { HiMiniXMark } from "react-icons/hi2";
 import { AiOutlineHome } from "react-icons/ai";
 import { HiMiniChevronDown } from "react-icons/hi2";
 import { HiMiniChevronUp } from "react-icons/hi2";
-import { MdOutlineShoppingBag } from "react-icons/md";
+import { MdOutlineAdminPanelSettings, MdOutlineShoppingBag } from "react-icons/md";
 import { IoDocumentTextOutline } from "react-icons/io5";
 import { BiPhone } from "react-icons/bi";
 import { RiGroupLine } from "react-icons/ri";
@@ -22,6 +22,7 @@ import SearchSuggestions from './SearchSuggestions/SearchSuggestions'
 import { getSessionUserAction, logoutAction } from '@root/src/components/templates/Auth/action'
 import CartDropdown from './CartDropdown'
 import { CartBadge, CartMiniList, CartMiniFooter } from './CartMiniPanel'
+import { PiUserCircleLight } from 'react-icons/pi';
 
 type SessionUser = { name: string; phone: string; role: string } | null
 
@@ -29,7 +30,7 @@ const Topbar = () => {
     const [searchedValue, setSearchedValue] = useState('')
     const [visibleOverlay, setVisibleOverlay] = useState(false)
     const [navClass, setNavClass] = useState('-right-64')
-    const [cartClass, setCartClass] = useState('-left-64')
+    const [cartClass, setCartClass] = useState('-left-80')
     const [isSubmenuOpen, setIsSubmenuOpen] = useState(false)
 
     const [currentUser, setCurrentUser] = useState<SessionUser>(null)
@@ -76,13 +77,13 @@ const Topbar = () => {
         setVisibleOverlay(!visibleOverlay)
     }
     const closeCartBar = () => {
-        setCartClass('-left-64')
+        setCartClass('-left-80')
         setVisibleOverlay(!visibleOverlay)
     }
 
     const closeOverlayFunc = () => {
         setNavClass('-right-64')
-        setCartClass('-left-64')
+        setCartClass('-left-80')
         setVisibleOverlay(false)
     }
 
@@ -221,9 +222,9 @@ const Topbar = () => {
                             </Link>
 
                             {/* <!-- Close Nav Icon --> */}
-                            <div onClick={() => closeNavBar()}>
-                                <HiMiniXMark className="w-5 h-5 cursor-pointer" />
-                            </div>
+                            <button onClick={() => closeNavBar()} aria-label='بستن' className='flex-center w-8 h-8 text-text hover:text-neon transition-colors cursor-pointer'>
+                                <HiMiniXMark className="w-5 h-5" />
+                            </button>
                         </div>
 
                         {/* <!-- Nav Menu --> */}
@@ -288,49 +289,61 @@ const Topbar = () => {
                             </ul>
                         </div>
 
-                        {/* <!-- Nav Footer --> */}
-                        <div
-                            className="inline-flex flex-col gap-y-6 w-full pr-2.5 py-8 border-t border-t-border-light text-primary-500 [&>*:hover]:text-neon [&>*:hover]:cursor-pointer">
-                            {/* <!-- Login Link --> */}
-                            {/* {
-                                localStorage.getItem('username') ? localStorage.getItem('username') :
-                                    <a className="flex gap-x-2">
-                                        <HiArrowRightEndOnRectangle className="w-5 h-5" />
-                                        ورود | ثبت‌نام
-                                    </a>
-                            } */}
-                            <a className="flex gap-x-2">
-                                <HiArrowRightEndOnRectangle className="w-5 h-5" />
-                                ورود | ثبت‌نام
-                            </a>
+{/* <!-- Nav Footer --> */}
+<div className="flex flex-col gap-y-6 w-full pr-2.5 py-8 border-t border-t-border-light text-primary-500 [&>*:hover]:text-neon">
+    {currentUser ? (
+        <>
+            <Link href='/p-user' className="flex items-center gap-x-2">
+                <PiUserCircleLight className="w-5 h-5" />
+                <span className='line-clamp-1'>{currentUser.name}</span>
+            </Link>
 
-                            {/* <!-- Shopping Cart Link --> */}
-                            <a className="flex gap-x-2">
-                                <HiOutlineShoppingCart className="w-5 h-5" />
-                                <span>سبد خرید</span>
-                            </a>
-                        </div>
+            {currentUser.role === 'ادمین' &&
+                <Link href='/p-admin' className="flex items-center gap-x-2">
+                    <MdOutlineAdminPanelSettings className="w-5 h-5" />
+                    <span>ورود به ادمین پنل</span>
+                </Link>
+            }
+        </>
+    ) : (
+        <Link href='/login-register' className="flex items-center gap-x-2">
+            <HiArrowRightEndOnRectangle className="w-5 h-5" />
+            <span>ورود | ثبت‌نام</span>
+        </Link>
+    )}
+
+    <Link href='/checkout/cart' className="flex items-center gap-x-2">
+        <HiOutlineShoppingCart className="w-5 h-5" />
+        <span>سبد خرید</span>
+    </Link>
+
+    {currentUser &&
+        <button onClick={exitUser} className="flex items-center gap-x-2 text-danger hover:text-danger! cursor-pointer">
+            <HiArrowRightEndOnRectangle className="w-5 h-5 rotate-180" />
+            <span>خروج</span>
+        </button>
+    }
+</div>
                     </div>
 
                     {/* <!-- Mobile Cart --> */}
-                    <div className={`mobile-cart fixed ${cartClass} top-0 bottom-0 flex flex-col w-64 px-4 pt-5 bg-navbar-menu z-20 text-text font-IranYekan transition-all`}>
+                    <div className={`mobile-cart fixed ${cartClass} top-0 bottom-0 flex flex-col w-80 max-w-[85vw] bg-white shadow-2xl z-20 text-zinc-700 font-IranYekan transition-all`}>
 
                         {/* <!-- Cart Header --> */}
-                        <div className="flex items-center justify-between pb-5 border-b border-b-gray-300 ">
-
-                            {/* <!-- Close Cart Icon --> */}
-                            <div onClick={() => closeCartBar()}>
+                        <div className="flex items-center justify-between px-4 py-4 bg-dark-secondary text-white">
+                            <span className='font-IranYekanMedium'>سبد خرید</span>
+                            <button onClick={() => closeCartBar()} aria-label='بستن' className='flex-center w-8 h-8 rounded-lg hover:bg-white/10 cursor-pointer'>
                                 <HiMiniXMark className="w-5 h-5" />
-                            </div>
-
-                            <span>سبد خرید</span>
+                            </button>
                         </div>
 
-                        {/* <!-- Cart Body and Footer --> */}
-                        <div className='flex-1 overflow-y-auto'>
+                        {/* <!-- Cart Body --> */}
+                        <div className='flex-1 overflow-y-auto px-4 py-4'>
                             <CartMiniList />
                         </div>
-                        <div className='pb-8'>
+
+                        {/* <!-- Cart Footer --> */}
+                        <div className='px-4 pb-6 bg-white shadow-[0_-8px_20px_rgba(0,0,0,0.06)]'>
                             <CartMiniFooter />
                         </div>
 

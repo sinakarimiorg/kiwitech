@@ -13,8 +13,8 @@ export default function TiltCard({ product }: { product: HomeProduct }) {
     return (
         <Tilt
             glareEnable={true}
-            glareMaxOpacity={0.25}
-            glareColor="#D7FF5C"
+            glareMaxOpacity={0.12}
+            glareColor="#ffffff"
             glarePosition="all"
             tiltMaxAngleX={10}
             tiltMaxAngleY={10}
@@ -24,7 +24,7 @@ export default function TiltCard({ product }: { product: HomeProduct }) {
         >
             <Link
                 href={`/product-info/${product.linkName}`}
-                className='relative block glass-neon-card rounded-3xl p-6 sm:p-7'
+                className='relative block glass-neon-card bg-white! rounded-3xl p-6 sm:p-7'
             >
                 {percent > 0 &&
                     <span className='absolute top-4 right-4 z-10 px-3 py-1 text-xs font-DanaDemiBold bg-neon text-surface rounded-full shadow-lg animate-glow-pulse'>
@@ -39,21 +39,22 @@ export default function TiltCard({ product }: { product: HomeProduct }) {
                 />
 
                 <div className='mt-5 text-center'>
-                    <p className='min-h-12 text-sm sm:text-base leading-6 text-zinc-700 line-clamp-2'>{product.name}</p>
+                    <p className='min-h-12 text-sm sm:text-base leading-6 text-zinc-800 line-clamp-2'>{product.name}</p>
 
-                    <div className='mt-3 flex flex-col items-center gap-1'>
+                    <div className='flex-center gap-3'>
                         {percent > 0 &&
-                            <span className='relative inline-flex text-sm text-zinc-400'>
+                            <span className='relative align-top text-md text-zinc-400 line-through decoration-zinc-400/70'>
                                 {product.exPrice!.toLocaleString()}
-                                <span className='absolute inset-x-0 top-1/2 h-px bg-zinc-400/70' />
                             </span>
                         }
-                        <span className='inline-flex items-center gap-1 font-IranYekanBold text-primary-600 text-lg sm:text-xl'>
-                            {product.price.toLocaleString()}
-                            <TomanIcon className='w-4 h-4' />
-                        </span>
-                    </div>
 
+                        <div className='mt-3 flex-center items-center'>
+                            <span className='inline-flex items-center gap-1 font-IranYekanBold text-primary-600 text-lg sm:text-2xl'>
+                                {product.price.toLocaleString()}
+                                <TomanIcon className='w-4 h-4' />
+                            </span>
+                        </div>
+                    </div>
                     {lowStock &&
                         <span className='inline-block mt-3 px-2.5 py-1 text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg'>
                             تنها {product.stock.toLocaleString('fa-IR')} عدد باقی مانده
