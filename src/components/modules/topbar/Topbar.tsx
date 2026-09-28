@@ -23,6 +23,7 @@ import { getSessionUserAction, logoutAction } from '@root/src/components/templat
 import CartDropdown from './CartDropdown'
 import { CartBadge, CartMiniList, CartMiniFooter } from './CartMiniPanel'
 import { PiUserCircleLight } from 'react-icons/pi';
+import MobileMenuCategories from './MobileMenuCategories';
 
 type SessionUser = { name: string; phone: string; role: string } | null
 
@@ -252,18 +253,7 @@ const Topbar = () => {
                                     </div>
 
                                     {/* <!-- Submenu --> */}
-                                    {
-                                        isSubmenuOpen &&
-                                        <div className="flex flex-col items-start mt-3 pr-7 gap-y-3 text-sm text-text-muted [&>*:hover]:text-neon">
-                                            <Link href={'/'}>شارژر گوشی</Link>
-                                            <Link href={'/'}>قاب و کاور گوشی</Link>
-                                            <Link href={'/'}>گلس گوشی</Link>
-                                            <Link href={'/'}>هولدر گوشی موبایل</Link>
-                                            <Link href={'/'}>کابل شارژ و مبدل</Link>
-                                            <Link href={'/'}>پاوربانک</Link>
-
-                                        </div>
-                                    }
+                                    {isSubmenuOpen && <MobileMenuCategories />}
                                 </li>
 
                                 <li>
@@ -289,41 +279,41 @@ const Topbar = () => {
                             </ul>
                         </div>
 
-{/* <!-- Nav Footer --> */}
-<div className="flex flex-col gap-y-6 w-full pr-2.5 py-8 border-t border-t-border-light text-primary-500 [&>*:hover]:text-neon">
-    {currentUser ? (
-        <>
-            <Link href='/p-user' className="flex items-center gap-x-2">
-                <PiUserCircleLight className="w-5 h-5" />
-                <span className='line-clamp-1'>{currentUser.name}</span>
-            </Link>
+                        {/* <!-- Nav Footer --> */}
+                        <div className="flex flex-col gap-y-6 w-full pr-2.5 py-8 border-t border-t-border-light text-primary-500 [&>*:hover]:text-neon">
+                            {currentUser ? (
+                                <>
+                                    <Link href='/p-user' className="flex items-center gap-x-2">
+                                        <PiUserCircleLight className="w-5 h-5" />
+                                        <span className='line-clamp-1'>{currentUser.name}</span>
+                                    </Link>
 
-            {currentUser.role === 'ادمین' &&
-                <Link href='/p-admin' className="flex items-center gap-x-2">
-                    <MdOutlineAdminPanelSettings className="w-5 h-5" />
-                    <span>ورود به ادمین پنل</span>
-                </Link>
-            }
-        </>
-    ) : (
-        <Link href='/login-register' className="flex items-center gap-x-2">
-            <HiArrowRightEndOnRectangle className="w-5 h-5" />
-            <span>ورود | ثبت‌نام</span>
-        </Link>
-    )}
+                                    {currentUser.role === 'ادمین' &&
+                                        <Link href='/p-admin' className="flex items-center gap-x-2">
+                                            <MdOutlineAdminPanelSettings className="w-5 h-5" />
+                                            <span>ورود به ادمین پنل</span>
+                                        </Link>
+                                    }
+                                </>
+                            ) : (
+                                <Link href='/login-register' className="flex items-center gap-x-2">
+                                    <HiArrowRightEndOnRectangle className="w-5 h-5" />
+                                    <span>ورود | ثبت‌نام</span>
+                                </Link>
+                            )}
 
-    <Link href='/checkout/cart' className="flex items-center gap-x-2">
-        <HiOutlineShoppingCart className="w-5 h-5" />
-        <span>سبد خرید</span>
-    </Link>
+                            <Link href='/checkout/cart' className="flex items-center gap-x-2">
+                                <HiOutlineShoppingCart className="w-5 h-5" />
+                                <span>سبد خرید</span>
+                            </Link>
 
-    {currentUser &&
-        <button onClick={exitUser} className="flex items-center gap-x-2 text-danger hover:text-danger! cursor-pointer">
-            <HiArrowRightEndOnRectangle className="w-5 h-5 rotate-180" />
-            <span>خروج</span>
-        </button>
-    }
-</div>
+                            {currentUser &&
+                                <button onClick={exitUser} className="flex items-center gap-x-2 text-danger hover:text-danger! cursor-pointer">
+                                    <HiArrowRightEndOnRectangle className="w-5 h-5 rotate-180" />
+                                    <span>خروج</span>
+                                </button>
+                            }
+                        </div>
                     </div>
 
                     {/* <!-- Mobile Cart --> */}
