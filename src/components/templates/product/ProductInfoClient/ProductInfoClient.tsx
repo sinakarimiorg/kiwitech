@@ -50,6 +50,66 @@ type ProductInfoClientProps = {
 }
 
 export default function ProductInfoClient({ product, comments, ratingAverage, ratingCount, initialIsFavorite }: ProductInfoClientProps) {
+  // *_______ Handle sections Management _______*  
+  const [desktopTab, setDesktopTab] = useState('description');
+  const [mobileTab, setMobileTab] = useState('description');
+
+  // Observer For Desctop
+  useEffect(() => {
+    const sections = [
+      { id: 'product__description-section-desktop', key: 'description' },
+      { id: 'product__features-section-desktop', key: 'features' },
+      { id: 'product__comments-section-desktop', key: 'comments' },
+    ];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const current = sections.find(sec => sec.id === entry.target.id);
+            if (current) setDesktopTab(current.key);
+          }
+        });
+      },
+      { rootMargin: '-20% 0px -60% 0px' }
+    );
+
+    sections.forEach((sec) => {
+      const el = document.getElementById(sec.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Observer For Mobile
+  useEffect(() => {
+    const sections = [
+      { id: 'product__description-section-mobile', key: 'description' },
+      { id: 'product__features-section-mobile', key: 'features' },
+      { id: 'product__comments-section-mobile', key: 'comments' },
+    ];
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const current = sections.find(sec => sec.id === entry.target.id);
+            if (current) setMobileTab(current.key);
+          }
+        });
+      },
+      { rootMargin: '-30% 0px -50% 0px' }
+    );
+
+    sections.forEach((sec) => {
+      const el = document.getElementById(sec.id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   ////////// Handle NavBar visiblity
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true)
@@ -465,30 +525,28 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
           </div>
 
           {/* Bottom Section (All features, description, comments) */}
-          <div className='mt-14 lg:mt-20'>
-            {/* Header Of This Section */}
+          <div className="hidden lg:block">
             <div className={`sticky ${visible ? 'top-41' : 'top-24'} z-10`}>
               <ul className='flex gap-8 px-4 rounded-t-md bg-surface-3 text-text'>
-                <li className={styles.productInfo__menuTitle}>
-                  <a href='#product__description-section'>معرفی</a>
-                  <div className={styles.productInfo__underlineBorder}></div>
+                <li className={styles.productInfo__menuTitle} onClick={() => setDesktopTab('description')}>
+                  <a href='#product__description-section-desktop'>معرفی</a>
+                  <div className={desktopTab === 'description' ? styles.productInfo__underlineBorder : 'opacity-0'}></div>
                 </li>
-                <li className={styles.productInfo__menuTitle}>
-                  <a href='#product__features-section'>مشخصات</a>
-                  <div className='productInfo__underline-border opacity-0'></div>
+                <li className={styles.productInfo__menuTitle} onClick={() => setDesktopTab('features')}>
+                  <a href='#product__features-section-desktop'>مشخصات</a>
+                  <div className={desktopTab === 'features' ? styles.productInfo__underlineBorder : 'opacity-0'}></div>
                 </li>
-                <li className={styles.productInfo__menuTitle}>
-                  <a href='#product__comments-section'>نظرات کاربران</a>
-                  <div className='productInfo__underline-border opacity-0'></div>
+                <li className={styles.productInfo__menuTitle} onClick={() => setDesktopTab('comments')}>
+                  <a href='#product__comments-section-desktop'>نظرات کاربران</a>
+                  <div className={desktopTab === 'comments' ? styles.productInfo__underlineBorder : 'opacity-0'}></div>
                 </li>
               </ul>
             </div>
-            {/* Body & Contents of Section */}
-            <div className=' flex gap-x-8 xl:gap-x-16 pt-8'>
-              {/* Right col & Contents */}
+
+            {/* Body & Contents */}
+            <div className='flex gap-x-8 xl:gap-x-16 pt-8'>
               <div className='w-8/12 xl:w-9/12'>
-                {/* Description */}
-                <div id='product__description-section' className='px-2.5 mb-7'>
+                <div id='product__description-section-desktop' className='px-2.5 mb-7 scroll-mt-52'>
                   <h1 className={styles.productInfo__title}>معرفی</h1>
                   <p className='text-sm lg:text-base text-text-muted leading-8 lg:leading-9'>
                     {product.description || 'توضیحاتی برای این محصول ثبت نشده است.'}
@@ -497,8 +555,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
 
                 <div className={styles.dividerBorder}></div>
 
-                {/* All Features */}
-                <div id='product__features-section'>
+                <div id='product__features-section-desktop' className='scroll-mt-52'>
                   <h1 className={styles.productInfo__title}>مشـخصات فـنی</h1>
                   <div className='overflow-hidden'>
                     {featureItems.map(item => (
@@ -509,8 +566,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
 
                 <div className={styles.dividerBorder}></div>
 
-                {/* Comments */}
-                <div id='product__comments-section'>
+                <div id='product__comments-section-desktop' className='scroll-mt-52'>
                   <CommentsSection
                     productId={product._id}
                     linkName={product.linkName}
@@ -524,8 +580,6 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
               {/* Left col & Product Purchase Cart */}
               <div className={`sticky ${visible ? 'top-60' : 'top-44'} h-fit w-4/12 xl:w-3/12 bg-white shadow-xl rounded-xl`}>
                 <OfferBar rounded='rounded-t-xl' />
-
-                {/* Product's Title & Color & Image */}
                 <div className='flex-center gap-4 lg:gap-9 px-4 lg:px-7 pt-5 pb-3'>
                   <img className='w-14 h-14 object-contain scale-150' src={mainImage} alt={product.name} />
                   <div>
@@ -537,9 +591,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
                     )}
                   </div>
                 </div>
-                {/* Cart Body */}
                 <div className='pb-6 px-5 bg-white'>
-                  {/* Purchase Details */}
                   <div className='py-1 lg:py-3 px-1 lg:px-3 border-y border-dotted border-gray-300'>
                     <div className='flex items-center gap-1.5 mb-2.5 py-1'>
                       <CiBoxes className='w-5 h-5' />
@@ -552,18 +604,13 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
                       <span className='font-IranYekanMedium text-xs lg:text-sm'>۷ روز تضمین بازگشت کالا</span>
                     </div>
                   </div>
-
-                  {/* Produc Price */}
                   <div className='my-2 lg:my-5 px-2 lg:px-4 text-left'>
                     <PriceBlock />
                   </div>
-
-                  {/* Cart Add Basket Button  */}
                   <AddToCartButton className='h-10 lg:h-12 text-center lg:text-lg leading-10 lg:leading-12' />
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
@@ -659,38 +706,36 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
           </div>
 
           {/* Bottom Section (All features, description, comments) */}
-          <div className='mt-10 pb-28'>
-            {/* Header Of This Section */}
+          <div className='block lg:hidden mt-10 pb-28'>
             <div className='sticky top-0 z-10'>
-              <ul className='flex justify-between px-10 border border-border-light rounded-t-md glass-card '>
-                <li className={styles.productInfo__menuTitle}>
-                  <a href='#product__description-section'>معرفی</a>
-                  <div className={styles.productInfo__underlineBorder}></div>
+              <ul className='flex justify-between px-6 sm:px-10 border border-border-light rounded-t-md glass-card'>
+                <li className={styles.productInfo__menuTitle} onClick={() => setMobileTab('description')}>
+                  <a href='#product__description-section-mobile'>معرفی</a>
+                  <div className={mobileTab === 'description' ? styles.productInfo__underlineBorder : 'opacity-0'}></div>
                 </li>
-                <li className={styles.productInfo__menuTitle}>
-                  <a href='#product__features-section'>مشخصات</a>
-                  <div className='productInfo__underline-border opacity-0'></div>
+                <li className={styles.productInfo__menuTitle} onClick={() => setMobileTab('features')}>
+                  <a href='#product__features-section-mobile'>مشخصات</a>
+                  <div className={mobileTab === 'features' ? styles.productInfo__underlineBorder : 'opacity-0'}></div>
                 </li>
-                <li className={styles.productInfo__menuTitle}>
-                  <a href='#product__comments-section'>نظرات کاربران</a>
-                  <div className='productInfo__underline-border opacity-0'></div>
+                <li className={styles.productInfo__menuTitle} onClick={() => setMobileTab('comments')}>
+                  <a href='#product__comments-section-mobile'>نظرات کاربران</a>
+                  <div className={mobileTab === 'comments' ? styles.productInfo__underlineBorder : 'opacity-0'}></div>
                 </li>
               </ul>
             </div>
-            {/* Body & Contents of Section */}
+
+            {/* Body & Contents */}
             <div className='w-full pt-8'>
-              {/* Description */}
-              <div id='product__description-section' className='px-2.5 mb-7'>
+              <div id='product__description-section-mobile' className='px-2.5 mb-7 scroll-mt-24'>
                 <h1 className={styles.productInfo__title}>معرفی</h1>
-                <p className='text-sm lg:text-base text-text-muted leading-8 lg:leading-9'>
+                <p className='text-sm text-text-muted leading-8'>
                   {product.description || 'توضیحاتی برای این محصول ثبت نشده است.'}
                 </p>
               </div>
 
               <div className={styles.dividerBorder}></div>
 
-              {/* All Features */}
-              <div id='product__features-section'>
+              <div id='product__features-section-mobile' className='scroll-mt-24'>
                 <h1 className={styles.productInfo__title}>مشـخصات فـنی</h1>
                 <div className='overflow-hidden'>
                   {featureItems.map(item => (
@@ -701,8 +746,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
 
               <div className={styles.dividerBorder}></div>
 
-              {/* Comments */}
-              <div id='product__Comments-section'>
+              <div id='product__comments-section-mobile' className='scroll-mt-24'>
                 <CommentsSection
                   productId={product._id}
                   linkName={product.linkName}
@@ -712,7 +756,6 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
                 />
               </div>
             </div>
-
           </div>
         </div>
       </div>
