@@ -48,6 +48,7 @@ interface FormValues {
     description: string
     colors: string
     tags: string
+    isFeatured: Boolean
 }
 
 const validationSchema = Yup.object({
@@ -93,6 +94,7 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
         description: product.description ?? "",
         colors: product.colors ?? "",
         tags: product.tags?.length ? product.tags.join("، ") : "",
+        isFeatured: product.isFeatured || false
     }
 
     const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,217 +171,227 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
                     {({ isSubmitting }) => {
                         const submitting = isSubmitting || isPending
                         return (
-                        <Form>
-                            <div className='flex flex-col lg:flex-row gap-6'>
-                                {/* Image Uploader */}
-                                <div className='w-full lg:w-56 shrink-0'>
-                                    <label className='block mb-2 text-xs text-zinc-500'>تصاویر محصول</label>
-                                    <div className='grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 lg:grid-cols-2 gap-2'>
-                                        {existingImages.map((src, index) => (
-                                            <div key={`existing-${index}`} className='relative aspect-square rounded-xl overflow-hidden border border-gray-200'>
-                                                <img src={src} className='w-full h-full object-cover' alt={`تصویر ${index + 1}`} />
-                                                <button
-                                                    onClick={() => removeExistingImage(index)}
-                                                    type='button'
-                                                    className='absolute top-1 left-1 text-white bg-black/50 hover:bg-black/70 rounded-full transition-colors cursor-pointer'>
-                                                    <PiXCircleFill className='w-5 h-5' />
-                                                </button>
-                                            </div>
-                                        ))}
+                            <Form>
+                                <div className='flex flex-col lg:flex-row gap-6'>
+                                    {/* Image Uploader */}
+                                    <div className='w-full lg:w-56 shrink-0'>
+                                        <label className='block mb-2 text-xs text-zinc-500'>تصاویر محصول</label>
+                                        <div className='grid grid-cols-3 xs:grid-cols-4 sm:grid-cols-5 lg:grid-cols-2 gap-2'>
+                                            {existingImages.map((src, index) => (
+                                                <div key={`existing-${index}`} className='relative aspect-square rounded-xl overflow-hidden border border-gray-200'>
+                                                    <img src={src} className='w-full h-full object-cover' alt={`تصویر ${index + 1}`} />
+                                                    <button
+                                                        onClick={() => removeExistingImage(index)}
+                                                        type='button'
+                                                        className='absolute top-1 left-1 text-white bg-black/50 hover:bg-black/70 rounded-full transition-colors cursor-pointer'>
+                                                        <PiXCircleFill className='w-5 h-5' />
+                                                    </button>
+                                                </div>
+                                            ))}
 
-                                        {newImagePreviews.map((src, index) => (
-                                            <div key={`new-${index}`} className='relative aspect-square rounded-xl overflow-hidden border-2 border-primary-300'>
-                                                <img src={src} className='w-full h-full object-cover' alt={`تصویر جدید ${index + 1}`} />
-                                                <button
-                                                    onClick={() => removeNewImage(index)}
-                                                    type='button'
-                                                    className='absolute top-1 left-1 text-white bg-black/50 hover:bg-black/70 rounded-full transition-colors cursor-pointer'>
-                                                    <PiXCircleFill className='w-5 h-5' />
-                                                </button>
-                                            </div>
-                                        ))}
+                                            {newImagePreviews.map((src, index) => (
+                                                <div key={`new-${index}`} className='relative aspect-square rounded-xl overflow-hidden border-2 border-primary-300'>
+                                                    <img src={src} className='w-full h-full object-cover' alt={`تصویر جدید ${index + 1}`} />
+                                                    <button
+                                                        onClick={() => removeNewImage(index)}
+                                                        type='button'
+                                                        className='absolute top-1 left-1 text-white bg-black/50 hover:bg-black/70 rounded-full transition-colors cursor-pointer'>
+                                                        <PiXCircleFill className='w-5 h-5' />
+                                                    </button>
+                                                </div>
+                                            ))}
 
-                                        <label className='flex flex-col items-center justify-center gap-1 aspect-square border-2 border-dashed border-gray-200 hover:border-primary-400 rounded-xl cursor-pointer text-zinc-400 hover:text-primary-500 transition-colors'>
-                                            <PiImageLight className='w-7 h-7' />
-                                            <span className='text-[10px]'>افزودن عکس</span>
-                                            <input
-                                                ref={fileInputRef}
-                                                onChange={handleImageChange}
-                                                type='file'
-                                                accept='image/*'
-                                                multiple
-                                                className='hidden'
+                                            <label className='flex flex-col items-center justify-center gap-1 aspect-square border-2 border-dashed border-gray-200 hover:border-primary-400 rounded-xl cursor-pointer text-zinc-400 hover:text-primary-500 transition-colors'>
+                                                <PiImageLight className='w-7 h-7' />
+                                                <span className='text-[10px]'>افزودن عکس</span>
+                                                <input
+                                                    ref={fileInputRef}
+                                                    onChange={handleImageChange}
+                                                    type='file'
+                                                    accept='image/*'
+                                                    multiple
+                                                    className='hidden'
+                                                />
+                                            </label>
+                                        </div>
+                                        <p className='mt-1.5 text-[11px] text-zinc-400'>اولین عکس، تصویر اصلی محصول در نظر گرفته می‌شود.</p>
+                                    </div>
+
+                                    {/* Fields */}
+                                    <div className='flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5'>
+                                        <div>
+                                            <label className='block mb-1.5 text-xs text-zinc-500'>نام محصول *</label>
+                                            <Field
+                                                name="name"
+                                                className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
                                             />
-                                        </label>
+                                            <ErrorMessage name="name" component="span" className="text-red-500 text-[11px] mt-1 block" />
+                                        </div>
+
+                                        <div>
+                                            <label className='block mb-1.5 text-xs text-zinc-500'>نام لینک *</label>
+                                            <Field
+                                                name="linkName"
+                                                dir='ltr'
+                                                className='w-full px-3.5 py-2.5 text-sm text-left border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                                            />
+                                            <ErrorMessage name="linkName" component="span" className="text-red-500 text-[11px] mt-1 block" />
+                                        </div>
+
+                                        <div>
+                                            <label className='block mb-1.5 text-xs text-zinc-500'>قیمت (تومان) *</label>
+                                            <Field name="price">
+                                                {({ field, form }: any) => (
+                                                    <input
+                                                        {...field}
+                                                        type="text"
+                                                        className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                                                        value={field.value ? Number(field.value.toString().replace(/\D/g, '')).toLocaleString('en-US') : ''}
+                                                        onChange={(e) => {
+                                                            const rawValue = e.target.value.replace(/\D/g, '');
+                                                            form.setFieldValue('price', rawValue);
+                                                        }}
+                                                    />
+                                                )}
+                                            </Field>
+                                            <ErrorMessage name="price" component="span" className="text-red-500 text-[11px] mt-1 block" />
+                                        </div>
+
+                                        <div>
+                                            <label className='block mb-1.5 text-xs text-zinc-500'>درصد تخفیف (اختیاری)</label>
+                                            <Field
+                                                name="discount"
+                                                className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                                            />
+                                            <ErrorMessage name="discount" component="span" className="text-red-500 text-[11px] mt-1 block" />
+                                        </div>
+
+                                        <div>
+                                            <label className='block mb-1.5 text-xs text-zinc-500'>قیمت قبل از تخفیف (اختیاری)</label>
+                                            <Field name="exPrice">
+                                                {({ field, form }: any) => (
+                                                    <input
+                                                        {...field}
+                                                        type="text"
+                                                        className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                                                        value={field.value ? Number(field.value.toString().replace(/\D/g, '')).toLocaleString('en-US') : ''}
+                                                        onChange={(e) => {
+                                                            const rawValue = e.target.value.replace(/\D/g, '');
+                                                            form.setFieldValue('exPrice', rawValue);
+                                                        }}
+                                                    />
+                                                )}
+                                            </Field>
+                                            <ErrorMessage name="exPrice" component="span" className="text-red-500 text-[11px] mt-1 block" />
+                                        </div>
+
+                                        <div>
+                                            <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
+                                                <PiStackLight className='w-3.5 h-3.5' />
+                                                موجودی انبار *
+                                            </label>
+                                            <Field
+                                                name="stock"
+                                                className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                                            />
+                                            <ErrorMessage name="stock" component="span" className="text-red-500 text-[11px] mt-1 block" />
+                                        </div>
+
+                                        <div>
+                                            <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
+                                                <PiTagLight className='w-3.5 h-3.5' />
+                                                دسته‌بندی *
+                                            </label>
+                                            <Field
+                                                as="select"
+                                                name="category"
+                                                className='w-full px-3.5 py-2.5 text-sm bg-white border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                                            >
+                                                <option value="">انتخاب کنید</option>
+                                                {categories.map(cat => (
+                                                    <option key={cat} value={cat}>{cat}</option>
+                                                ))}
+                                            </Field>
+                                            <ErrorMessage name="category" component="span" className="text-red-500 text-[11px] mt-1 block" />
+                                        </div>
+
+                                        <div>
+                                            <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
+                                                <PiTagLight className='w-3.5 h-3.5' />
+                                                زیر مجموعه *
+                                            </label>
+                                            <Field
+                                                as="select"
+                                                name="subCategory"
+                                                className='w-full px-3.5 py-2.5 text-sm bg-white border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                                            >
+                                                <option value="">انتخاب کنید</option>
+                                                {subCategories.map(subCat => (
+                                                    <option key={subCat} value={subCat}>{subCat}</option>
+                                                ))}
+                                            </Field>
+                                            <ErrorMessage name="subCategory" component="span" className="text-red-500 text-[11px] mt-1 block" />
+                                        </div>
+
+                                        <div>
+                                            <label className='block mb-1.5 text-xs text-zinc-500'>رنگ‌ها (اختیاری)</label>
+                                            <Field
+                                                name="colors"
+                                                className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className='block mb-1.5 text-xs text-zinc-500'>تگ‌ها (با کاما جدا کنید)</label>
+                                            <Field
+                                                name="tags"
+                                                className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
+                                            />
+                                        </div>
+                                        <div className='col-span-2'>
+                                            <label className='flex items-center gap-3 px-3.5 py-2.5 border border-gray-200 rounded-lg cursor-pointer hover:border-primary-400 transition-colors'>
+                                                <Field
+                                                    type="checkbox"
+                                                    name="isFeatured"
+                                                    className='w-4 h-4 text-primary-500 border-gray-300 rounded focus:ring-primary-400 accent-primary-500 cursor-pointer'
+                                                />
+                                                <span className='text-sm text-zinc-700'>نمایش به عنوان محصول ویژه در صفحه اصلی</span>
+                                            </label>
+                                        </div>
+                                        <div className='sm:col-span-2'>
+                                            <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
+                                                <PiTextAlignRightLight className='w-3.5 h-3.5' />
+                                                توضیحات (اختیاری)
+                                            </label>
+                                            <Field
+                                                as="textarea"
+                                                name="description"
+                                                rows={5}
+                                                className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors resize-none'
+                                            />
+                                        </div>
                                     </div>
-                                    <p className='mt-1.5 text-[11px] text-zinc-400'>اولین عکس، تصویر اصلی محصول در نظر گرفته می‌شود.</p>
                                 </div>
 
-                                {/* Fields */}
-                                <div className='flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5'>
-                                    <div>
-                                        <label className='block mb-1.5 text-xs text-zinc-500'>نام محصول *</label>
-                                        <Field
-                                            name="name"
-                                            className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
-                                        />
-                                        <ErrorMessage name="name" component="span" className="text-red-500 text-[11px] mt-1 block" />
-                                    </div>
-
-                                    <div>
-                                        <label className='block mb-1.5 text-xs text-zinc-500'>نام لینک *</label>
-                                        <Field
-                                            name="linkName"
-                                            dir='ltr'
-                                            className='w-full px-3.5 py-2.5 text-sm text-left border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
-                                        />
-                                        <ErrorMessage name="linkName" component="span" className="text-red-500 text-[11px] mt-1 block" />
-                                    </div>
-
-                                    <div>
-                                        <label className='block mb-1.5 text-xs text-zinc-500'>قیمت (تومان) *</label>
-                                        <Field name="price">
-                                            {({ field, form }: any) => (
-                                                <input
-                                                    {...field}
-                                                    type="text"
-                                                    className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
-                                                    value={field.value ? Number(field.value.toString().replace(/\D/g, '')).toLocaleString('en-US') : ''}
-                                                    onChange={(e) => {
-                                                        const rawValue = e.target.value.replace(/\D/g, '');
-                                                        form.setFieldValue('price', rawValue);
-                                                    }}
-                                                />
-                                            )}
-                                        </Field>
-                                        <ErrorMessage name="price" component="span" className="text-red-500 text-[11px] mt-1 block" />
-                                    </div>
-
-                                    <div>
-                                        <label className='block mb-1.5 text-xs text-zinc-500'>درصد تخفیف (اختیاری)</label>
-                                        <Field
-                                            name="discount"
-                                            className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
-                                        />
-                                        <ErrorMessage name="discount" component="span" className="text-red-500 text-[11px] mt-1 block" />
-                                    </div>
-
-                                    <div>
-                                        <label className='block mb-1.5 text-xs text-zinc-500'>قیمت قبل از تخفیف (اختیاری)</label>
-                                        <Field name="exPrice">
-                                            {({ field, form }: any) => (
-                                                <input
-                                                    {...field}
-                                                    type="text"
-                                                    className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
-                                                    value={field.value ? Number(field.value.toString().replace(/\D/g, '')).toLocaleString('en-US') : ''}
-                                                    onChange={(e) => {
-                                                        const rawValue = e.target.value.replace(/\D/g, '');
-                                                        form.setFieldValue('exPrice', rawValue);
-                                                    }}
-                                                />
-                                            )}
-                                        </Field>
-                                        <ErrorMessage name="exPrice" component="span" className="text-red-500 text-[11px] mt-1 block" />
-                                    </div>
-
-                                    <div>
-                                        <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
-                                            <PiStackLight className='w-3.5 h-3.5' />
-                                            موجودی انبار *
-                                        </label>
-                                        <Field
-                                            name="stock"
-                                            className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
-                                        />
-                                        <ErrorMessage name="stock" component="span" className="text-red-500 text-[11px] mt-1 block" />
-                                    </div>
-
-                                    <div>
-                                        <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
-                                            <PiTagLight className='w-3.5 h-3.5' />
-                                            دسته‌بندی *
-                                        </label>
-                                        <Field
-                                            as="select"
-                                            name="category"
-                                            className='w-full px-3.5 py-2.5 text-sm bg-white border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
-                                        >
-                                            <option value="">انتخاب کنید</option>
-                                            {categories.map(cat => (
-                                                <option key={cat} value={cat}>{cat}</option>
-                                            ))}
-                                        </Field>
-                                        <ErrorMessage name="category" component="span" className="text-red-500 text-[11px] mt-1 block" />
-                                    </div>
-
-                                    <div>
-                                        <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
-                                            <PiTagLight className='w-3.5 h-3.5' />
-                                            زیر مجموعه *
-                                        </label>
-                                        <Field
-                                            as="select"
-                                            name="subCategory"
-                                            className='w-full px-3.5 py-2.5 text-sm bg-white border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
-                                        >
-                                            <option value="">انتخاب کنید</option>
-                                            {subCategories.map(subCat => (
-                                                <option key={subCat} value={subCat}>{subCat}</option>
-                                            ))}
-                                        </Field>
-                                        <ErrorMessage name="subCategory" component="span" className="text-red-500 text-[11px] mt-1 block" />
-                                    </div>
-
-                                    <div>
-                                        <label className='block mb-1.5 text-xs text-zinc-500'>رنگ‌ها (اختیاری)</label>
-                                        <Field
-                                            name="colors"
-                                            className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
-                                        />
-                                    </div>
-
-                                    <div>
-                                        <label className='block mb-1.5 text-xs text-zinc-500'>تگ‌ها (با کاما جدا کنید)</label>
-                                        <Field
-                                            name="tags"
-                                            className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
-                                        />
-                                    </div>
-
-                                    <div className='sm:col-span-2'>
-                                        <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
-                                            <PiTextAlignRightLight className='w-3.5 h-3.5' />
-                                            توضیحات (اختیاری)
-                                        </label>
-                                        <Field
-                                            as="textarea"
-                                            name="description"
-                                            rows={5}
-                                            className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors resize-none'
-                                        />
-                                    </div>
+                                {/* Actions */}
+                                <div className='flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 mt-7 pt-5 border-t border-gray-100'>
+                                    <button
+                                        type='button'
+                                        onClick={onClose}
+                                        className='px-5 py-2.5 text-sm text-zinc-500 hover:text-zinc-700 border border-gray-200 rounded-lg transition-colors cursor-pointer'>
+                                        انصراف
+                                    </button>
+                                    <button
+                                        type='submit'
+                                        disabled={submitting}
+                                        className='flex-center gap-1.5 px-6 py-2.5 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed'>
+                                        <PiFloppyDiskLight className='w-4 h-4' />
+                                        {submitting ? "در حال ذخیره..." : "ذخیره تغییرات"}
+                                    </button>
                                 </div>
-                            </div>
-
-                            {/* Actions */}
-                            <div className='flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 mt-7 pt-5 border-t border-gray-100'>
-                                <button
-                                    type='button'
-                                    onClick={onClose}
-                                    className='px-5 py-2.5 text-sm text-zinc-500 hover:text-zinc-700 border border-gray-200 rounded-lg transition-colors cursor-pointer'>
-                                    انصراف
-                                </button>
-                                <button
-                                    type='submit'
-                                    disabled={submitting}
-                                    className='flex-center gap-1.5 px-6 py-2.5 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed'>
-                                    <PiFloppyDiskLight className='w-4 h-4' />
-                                    {submitting ? "در حال ذخیره..." : "ذخیره تغییرات"}
-                                </button>
-                            </div>
-                        </Form>
-                    )}}
+                            </Form>
+                        )
+                    }}
                 </Formik>
             </div>
         </div>

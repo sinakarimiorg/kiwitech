@@ -6,7 +6,7 @@ type IBanner = Omit<AdminBanner, "_id">;
 const BannerSchema = new Schema<IBanner>(
     {
         title: { type: String, required: true },
-        position: { type: String, enum: ["landing", "amazingOffers", "categoriesByPhone"], required: true },
+        position: { type: String, enum: ["landing", "amazingOffers", "categoriesByPhone, brands"], required: true },
         image: { type: String, required: true },
         linkUrl: { type: String, default: "#" },
         order: { type: Number, default: 1 },

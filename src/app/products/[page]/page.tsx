@@ -5,7 +5,6 @@ import { useParams } from 'next/navigation'
 import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Pagination from '@root/src/components/modules/Pagination/Pagination'
-import allProducts from '@root/Products'
 import ProductCard from '@root/src/components/templates/Product/ProductCard/ProductCard'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import { PiSlidersHorizontalLight, PiMagnifyingGlassLight, PiXCircleLight } from 'react-icons/pi'
@@ -36,6 +35,7 @@ function getDiscount(item: any) {
 }
 
 export default function ProductsPage() {
+    const [allProducts, setAllProducts] = useState([])
     const params = useParams<{ page: string }>()
     const currentPage = Math.max(1, Number(params?.page) || 1)
 

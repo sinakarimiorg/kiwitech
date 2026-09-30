@@ -29,6 +29,7 @@ const positionMeta: Record<BannerPosition, string> = {
     landing: 'اسلایدر اصلی (Landing)',
     amazingOffers: 'تخفیفات شگفت‌انگیز',
     categoriesByPhone: 'دسته‌بندی بر اساس گوشی',
+    brands: 'برندهای محبوب'
 }
 
 type BannersManagerProps = {

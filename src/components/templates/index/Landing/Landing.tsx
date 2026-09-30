@@ -4,7 +4,6 @@ import LandingBannerSlider from './LandingBannerSlider'
 import FeaturedProductsSwiper from './FeaturedProductsSwiper'
 import type { HomeSectionConfig } from '@root/src/types/siteSettingsType'
 
-import './Landing.css'
 
 const trustItems = [
     { icon: PiShieldCheckLight, label: 'ضمانت اصالت کالا' },
@@ -20,14 +19,14 @@ export default async function Landing({ config }: { config: HomeSectionConfig })
     ])
 
     return (
-        <div className='min-h-130 relative overflow-hidden sm:mt-40 bg-linear-to-br from-dark via-dark-secondary to-dark'>
+        <div className='min-h-[calc(100vh-10rem)] sm:pt-6 relative overflow-hidden sm:mt-40 bg-linear-to-br from-dark via-dark-secondary to-dark'>
 
             {/* Ambient neon blobs */}
             <div className='pointer-events-none absolute -top-24 -right-24 w-72 h-72 md:w-96 md:h-96 bg-neon/25 rounded-full blur-3xl animate-float-blob' />
             <div className='pointer-events-none absolute -bottom-32 -left-16 w-72 h-72 md:w-96 md:h-96 bg-primary-500/25 rounded-full blur-3xl animate-float-blob' style={{ animationDelay: '3s' }} />
 
             {/* Subtle tech-grid texture */}
-            <div className='landing-grid pointer-events-none absolute inset-0 opacity-[0.07]' />
+            <div className='pointer-events-none absolute inset-0 opacity-[0.07]' />
 
             <div className='container relative z-10 px-3 sm:px-0 py-6 sm:py-10'>
 

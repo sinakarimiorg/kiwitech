@@ -15,6 +15,7 @@ const positionOptions: { value: BannerPosition; label: string }[] = [
     { value: 'landing', label: 'اسلایدر اصلی (Landing)' },
     { value: 'amazingOffers', label: 'تخفیفات شگفت‌انگیز' },
     { value: 'categoriesByPhone', label: 'دسته‌بندی بر اساس گوشی' },
+    { value: 'brands', label: 'برندهای محبوب' }
 ]
 
 export default function BannerModal({ initialData, onClose, onSave, isSaving }: BannerModalProps) {
