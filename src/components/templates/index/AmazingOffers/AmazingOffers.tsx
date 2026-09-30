@@ -1,25 +1,22 @@
 import Link from 'next/link'
 import { PiLightningFill, PiArrowLeftLight } from 'react-icons/pi'
 import { getOfferProducts } from '@root/src/lib/home/homeData'
+import { getEndOfIranDay } from '@root/src/utils/date'
+import type { HomeSectionConfig } from '@root/src/types/siteSettingsType'
 import AmazingOffersSlider from './AmazingOffersSlider'
 import OfferCountdown from './OfferCountdown'
 
-const IRAN_OFFSET_MS = 3.5 * 60 * 60 * 1000
-const DAY_MS = 24 * 60 * 60 * 1000
-
-function getEndOfIranDay() {
-    const iranNow = Date.now() + IRAN_OFFSET_MS
-    const iranEndOfDay = (Math.floor(iranNow / DAY_MS) + 1) * DAY_MS
-    return iranEndOfDay - IRAN_OFFSET_MS
-}
-
-export default async function AmazingOffers() {
-    const products = await getOfferProducts(10)
+export default async function AmazingOffers({ config }: { config: HomeSectionConfig }) {
+    const products = await getOfferProducts(config.limit)
 
     if (products.length === 0) return null
 
-    return (
-        <section className='container px-3 sm:px-0 my-14 sm:my-20 md:my-24'>
+    // Make Last Word Neon Color 
+    const words = config.title.trim().split(/\s+/)
+    const highlight = words.length > 1 ? words.pop() : null
+
+        return (
+        <section id='amazing-offers' className='container px-3 sm:px-0 my-14 sm:my-20 md:my-24 scroll-mt-44'>
             <div className='relative overflow-hidden rounded-3xl bg-linear-to-br from-dark via-dark-secondary to-dark p-4 sm:p-6 lg:p-8 shadow-[0_20px_50px_rgba(15,17,21,0.25)]'>
 
                 <div className='pointer-events-none absolute -top-24 -left-16 w-72 h-72 bg-neon/20 rounded-full blur-3xl' />
@@ -34,12 +31,12 @@ export default async function AmazingOffers() {
                                 پیشنهاد لحظه‌ای
                             </span>
                             <h2 className='font-MorabbaBold text-2xl sm:text-3xl leading-relaxed text-text'>
-                                تخفیفات
-                                <span className='block text-neon neon-text-glow'>شگفت‌انگیز</span>
+                                {words.join(' ')}
+                                {highlight && <span className='block text-neon neon-text-glow'>{highlight}</span>}
                             </h2>
-                            <p className='mt-2 text-xs sm:text-sm leading-7 text-text-muted'>
-                                بهترین تخفیف‌های امروز، تا وقتی موجود است
-                            </p>
+                            {config.subtitle &&
+                                <p className='mt-2 text-xs sm:text-sm leading-7 text-text-muted'>{config.subtitle}</p>
+                            }
                         </div>
 
                         <div>
@@ -48,7 +45,7 @@ export default async function AmazingOffers() {
                         </div>
 
                         <Link
-                            href='/products/1'
+                            href='/amazing-offers/1'
                             className='group flex items-center justify-center gap-2 px-5 py-2.5 text-sm bg-neon text-surface rounded-xl shadow-[0_0_24px_rgba(215,255,92,0.3)] hover:shadow-[0_0_36px_rgba(215,255,92,0.5)] transition-shadow'
                         >
                             مشاهده همه

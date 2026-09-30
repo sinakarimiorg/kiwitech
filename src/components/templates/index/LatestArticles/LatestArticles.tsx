@@ -1,20 +1,33 @@
-import React from 'react'
 import ArticleBox from '../ArticleBox/ArticleBox'
 import SectionHeader from '@root/src/components/modules/SectionHeader/SectionHeader'
+import { getLatestArticles } from '@root/src/lib/home/homeData'
+import { getPersianDateParts } from '@root/src/utils/date'
+import type { HomeSectionConfig } from '@root/src/types/siteSettingsType'
 
-export default function LatestArticles() {
+export default async function LatestArticles({ config }: { config: HomeSectionConfig }) {
+    const articles = await getLatestArticles(config.limit)
+    if (articles.length === 0) return null
     return (
-        <div>
-            <div className='container'>
-                <SectionHeader title={'مطالب خواندنی'} desc={'کــــــیـوی مــگ'} btnTitle={'همه مطالب'} btnHref={'/articles/1'} />
-                {/* <!-- Blogs --> */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 lg:gap-x-5 gap-y-3.5 sm:gap-y-4">
-                <ArticleBox shortName={'best-phone'} img={'/images/articles/phone.jpg'} title={'بهترین گوشی تا پنج میلیون'} date={[{day:'21', month:'تیر', year:'1404'}]}/>
-                <ArticleBox shortName={'earn-from-game'} img={'/images/articles/game-article.jpg'} title={'کسب درآمد از بازی!'} date={[{day:'03', month:'آذر', year:'1404'}]}/>
-                <ArticleBox shortName={'how-buy-speaker'} img={'/images/articles/speaker.jpg'} title={'راهنمای خرید اسپیکر بلوتوث قابل حمل (10 نکته ی مهم ضروری و کاربردی)'} date={[{day:'28', month:'اردیبهشت', year:'1403'}]}/>
-                <ArticleBox shortName={'how-buy-headphon'} img={'/images/articles/headphone.jpg'} title={'راهنمای خرید هندزفری سیمی (خلاصه، مهم و کاربردی)'} date={[{day:'31', month:'مرداد', year:'1403'}]}/>
+        <section>
+            <div className='container px-3 sm:px-0'>
+                <SectionHeader
+                    title={config.title}
+                    desc={config.subtitle || null}
+                    btnTitle={'همه مطالب'}
+                    btnHref={'/articles/1'} />
+
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 lg:gap-x-5 gap-y-3.5 sm:gap-y-4'>
+                    {articles.map(article => (
+                        <ArticleBox
+                            key={article._id}
+                            shortName={article.linkName}
+                            img={article.img}
+                            title={article.title}
+                            date={[getPersianDateParts(article.createdAt)]}
+                        />
+                    ))}
                 </div>
             </div>
-        </div>
+        </section>
     )
 }

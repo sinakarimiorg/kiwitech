@@ -19,10 +19,12 @@ export default function ProductCard({ shortName, img, img2, title, price, exPric
             className='group flex flex-col w-full h-full bg-white shadow-lg rounded-2xl overflow-hidden cursor-pointer transition-transform hover:-translate-y-1'>
 
             <div className='relative w-full aspect-square bg-gray-50 shrink-0'>
-                {discount &&
+                {discount ?
                     <span className='absolute top-2.5 right-2.5 z-10 px-2 xs:px-2.5 pt-0.5 font-DanaMedium xs:font-DanaDemiBold text-xs text-white bg-primary-600 rounded-lg'>
                         {discount}%
                     </span>
+                    :
+                    null
                 }
 
                 <div className={`absolute inset-0 p-4 sm:p-6 ${img2 ? 'group-hover:opacity-0 group-hover:invisible' : ''} transition-all duration-500`}>

@@ -1,22 +1,35 @@
-import React from 'react'
 import SectionHeader from '@root/src/components/modules/SectionHeader/SectionHeader'
 import PopularCategoryBox from '../PopularCategoryBox/PopularCategoryBox'
+import { categoryIconMap } from '@root/src/components/templates/P-admin/Categories/categoryIcons'
+import { getPopularCategories } from '@root/src/lib/home/homeData'
+import { getCategoryHref } from '@root/src/types/menuType'
+import type { HomeSectionConfig } from '@root/src/types/siteSettingsType'
 
-export default function PopularCategories() {
+export default async function PopularCategories({ config }: { config: HomeSectionConfig }) {
+    const categories = await getPopularCategories(config.limit)
+    if (categories.length === 0) return null
     return (
-        <div>
-            <div className='container'>
-                <SectionHeader title={'دسته بندی های محبوب'} desc={'بهترین ها را از ما بخواهید'} btnTitle={'مشاهده همه'} />
-                <div className='w-full flex-center flex-wrap m-auto gap-10 md:gap-16 2xl:gap-20'>
-                    <PopularCategoryBox src={'/images/categories/phone-category.png'} title={'گوشی موبایل'} />
-                    <PopularCategoryBox src={'/images/categories/cable-category.png'} title={'کابل و تبدیلات'} />
-                    <PopularCategoryBox src={'/images/categories/hard-category.png'} title={'ذخیره سازی'} />
-                    <PopularCategoryBox src={'/images/categories/watch-category.png'} title={'ساعت هوشمند'} />
-                    <PopularCategoryBox src={'/images/categories/holder-category.png'} title={'هولدر موبایل'} />
-                    <PopularCategoryBox src={'/images/categories/computer-category.png'} title={'جانبی کامپیوتر'} />
-                    <PopularCategoryBox src={'/images/categories/other-category.png'} title={'سایر'} />
+        <section>
+            <div className='container px-3 sm:px-0'>
+                <SectionHeader
+                    title={config.title}
+                    desc={config.subtitle || null}
+                    btnTitle={'مشاهده همه'}
+                    btnHref={'/products/1'}
+                />
+
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5'>
+                    {categories.map(category => (
+                        <PopularCategoryBox
+                            key={category._id}
+                            icon={categoryIconMap[category.icon] ?? categoryIconMap.package}
+                            title={category.title}
+                            subtitle={category.items.slice(0, 3).map(item => item.title).join('، ')}
+                            href={getCategoryHref(category.title)}
+                        />
+                    ))}
                 </div>
             </div>
-        </div>
+        </section>
     )
 }

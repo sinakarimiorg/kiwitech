@@ -2,24 +2,25 @@ import { PiShieldCheckLight, PiLightningLight, PiArrowsCounterClockwiseLight, Pi
 import { getFeaturedProducts, getLandingBanners } from '@root/src/lib/home/homeData'
 import LandingBannerSlider from './LandingBannerSlider'
 import FeaturedProductsSwiper from './FeaturedProductsSwiper'
+import type { HomeSectionConfig } from '@root/src/types/siteSettingsType'
 
 import './Landing.css'
 
 const trustItems = [
     { icon: PiShieldCheckLight, label: 'ضمانت اصالت کالا' },
-    { icon: PiLightningLight, label: 'ارسال فوری تهران' },
+    { icon: PiLightningLight, label: 'ارسال فوری' },
     { icon: PiArrowsCounterClockwiseLight, label: '۷ روز ضمانت بازگشت' },
     { icon: PiCreditCardLight, label: 'پرداخت امن' },
 ]
 
-export default async function Landing() {
+export default async function Landing({ config }: { config: HomeSectionConfig }) {
     const [banners, featuredProducts] = await Promise.all([
         getLandingBanners(),
-        getFeaturedProducts(6),
+        getFeaturedProducts(config.limit),
     ])
 
     return (
-        <div className='landing-hero relative overflow-hidden sm:mt-40 bg-linear-to-br from-dark via-dark-secondary to-dark'>
+        <div className='min-h-130 relative overflow-hidden sm:mt-40 bg-linear-to-br from-dark via-dark-secondary to-dark'>
 
             {/* Ambient neon blobs */}
             <div className='pointer-events-none absolute -top-24 -right-24 w-72 h-72 md:w-96 md:h-96 bg-neon/25 rounded-full blur-3xl animate-float-blob' />
@@ -39,7 +40,7 @@ export default async function Landing() {
 
                     {featuredProducts.length > 0 &&
                         <div className='min-w-0 lg:col-span-4'>
-                            <FeaturedProductsSwiper products={featuredProducts} />
+                            <FeaturedProductsSwiper products={featuredProducts} title={config.title}/>
                         </div>
                     }
                 </div>

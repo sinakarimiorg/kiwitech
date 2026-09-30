@@ -1,4 +1,4 @@
-export type BannerPosition = "landing" | "amazingOffers" | "categoriesByPhone"
+export type BannerPosition = "landing" | "amazingOffers" | "categoriesByPhone" | "brands"
 export type BannerStatus = "active" | "disabled"
 
 export interface AdminBanner {

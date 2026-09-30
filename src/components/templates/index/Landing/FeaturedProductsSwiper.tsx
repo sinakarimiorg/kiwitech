@@ -11,17 +11,16 @@ import 'swiper/css'
 import 'swiper/css/effect-fade'
 import 'swiper/css/pagination'
 
-export default function FeaturedProductsSwiper({ products }: { products: HomeProduct[] }) {
+export default function FeaturedProductsSwiper({ products, title = 'محصولات ویژه' }: { products: HomeProduct[]; title?: string }) {
     const isMulti = products.length > 1
 
     return (
         <div className='flex flex-col h-full'>
             <h2 className='flex items-center gap-1.5 mb-3 px-1 font-MorabbaBold text-lg text-text'>
                 <PiSparkleLight className='w-5 h-5 text-neon' />
-                محصولات ویژه
+                {title}
             </h2>
 
-            {/* padding اطراف، برای این‌که scale و glare کارت‌ت توسط overflow اسلایدر بریده نشه */}
             <div className='px-2'>
                 <Swiper
                     modules={[Autoplay, EffectFade, Pagination]}

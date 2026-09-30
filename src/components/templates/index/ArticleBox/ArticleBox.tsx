@@ -30,7 +30,6 @@ export default function ArticleBox({ shortName, img, title, date }: ArticleCardP
                         alt="blog"
                         height={'100%'}
                         width={'100%'}
-                        effect='blur'
                     />
                 </div>
                 <div

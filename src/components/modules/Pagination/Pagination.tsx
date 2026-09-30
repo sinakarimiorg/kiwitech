@@ -5,10 +5,12 @@ export default function Pagination({
     currentPage,
     totalPages,
     basePath,
+    query = '',
 }: {
     currentPage: number
     totalPages: number
     basePath: string
+    query?: string
 }) {
     if (totalPages <= 1) return null
 
@@ -17,7 +19,7 @@ export default function Pagination({
     return (
         <div className='flex items-center justify-center gap-1.5 sm:gap-2 mt-10'>
             <Link
-                href={`${basePath}/${Math.max(1, currentPage - 1)}`}
+                href={`${basePath}/${Math.max(1, currentPage - 1)}${query}`}
                 className={`flex-center gap-1 h-9 px-3 rounded-lg border text-sm transition-colors
                     ${currentPage === 1
                         ? 'pointer-events-none opacity-40 border-gray-200 text-zinc-300'
@@ -30,7 +32,7 @@ export default function Pagination({
                 {pages.map(p => (
                     <Link
                         key={p}
-                        href={`${basePath}/${p}`}
+                        href={`${basePath}/${p}${query}`}
                         className={`flex-center w-9 h-9 rounded-lg text-sm font-IranYekanMedium transition-colors
                             ${p === currentPage
                                 ? 'bg-primary-500 text-white'
@@ -41,7 +43,7 @@ export default function Pagination({
             </div>
 
             <Link
-                href={`${basePath}/${Math.min(totalPages, currentPage + 1)}`}
+                href={`${basePath}/${Math.min(totalPages, currentPage + 1)}${query}`}
                 className={`flex-center gap-1 h-9 px-3 rounded-lg border text-sm transition-colors
                     ${currentPage === totalPages
                         ? 'pointer-events-none opacity-40 border-gray-200 text-zinc-300'

@@ -1,28 +1,37 @@
+import Link from 'next/link'
+import { getBannersByPosition } from '@root/src/lib/home/homeData'
+import type { HomeSectionConfig } from '@root/src/types/siteSettingsType'
 
-const brands = [
-    { key: 'apple', src: '/images/categoriesByPhone/apple.jpg' },
-    { key: 'samsung', src: '/images/categoriesByPhone/samsung.jpg' },
-    { key: 'xiaomi', src: '/images/categoriesByPhone/xiaomi.jpg' },
-    { key: 'huawei', src: '/images/categoriesByPhone/huawei.jpg' },
-]
+export default async function categoriesByPhone({ config }: { config: HomeSectionConfig }) {
+    const banners = await getBannersByPosition('categoriesByPhone', config.limit)
+    if (banners.length === 0) return null
 
-export default function categoriesByPhone() {
+
     return (
-        <div>
-            <div className='container'>
-                <h4 className='mb-7 sm:mb-10 font-MorabbaBold text-lg sm:text-xl md:text-2xl lg:text-3xl tracking-wide text-center'>دسته بندی بر اساس مدل گوشی</h4>
-                <div className='grid grid-cols-2 lg:grid-cols-4 gap-6 w-full'>
-                    {brands.map(brand => (
-                        <div key={brand.key} className='group relative rounded-2xl overflow-hidden cursor-pointer'>
+        <section className='mt-16 sm:mt-20'>
+            <div className='container px-3 sm:px-0'>
+                <h2 className='mb-7 sm:mb-10 font-MorabbaBold text-lg sm:text-xl md:text-2xl lg:text-3xl tracking-wide text-center'>
+                    {config.title}
+                </h2>
+
+                <div className='grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full'>
+                    {banners.map(banner => (
+                        <Link
+                            key={banner._id}
+                            href={banner.linkUrl || '#'}
+                            aria-label={banner.title}
+                            className='group relative block rounded-2xl overflow-hidden'
+                        >
                             <img
-                                className='w-full 2xl:h-72 transition-transform duration-500 group-hover:scale-105'
-                                src={brand.src}
+                                src={banner.image}
+                                alt={banner.title}
+                                className='w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-105'
                             />
                             <span className='absolute inset-0 rounded-2xl ring-0 group-hover:ring-2 ring-neon/70 transition-all duration-500' />
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>
-        </div>
+        </section>
     )
 }

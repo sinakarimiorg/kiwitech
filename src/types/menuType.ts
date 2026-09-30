@@ -1,6 +1,5 @@
 import { CategoryIconKey } from "./adminCategoryType"
 
-
 export type MenuCategoryItem = {
     _id: string
     title: string

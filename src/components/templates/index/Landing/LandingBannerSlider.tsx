@@ -94,14 +94,15 @@ export default function LandingBannerSlider({ banners }: { banners: HomeBanner[]
                     <button
                         type='button'
                         aria-label='بنر قبلی'
-                        className={`landing-banner-prev right-3 ${navButtonClasses}`}
+                        className='landing-banner-prev hidden sm:flex items-center justify-center absolute top-1/2 right-3 -translate-y-1/2 z-10 w-10 h-10 text-zinc-800 bg-white/90 hover:bg-neon rounded-full shadow-lg opacity-0 group-hover/slider:opacity-100 transition-all cursor-pointer'
                     >
                         <FaChevronLeft className='w-4 h-4 rotate-180' />
                     </button>
                     <button
                         type='button'
                         aria-label='بنر بعدی'
-                        className={`landing-banner-next left-3 ${navButtonClasses}`}                    >
+                        className='landing-banner-next hidden sm:flex items-center justify-center absolute top-1/2 left-3 -translate-y-1/2 z-10 w-10 h-10 text-zinc-800 bg-white/90 hover:bg-neon rounded-full shadow-lg opacity-0 group-hover/slider:opacity-100 transition-all cursor-pointer'
+                    >
                         <FaChevronLeft className='w-4 h-4' />
                     </button>
                 </>

@@ -7,6 +7,7 @@ export type HomeProduct = {
     discount?: number
     img: string
     stock: number
+    category?: string
 }
 
 export type HomeBanner = {
@@ -14,6 +15,14 @@ export type HomeBanner = {
     title: string
     image: string
     linkUrl: string
+}
+
+export type HomeArticle = {
+    _id: string
+    title: string
+    linkName: string
+    img: string
+    createdAt?: string
 }
 
 export function getDiscountPercent(product: Pick<HomeProduct, 'price' | 'exPrice'>): number {
