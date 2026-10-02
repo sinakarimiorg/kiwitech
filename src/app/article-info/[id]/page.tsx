@@ -3,7 +3,7 @@ import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import ArticleCard from '@root/src/components/templates/Articles/ArticleCard/ArticleCard'
-import AdminArticle from "@/types/adminArticleType"
+import { AdminArticle } from "@/types/adminArticleType"
 import ArticleModel from "@models/Article"
 import { notFound } from 'next/navigation'
 import { connectDB } from '@root/src/lib/mongodb'

@@ -17,7 +17,6 @@ function readStoredCart(): CartItem[] {
         const parsed = JSON.parse(raw)
         if (!Array.isArray(parsed)) return []
 
-        // فقط آیتم‌های سالم رو قبول می‌کنیم (اگه کسی localStorage رو دستکاری کرده باشه)
         return parsed.filter(
             (item): item is CartItem =>
                 item &&
@@ -38,7 +37,6 @@ function CartPersistence() {
     const items = useAppSelector(state => state.cart.items)
     const hydrated = useAppSelector(state => state.cart.hydrated)
 
-    // ۱) بعد از mount: خوندن سبد ذخیره‌شده + همگام‌سازی بین تب‌ها
     useEffect(() => {
         dispatch(hydrateCart(readStoredCart()))
 
@@ -49,13 +47,11 @@ function CartPersistence() {
         return () => window.removeEventListener("storage", onStorage)
     }, [dispatch])
 
-    // ۲) ذخیره‌ی تغییرات (قبل از hydrate نباید بنویسیم، وگرنه سبد ذخیره‌شده با یه سبد خالی پاک می‌شه)
     useEffect(() => {
         if (!hydrated) return
         try {
             localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
         } catch {
-            // حافظه پر بود یا مرورگر در حالت خصوصیه؛ سبد فقط در همین نشست می‌مونه
         }
     }, [items, hydrated])
 

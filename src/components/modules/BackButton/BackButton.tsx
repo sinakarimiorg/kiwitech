@@ -6,7 +6,7 @@ import { PiArrowRightLight } from 'react-icons/pi'
 
 type BackButtonProps = {
     className?: string
-    fallbackHref?: string   // اگه تاریخچه‌ای برای برگشت نبود (مثلاً لینک مستقیم)، به این آدرس می‌ره
+    fallbackHref?: string
     children?: ReactNode
 }
 
