@@ -160,3 +160,7 @@ export function validateAndCleanSections(input: unknown): HomeSectionConfig[] {
 
     return result
 }
+export interface ShippingSettings {
+    freeShippingThreshold: number
+    standardShippingCost: number
+}

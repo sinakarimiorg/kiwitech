@@ -40,6 +40,7 @@ import { toggleFavoriteAction } from '../../P-user/Favorites/action'
 import { useAppDispatch, useAppSelector } from '@root/src/store/hooks'
 import { addToCart, incrementItem, decrementItem } from '@root/src/store/reducers/cartSlice'
 import { toast } from '@/utils/helpers'
+import { useIsClient } from '@root/src/components/modules/Topbar/CartMiniPanel'
 
 type ProductInfoClientProps = {
   product: AdminProduct
@@ -136,7 +137,9 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
 
   // handle Add To Cart Action
   const dispatch = useAppDispatch()
-  const cartItem = useAppSelector(state => state.cart.items.find(i => i.id === product._id))
+  const isClient = useIsClient()
+  const storeCartItem = useAppSelector(state => state.cart.items.find(i => i.id === product._id))
+  const cartItem = isClient ? storeCartItem : undefined
   const countInCart = useAppSelector(s => s.cart.items.find(i => i.id === product._id)?.count ?? 0)
 
   const handleAddToCart = () => {
