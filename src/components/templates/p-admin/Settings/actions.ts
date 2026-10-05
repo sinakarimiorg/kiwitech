@@ -54,7 +54,7 @@ export async function getShippingSettingsAction(): Promise<ShippingSettings> {
     const doc = await SettingModel.findOneAndUpdate(
         { key: SHIPPING_KEY },
         { $setOnInsert: { key: SHIPPING_KEY } },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
     ).lean()
 
     const setting = doc as unknown as ShippingSettings
@@ -88,7 +88,7 @@ export async function updateShippingSettingsAction(data: ShippingSettings): Prom
                 freeShippingThreshold: data.freeShippingThreshold,
                 standardShippingCost: data.standardShippingCost,
             },
-            { upsert: true, new: true, runValidators: true }
+            { upsert: true, returnDocument: 'after', runValidators: true }
         )
 
         revalidatePath("/p-admin/settings")
