@@ -11,6 +11,7 @@ type OrderItemInput = {
     img: string
     price: number
     count: number
+    product?: string
 }
 
 type CreateOrderInput = {

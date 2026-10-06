@@ -63,8 +63,9 @@ export default function PaymentClient({ selectedAddress, shippingSettings }: Pay
                     img: item.img,
                     price: item.price,
                     count: item.count,
+                    product: item.id,
                 })),
-                address: `${selectedAddress.title} - ${selectedAddress.fullAddress}`,
+                address: formatAddress(selectedAddress),
                 phone: selectedAddress.phone,
                 shippingCost: shippingCost,
             })

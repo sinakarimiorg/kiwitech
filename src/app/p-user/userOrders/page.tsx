@@ -3,6 +3,7 @@ import { getCurrentUser } from '@root/src/lib/auth/session'
 import { connectDB } from '@root/src/lib/mongodb'
 import { redirect } from 'next/navigation'
 import OrderModel from '@models/Order'
+import '@models/Product'
 import { UserOrder } from '@root/src/types/userOrderType'
 import UserOrdersList from '@root/src/components/templates/P-user/Orders/UserOrdersList'
 
@@ -13,7 +14,10 @@ async function page() {
   if (!user) redirect('/login-register')
 
   await connectDB()
-    const orders = await OrderModel.find({ user: user._id }).sort({ _id: -1 }).lean()
+  const orders = await OrderModel.find({ user: user._id })
+  .populate('items.product', 'linkName')
+  .sort({ _id: -1 })
+  .lean()
   const userOrders: UserOrder[] = JSON.parse(JSON.stringify(orders))
 
 
