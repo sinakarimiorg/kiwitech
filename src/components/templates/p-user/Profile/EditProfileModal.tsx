@@ -1,10 +1,10 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { PiXBold } from "react-icons/pi"
 import Swal from "sweetalert2"
 import type { UserProfile } from "@root/src/types/userType"
 import { updateProfileAction } from "./actions"
+import PanelModal, { panelFieldClasses, panelPrimaryButton, panelSecondaryButton } from "../PanelModal/PanelModal"
 
 type EditProfileModalProps = {
     user: UserProfile
@@ -111,89 +111,85 @@ export default function EditProfileModal({ user, onClose }: EditProfileModalProp
     }
 
     return (
-        <div className="fixed inset-0 flex-center bg-black/40 z-50 px-4">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-5 sm:p-6">
-
-                <div className="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
-                    <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">ویرایش مشخصات فردی</h2>
-                    <button onClick={onClose} className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
-                        <PiXBold className="w-4 h-4" />
-                    </button>
-                </div>
-
-                <div className="flex flex-col gap-4">
-                    <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">نام و نام خانوادگی</label>
-                        <input
-                            value={name}
-                            onChange={e => setName(e.target.value)}
-                            className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">شماره موبایل</label>
-                        <input
-                            value={user.phone}
-                            disabled
-                            dir="ltr"
-                            className="w-full px-3.5 py-2.5 text-sm text-left bg-gray-100 border border-gray-200 rounded-xl outline-none text-zinc-400 cursor-not-allowed"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">پست الکترونیکی</label>
-                        <input
-                            value={email}
-                            onChange={e => setEmail(e.target.value)}
-                            dir="ltr"
-                            placeholder="example@mail.com"
-                            className="w-full px-3.5 py-2.5 text-sm text-left bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">کد ملی</label>
-                        <input
-                            value={nationalCode}
-                            onChange={e => setNationalCode(e.target.value)}
-                            dir="ltr"
-                            className="w-full px-3.5 py-2.5 text-sm text-left bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">تاریخ تولد</label>
-                        <input
-                            type="text"
-                            value={birthDate}
-                            onChange={handleBirthDateChange}
-                            placeholder="YYYY/MM/DD"
-                            maxLength={10}
-                            dir="ltr"
-                            className="w-full px-3.5 py-2.5 text-sm text-left bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"
-                        />
-                    </div>
-                </div>
-
-                {error && <p className="mt-3 text-xs text-danger">{error}</p>}
-
-                <div className="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100">
-                    <button
-                        onClick={handleSubmit}
-                        disabled={isPending}
-                        className="flex-1 flex-center h-11 text-sm text-text linear_btn disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
+        <PanelModal
+            title='ویرایش مشخصات فردی'
+            size='md'
+            busy={isPending}
+            onClose={onClose}
+            footer={
+                <div className='flex items-center gap-3'>
+                    <button onClick={handleSubmit} disabled={isPending} className={panelPrimaryButton}>
                         {isPending ? 'در حال ذخیره...' : 'ذخیره تغییرات'}
                     </button>
-                    <button
-                        onClick={onClose}
-                        className="flex-1 flex-center h-11 text-sm text-zinc-600 border border-gray-200 hover:border-gray-300 rounded-lg transition-colors cursor-pointer"
-                    >
+                    <button onClick={onClose} disabled={isPending} className={panelSecondaryButton}>
                         انصراف
                     </button>
                 </div>
+            }
+        >
+            <div className="flex flex-col gap-4">
+                <div>
+                    <label className="block mb-1.5 text-xs text-zinc-500">نام و نام خانوادگی</label>
+                    <input
+                        value={name}
+                        onChange={e => setName(e.target.value)}
+                        autoComplete="name"
+                        className={panelFieldClasses}
+                    />
+                </div>
+
+                <div>
+                    <label className="block mb-1.5 text-xs text-zinc-500">شماره موبایل</label>
+                    <input
+                        value={user.phone}
+                        disabled
+                        dir="ltr"
+                        className={`${panelFieldClasses} text-left bg-gray-100! text-zinc-400 cursor-not-allowed`}
+                    />
+                </div>
+
+                <div>
+                    <label className="block mb-1.5 text-xs text-zinc-500">پست الکترونیکی</label>
+                    <input
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        type="email"
+                        inputMode="email"
+                        autoComplete="email"
+                        dir="ltr"
+                        placeholder="example@mail.com"
+                        className={`${panelFieldClasses} text-left`}
+                    />
+                </div>
+
+                <div>
+                    <label className="block mb-1.5 text-xs text-zinc-500">کد ملی</label>
+                    <input
+                        value={nationalCode}
+                        onChange={e => setNationalCode(e.target.value)}
+                        inputMode="numeric"
+                        maxLength={10}
+                        dir="ltr"
+                        className={`${panelFieldClasses} text-left`}
+                    />
+                </div>
+
+                <div>
+                    <label className="block mb-1.5 text-xs text-zinc-500">تاریخ تولد</label>
+                    <input
+                        type="text"
+                        inputMode="numeric"
+                        value={birthDate}
+                        onChange={handleBirthDateChange}
+                        placeholder="YYYY/MM/DD"
+                        maxLength={10}
+                        dir="ltr"
+                        className={`${panelFieldClasses} text-left`}
+                    />
+                </div>
             </div>
-        </div>
+
+            {error && <p className="mt-3 text-xs text-danger">{error}</p>}
+        </PanelModal>
     )
 }

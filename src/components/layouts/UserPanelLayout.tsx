@@ -21,25 +21,20 @@ const Layout = async ({ children }: LayoutProps) => {
     await connectDB()
     unreadMessagesCount = await MessageModel.countDocuments({ user: user._id, isRead: false })
 
-
-
     return (
         <div>
             <Header />
 
             <UserBreadCrumb />
 
-            <div className='container pb-11'>
-                <div className='flex flex-col lg:flex-row gap-6'>
+            <div className='container px-3 xl:px-0 pb-11'>
+                <div className='flex flex-col lg:flex-row gap-4 lg:gap-6'>
 
                     <ProfileSidebar userName={user.name} unreadMessagesCount={unreadMessagesCount} />
                     {children}
                 </div>
             </div>
-
-
             <Footer marginClasses={''} />
-
         </div>
     )
 }

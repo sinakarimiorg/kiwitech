@@ -26,7 +26,7 @@ export default function WalletOverviewCard({ balance }: { balance: number }) {
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className='flex-center gap-1.5 px-4 sm:px-5 py-2.5 text-sm bg-white text-primary-600 hover:bg-white/90 rounded-xl transition-colors cursor-pointer shrink-0'>
+          className='flex-center w-full sm:w-auto gap-1.5 px-4 sm:px-5 py-2.5 text-sm bg-white text-primary-600 hover:bg-white/90 rounded-xl transition-colors cursor-pointer shrink-0'>
           <PiPlusCircleLight className='w-4 h-4' />
           افزایش موجودی
         </button>

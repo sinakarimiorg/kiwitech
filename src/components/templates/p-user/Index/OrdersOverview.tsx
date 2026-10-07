@@ -9,7 +9,8 @@ import {
 } from 'react-icons/pi'
 import { HiMiniChevronLeft } from 'react-icons/hi2'
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
-import { statusStyle, getOrderTotal, AdminOrder, OrderStatus } from '@root/src/types/adminOrderType'
+import { statusStyle, getOrderTotal } from '@root/src/types/adminOrderType'
+import type { AdminOrder, OrderStatus } from '@root/src/types/adminOrderType'
 
 const ORDERS_HREF = '/p-user/userOrders'
 
@@ -55,7 +56,7 @@ function OrderProgress({ status }: { status: OrderStatus }) {
                                         : 'bg-white border-gray-200 text-zinc-300'}`}>
                                 {isDone ? <PiCheckBold className='w-3.5 h-3.5' /> : (i + 1).toLocaleString('fa-IR')}
                             </span>
-                            <span className={`text-[11px] whitespace-nowrap
+                            <span className={`text-[11px] w-14 sm:w-auto text-center leading-4 sm:whitespace-nowrap
                                 ${isActive ? 'text-primary-600 font-IranYekanBold' : isDone ? 'text-zinc-500' : 'text-zinc-400'}`}>
                                 {step}
                             </span>
@@ -146,7 +147,7 @@ export default function OrdersOverview({ counts, activeOrders }: OrdersOverviewP
                                     </span>
                                 </div>
 
-                                <div className='flex items-center justify-between gap-3 mt-4'>
+                                <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-4'>
                                     <div className='flex items-center gap-2'>
                                         {visibleItems.map((item, index) => (
                                             <span key={index} className='w-12 h-12 shrink-0 bg-gray-50 border border-gray-100 rounded-xl overflow-hidden'>

@@ -82,9 +82,9 @@ export default function MessagesList({ messages }: { messages: UserMessage[] }) 
                             <button
                                 onClick={handleMarkAll}
                                 disabled={isPending}
-                                className='hidden sm:flex items-center gap-1.5 text-xs sm:text-sm text-primary-600 hover:text-primary-700 transition-colors cursor-pointer'>
+                                className='flex items-center gap-1.5 text-xs sm:text-sm text-primary-600 hover:text-primary-700 transition-colors cursor-pointer'>
                                 <PiCheckCircleLight className='w-4 h-4' />
-                                خواندن همه
+                                <span className='hidden sm:inline'>خواندن همه</span>
                             </button>
                         }
                         <button
@@ -144,7 +144,7 @@ export default function MessagesList({ messages }: { messages: UserMessage[] }) 
                                                 {message.title}
                                             </p>
                                         }
-                                        <p className='text-xs sm:text-sm text-zinc-500 mt-1.5 leading-6'>{message.body}</p>
+                                        <p className='text-xs sm:text-sm text-zinc-500 mt-1.5 leading-6 wrap-break-word'>{message.body}</p>
                                         <p className='text-[11px] text-zinc-400 mt-2'>{new Date(message.createdAt).toLocaleDateString('fa-IR')}</p>
                                     </div>
 
