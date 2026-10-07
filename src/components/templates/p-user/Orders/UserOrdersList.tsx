@@ -2,16 +2,24 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { PiPackageLight } from 'react-icons/pi'
+import { PiPackageLight, PiReceiptLight } from 'react-icons/pi'
 import { HiMiniChevronLeft } from 'react-icons/hi2'
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 import type { UserOrder, OrderStatus } from '@/types/userOrderType'
+import { IoCheckmarkCircle } from 'react-icons/io5'
 
 const statusStyle: Record<OrderStatus, string> = {
     "در حال پردازش": "bg-amber-50 text-amber-600",
     "ارسال شده": "bg-sky-50 text-sky-600",
     "تحویل شده": "bg-primary-50 text-primary-600",
     "لغو شده": "bg-danger/10 text-danger",
+}
+
+const statusIcon: Record<OrderStatus, React.ReactNode> = {
+    "در حال پردازش": <span className='w-2 h-2 rounded-full bg-amber-500 animate-pulse' />,
+    "ارسال شده": <span className='w-2 h-2 rounded-full bg-sky-500 animate-pulse' />,
+    "تحویل شده": <IoCheckmarkCircle className='w-4.5 h-4.5' />,
+    "لغو شده": <span className='w-2 h-2 rounded-full bg-danger' />,
 }
 
 type TabKey = 'active' | 'delivered' | 'cancelled'
@@ -82,76 +90,58 @@ export default function UserOrdersList({ orders }: { orders: UserOrder[] }) {
             ) : (
                 <div className='flex flex-col gap-4'>
                     {filtered.map(order => {
-                        const itemsCount = order.items.reduce((sum, item) => sum + item.count, 0)
                         const visibleItems = order.items.slice(0, 5)
                         const hiddenCount = order.items.length - visibleItems.length
                         const detailHref = `/p-user/userOrders/${order._id}`
+                        const orderDate = new Date(order.createdAt).toLocaleDateString('fa-IR', { day: 'numeric', month: 'long' })
 
                         return (
-                            <div key={order._id} className='bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-zinc-200/70 transition-shadow'>
+                            <Link
+                                href={detailHref}
+                                key={order._id}
+                                className='group block bg-white shadow-lg rounded-2xl overflow-hidden hover:shadow-xl hover:shadow-zinc-200/70 transition-shadow'>
 
-                                {/* Header — clicking goes to order detail */}
-                                <Link href={detailHref} className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-5 sm:px-6 py-4 border-b border-gray-100'>
-                                    <div className='flex items-center gap-2.5'>
-                                        <span className='flex-center w-9 h-9 bg-primary-50 text-primary-600 rounded-lg shrink-0'>
-                                            <PiPackageLight className='w-5 h-5' />
-                                        </span>
-                                        <div>
-                                            <p className='font-IranYekanMedium text-sm text-zinc-700 tracking-wide' dir='ltr'>
-                                                {order._id.slice(-8).toUpperCase()}
-                                            </p>
-                                            <p className='text-xs text-zinc-400'>
-                                                {new Date(order.createdAt).toLocaleDateString('fa-IR')}
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <span className={`self-start sm:self-auto px-3 py-1.5 text-xs rounded-lg ${statusStyle[order.status]}`}>
+                                {/* Header: status + meta row */}
+                                <div className='flex items-center justify-between gap-3 px-4 sm:px-5 pt-4 pb-3.5'>
+                                    <span className={`inline-flex items-center gap-1.5 text-xs sm:text-[13px] font-IranYekanMedium px-2.5 py-1 rounded-lg shrink-0 ${statusStyle[order.status]}`}>
+                                        {statusIcon[order.status]}
                                         {order.status}
                                     </span>
-                                </Link>
 
-                                {/* Product thumbnails only — each links to its own product page when available */}
-                                <div className='flex items-center gap-2 px-5 sm:px-6 py-4 overflow-x-auto'>
-                                    {visibleItems.map(item => {
-                                        const productHref = item.product?.linkName ? `/product-info/${item.product.linkName}` : null
-                                        const image = <img src={item.img} alt={item.title} className='w-full h-full object-cover' />
+                                    <HiMiniChevronLeft className='w-4 h-4 text-zinc-300 group-hover:text-primary-500 group-hover:-translate-x-0.5 transition-all shrink-0' />
+                                </div>
 
-                                        return productHref ? (
-                                            <Link
-                                                key={item._id}
-                                                href={productHref}
-                                                title={item.title}
-                                                className='w-14 h-14 shrink-0 bg-gray-50 border border-gray-100 rounded-xl overflow-hidden hover:border-primary-300 transition-colors'>
-                                                {image}
-                                            </Link>
-                                        ) : (
-                                            <span key={item._id} title={item.title} className='w-14 h-14 shrink-0 bg-gray-50 border border-gray-100 rounded-xl overflow-hidden'>
-                                                {image}
-                                            </span>
-                                        )
-                                    })}
+                                <div className='flex flex-wrap items-center gap-x-2.5 gap-y-1 px-4 sm:px-5 pb-4 text-[11px] sm:text-xs text-zinc-400'>
+                                    <span>{orderDate} ۱۴۰۵</span>
+                                    <span className='w-0.5 h-0.5 rounded-full bg-zinc-300' />
+                                    <span dir='ltr' className='tracking-wide'>{order._id.slice(-10)}</span>
+                                    <span className='w-0.5 h-0.5 rounded-full bg-zinc-300' />
+                                    <span className='inline-flex items-center gap-0.5'>
+                                        مبلغ {getOrderTotal(order).toLocaleString()}
+                                        <TomanIcon className='w-3 h-3' />
+                                    </span>
+                                </div>
+
+                                {/* Product thumbnails */}
+                                <div className='flex items-center gap-2 px-4 sm:px-5 pb-4 overflow-x-auto'>
+                                    {visibleItems.map(item => (
+                                        <span key={item._id} title={item.title} className='w-14 h-14 shrink-0 bg-gray-50 border border-gray-100 rounded-xl overflow-hidden'>
+                                            <img src={item.img} alt={item.title} className='w-full h-full object-cover' />
+                                        </span>
+                                    ))}
                                     {hiddenCount > 0 &&
-                                        <Link href={detailHref} className='flex-center w-14 h-14 shrink-0 text-xs text-zinc-500 bg-gray-50 border border-gray-100 rounded-xl hover:border-primary-300 transition-colors'>
+                                        <span className='flex-center w-14 h-14 shrink-0 text-xs text-zinc-500 bg-gray-50 border border-gray-100 rounded-xl'>
                                             +{hiddenCount.toLocaleString('fa-IR')}
-                                        </Link>
+                                        </span>
                                     }
                                 </div>
 
-                                {/* Footer — clicking goes to order detail */}
-                                <Link href={detailHref} className='flex items-center justify-between gap-3 px-5 sm:px-6 py-4 bg-gray-50/60 hover:bg-gray-50 transition-colors'>
-                                    <span className='text-xs text-zinc-500'>{itemsCount.toLocaleString('fa-IR')} کالا</span>
-                                    <div className='flex items-center gap-3'>
-                                        <span className='inline-flex items-center gap-1 font-IranYekanBold text-zinc-800'>
-                                            {getOrderTotal(order).toLocaleString()}
-                                            <TomanIcon />
-                                        </span>
-                                        <span className='flex items-center gap-1 text-xs sm:text-sm text-primary-600'>
-                                            مشاهده جزئیات
-                                            <HiMiniChevronLeft className='w-4 h-4' />
-                                        </span>
-                                    </div>
-                                </Link>
-                            </div>
+                                {/* Footer */}
+                                <div className='flex items-center justify-end gap-1.5 px-4 sm:px-5 py-3 border-t border-gray-100 text-xs sm:text-[13px] text-zinc-500 group-hover:text-primary-600 transition-colors'>
+                                    <PiReceiptLight className='w-4 h-4' />
+                                    مشاهده فاکتور
+                                </div>
+                            </Link>
                         )
                     })}
                 </div>
