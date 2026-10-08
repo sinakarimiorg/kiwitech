@@ -91,23 +91,23 @@ export default async function ArticleInfoPage({ params }: { params: Promise<{ id
                 ]}
             />
 
-            <div className='container pb-16'>
-                <div className='max-w-4xl mx-auto'>
+            <div className='container px-3 sm:px-6 pb-12 sm:pb-16'>
+                <article className='max-w-4xl mx-auto'>
 
-                    <div className='w-full h-52 sm:h-72 md:h-96 rounded-2xl overflow-hidden'>
+                    <div className='w-full h-48 sm:h-72 md:h-96 rounded-2xl overflow-hidden bg-gray-100'>
                         <img src={article.img} alt={article.title} className='w-full h-full object-cover' />
                     </div>
 
-                    <div className='mt-6'>
+                    <div className='mt-5 sm:mt-6'>
                         <span className='inline-block px-3 py-1 text-xs font-IranYekanMedium text-primary-600 bg-primary-50 rounded-lg'>
                             {article.category}
                         </span>
 
-                        <h1 className='mt-4 font-MorabbaBold text-xl sm:text-2xl md:text-3xl text-zinc-800 leading-10'>
+                        <h1 className='mt-3 sm:mt-4 font-MorabbaBold text-xl sm:text-2xl md:text-3xl text-zinc-800 leading-9 sm:leading-10 wrap-break-word'>
                             {article.title}
                         </h1>
 
-                        <div className='flex items-center gap-4 mt-4 pb-6 border-b border-gray-100 text-xs sm:text-sm text-zinc-400'>
+                        <div className='flex flex-wrap items-center gap-x-4 gap-y-2 mt-4 pb-5 sm:pb-6 border-b border-gray-100 text-xs sm:text-sm text-zinc-400'>
                             <span className='flex items-center gap-1.5'>
                                 <PiCalendarBlankLight className='w-4 h-4' />
                                 {day} {month} {year}
@@ -118,16 +118,16 @@ export default async function ArticleInfoPage({ params }: { params: Promise<{ id
                             </span>
                         </div>
 
-                        <div className='mt-7 flex flex-col gap-5'>
+                        <div className='mt-6 sm:mt-7 flex flex-col gap-4 sm:gap-5'>
                             {paragraphs.map((paragraph, index) => (
-                                <p key={index} className='text-sm sm:text-base text-zinc-600 leading-8 sm:leading-9'>
+                                <p key={index} className='text-[15px] sm:text-base text-zinc-600 leading-8 sm:leading-9 wrap-break-word'>
                                     {paragraph}
                                 </p>
                             ))}
                         </div>
 
                         {article.tags && article.tags?.length > 0 && (
-                            <div className='flex flex-wrap items-center gap-2 mt-7'>
+                            <div className='flex flex-wrap items-center gap-2 mt-6 sm:mt-7'>
                                 {article.tags.map(tag => (
                                     <span key={tag} className='px-3 py-1 text-xs text-zinc-500 bg-gray-50 border border-gray-100 rounded-full'>
                                         #{tag}
@@ -136,32 +136,32 @@ export default async function ArticleInfoPage({ params }: { params: Promise<{ id
                             </div>
                         )}
 
-                        <div className='flex items-center gap-3 mt-8 pt-6 border-t border-gray-100'>
+                        <div className='flex flex-wrap items-center gap-3 mt-7 sm:mt-8 pt-5 sm:pt-6 border-t border-gray-100'>
                             <span className='text-sm text-zinc-500 ml-1'>اشتراک‌گذاری:</span>
-                            <a className='social-button bg-black hover:bg-white hover:text-black hover:border-2 hover:border-black' href='#'>
+                            <a className='social-button bg-black hover:bg-white hover:text-black hover:border-2 hover:border-black' href='#' aria-label='اشتراک در X'>
                                 <RiTwitterXFill className='social-button__icon' />
                             </a>
-                            <a className='social-button bg-green-600 hover:bg-white hover:text-green-600 hover:border-2 hover:border-green-600' href='#'>
+                            <a className='social-button bg-green-600 hover:bg-white hover:text-green-600 hover:border-2 hover:border-green-600' href='#' aria-label='اشتراک در واتساپ'>
                                 <MdOutlineWhatsapp className='social-button__icon' />
                             </a>
-                            <a className='social-button bg-pink-600 hover:bg-white hover:text-pink-600 hover:border-2 hover:border-pink-600' href='#'>
+                            <a className='social-button bg-pink-600 hover:bg-white hover:text-pink-600 hover:border-2 hover:border-pink-600' href='#' aria-label='اشتراک در اینستاگرام'>
                                 <IoLogoInstagram className='social-button__icon' />
                             </a>
                         </div>
                     </div>
-                </div>
+                </article>
 
                 {related.length > 0 && (
-                    <div className='max-w-6xl mx-auto mt-16'>
-                        <div className='flex items-center justify-between pb-6'>
+                    <section className='max-w-6xl mx-auto mt-12 sm:mt-16'>
+                        <div className='flex items-center justify-between gap-3 pb-5 sm:pb-6'>
                             <h2 className='font-MorabbaBold text-lg sm:text-xl text-zinc-800'>مطالب مرتبط</h2>
-                            <Link href='/articles/1' className='flex items-center gap-1 text-sm text-primary-600 hover:text-primary-700 transition-colors'>
+                            <Link href='/articles/1' className='flex items-center gap-1 shrink-0 text-sm text-primary-600 hover:text-primary-700 transition-colors'>
                                 همه مطالب
                                 <HiMiniChevronLeft className='w-4 h-4' />
                             </Link>
                         </div>
 
-                        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-4 sm:gap-y-5'>
+                        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5'>
                             {related.map(item => {
                                 const parts = getPersianDateParts(item.createdAt)
                                 return (
@@ -176,7 +176,7 @@ export default async function ArticleInfoPage({ params }: { params: Promise<{ id
                                 )
                             })}
                         </div>
-                    </div>
+                    </section>
                 )}
             </div>
 
