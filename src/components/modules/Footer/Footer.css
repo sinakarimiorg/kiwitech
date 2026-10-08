@@ -3,6 +3,7 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
+    min-width: 0;
 }
 
 .footer-title {
@@ -21,6 +22,10 @@
     font-size: 0.75rem;
     letter-spacing: -0.025em;
     transition: all 0.15s ease;
+}
+
+.footer-col__list a {
+    padding-block: 0.125rem;
 }
 
 .footer-col__list a:hover {

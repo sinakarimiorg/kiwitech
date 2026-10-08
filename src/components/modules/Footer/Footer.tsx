@@ -10,7 +10,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 
 import 'swiper/css';
-
 import './Footer.css'
 
 export default function Footer({ marginClasses }: { marginClasses: string }) {
@@ -18,20 +17,22 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
         <div className={`footer bg-linear-to-br from-primary-50 via-white to-primary-100 ${marginClasses}`}>
             {/* Footer Header  */}
 
-            <div className="relative overflow-hidden rounded-t-3xl border border-primary-100/20 bg-linear-to-br from-primary-100 via-white to-primary-200 px-8 py-6 mx-10 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
+            <div 
+            className="relative overflow-hidden rounded-t-3xl border border-primary-100/20 bg-linear-to-br from-primary-100 via-white 
+            to-primary-200 px-4 py-5 sm:px-8 sm:py-6  sm:mx-6 md:mx-10 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
 
                 <div className="absolute -top-20 left-0 w-60 h-60 bg-primary-300/60 blur-3xl rounded-full" />
                 <div className="absolute -right-10 bottom-0 w-52 h-52 bg-primary-200/50 blur-3xl rounded-full" />
 
-                <div className="relative z-10 flex items-center justify-between">
+                <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
                     <Link href="/" className="flex items-center gap-2">
                         <img
                             src="/images/logo/logo.png"
-                            className="w-10 h-10 md:w-16 md:h-16"
+                            className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
                         />
 
                         <div>
-                            <h5 className="font-MorabbaBold text-2xl md:text-3xl text-zinc-800">
+                            <h5 className="font-MorabbaBold text-xl sm:text-2xl md:text-3xl text-zinc-800">
                                 کیـــوی تــــک
                             </h5>
                             <p className="text-xs text-zinc-500">
@@ -46,7 +47,7 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                 group flex items-center gap-2
                 rounded-xl border border-primary-300/50
                 bg-white/70 backdrop-blur-sm
-                px-4 py-2
+                px-3 py-1.5 sm:px-4 sm:py-2
                 transition-all duration-300
                 hover:-translate-y-1
                 hover:bg-primary-500
@@ -55,7 +56,7 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                 hover:shadow-primary-500/30
             "
                     >
-                        <span className="text-sm md:text-base">
+                        <span className="hidden sm:block text-sm lg:text-base">
                             بازگشت به بالا
                         </span>
 
@@ -67,7 +68,7 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
 
                 <div className="relative z-10 mt-5 flex flex-col gap-y-3 text-sm text-zinc-600 custom-sc:flex-row custom-sc:items-center custom-sc:justify-between">
 
-                    <div className="flex flex-wrap items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
 
                         <a
                             href="tel:0211111000"
@@ -87,7 +88,7 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
 
                     </div>
 
-                    <p>
+                    <p className='text-xs md:text-sm'>
                         شنبه الی پنجشنبه، از ۸ صبح الی ۱۸ عصر پاسخگوی شما هستیم.
                     </p>
 
@@ -95,12 +96,12 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
             </div>
 
             {/* ////////////////contents of footer  */}
-            <div className='px-5 xs:px-7 sm:px-8 xl:px-10 2xl:px-16 py-7'>
+            <div className='px-4 xs:px-6 sm:px-8 xl:px-10 2xl:px-16 py-7'>
 
                 {/* Footer Content  */}
-                <div className='flex flex-wrap items-start 2xl:justify-between gap-y-7 gap-x-16 sm:gap-x-28 custom-sc:gap-x-24 lg:gap-x-28 xl:gap-x-44 2xl:gap-x-0 pt-6 md:pt-10'>
+                <div className='grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-4 xl:grid-cols-[1.6fr_1fr_1fr_auto_auto] items-start gap-x-6 sm:gap-x-10 xl:gap-x-16 2xl:gap-x-24 gap-y-8 pt-6 md:pt-10'>
                     {/* <!-- First Col & About Us section -->  */}
-                    <div className='footer-col 2xl:max-w-80'>
+                    <div className='footer-col xs:col-span-2 lg:col-span-4 xl:col-span-1'>
                         <h2 className='footer-title'>درباره ما</h2>
                         <p className='text-xs md:text-sm md:leading-7'>
                             فروشگاه کیوی تک، بزرگترین وارد کننده لوازم جانبی موبایل در پایتخت کشور
@@ -134,7 +135,7 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                     </div>
 
                     {/* <!-- fourth Col & Licenses section -->  */}
-                    <div className='footer-col  w-full items-center xs:items-start xs:w-auto'>
+                    <div className='footer-col'>
                         <h2 className='footer-title'>مجــوزها</h2>
                         <div className='w-20 xs:w-24 md:w-25 h-30 overflow-hidden'>
                             <Swiper
@@ -166,7 +167,7 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                         </div>
                     </div>
                     {/* <!-- fifth Col & Social Medias section -->  */}
-                    <div className='footer-col w-full items-center xs:items-start xs:w-auto'>
+                    <div className='footer-col'>
                         {/* Social Media Links */}
                         <div>
                             <h2 className='footer-title'>شبکه های اجتماعی</h2>
@@ -178,11 +179,11 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                             </div>
                         </div>
 
-                        <div className='mt-4 md:mt-10'>
+                        <div className='mt-5 md:mt-10 w-full'>
                             <h2 className='footer-title'>با ثبت ایمیل، از اخبار کیوی تک باخبر شوید.</h2>
-                            <div>
-                                <input className='px-1 md:px-3 py-1 xs:py-1.5 md:py-2.5 ml-0.5 xs:ml-1 md:ml-2 text-xs md:text-sm bg-gray-300 border border-gray-700/70 shadow-lg focus:border-none focus:outline-none focus:shadow-white/30 rounded-lg placeholder:text-xs md:placeholder:text-sm' type='email' name='email' placeholder='ایمیل شما' />
-                                <button className='px-2 md:px-4 py-0.5 xs:py-1 md:py-2 md:font-DanaMedium text-xs md:text-base bg-gray-300/85 border border-gray-700/70 shadow-lg sm:tracking-wide rounded-lg'>ثبت</button>
+                            <div className='flex w-full max-w-sm gap-2'>
+                                <input className='flex-1 min-w-0 px-2 md:px-3 py-1.5 md:py-2.5 text-xs md:text-sm bg-gray-300 border border-gray-700/70 shadow-lg focus:border-none focus:outline-none focus:shadow-white/30 rounded-lg placeholder:text-xs md:placeholder:text-sm' type='email' name='email' placeholder='ایمیل شما' />
+                                <button type='submit' className='shrink-0 px-3 md:px-4 py-1.5 md:py-2 md:font-DanaMedium text-xs md:text-base bg-gray-300/85 border border-gray-700/70 shadow-lg sm:tracking-wide rounded-lg'>ثبت</button>
                             </div>
                         </div>
                     </div>
@@ -190,6 +191,7 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
             </div>
             <div className='relative'>
                 <svg
+                    className='block w-full h-auto'
                     version="1.1"
                     id="Layer_1"
                     xmlns="http://www.w3.org/2000/svg"
@@ -271,8 +273,8 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                         />
                     </g>
                 </svg>
-                <p className='w-full absolute bottom-0.5 md:bottom-3 xl:bottom-5 2xl:bottom-7 text-center text-[8px] md:text-sm text-zinc-300'>
-                    © 1405 تمامی حقوق مادی و معنوی این سایت متعلق به <Link className='md:font-IranYekanBold text-[10px] md:text-base text-white' href='https://github.com/sinakarimiorg'>کـــیـوی تـــک</Link> می‌باشد.
+                <p className='w-full -mt-px px-4 py-3 bg-[#243F19] text-center text-xs leading-6 text-zinc-300 md:absolute md:inset-x-0 md:mt-0 md:p-0 md:bg-transparent md:leading-normal md:bottom-3 xl:bottom-5 2xl:bottom-7 md:text-sm'>
+                    © 1405 تمامی حقوق مادی و معنوی این سایت متعلق به <Link className='md:font-IranYekanBold text-xs md:text-base text-white' href='https://github.com/sinakarimiorg'>کـــیـوی تـــک</Link> می‌باشد.
                 </p>
             </div>
         </div>

@@ -121,6 +121,7 @@
   --font-Morabba: 'Morabba';
   --font-MorabbaBold: 'Morabba Bold';
   --font-gotham: 'Gotham';
+  --breakpoint-2xs: 380px;
   --breakpoint-xs: 480px;
   --breakpoint-sm: 640px;
   --breakpoint-md: 768px;
