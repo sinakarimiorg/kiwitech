@@ -257,7 +257,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
           { id: 3, title: product.name, to: `/product-info/${product.linkName}` },
         ]} />
 
-      <div className='container px-3 sm:px-0 pb-28 md:pb-0'>
+      <div className='container px-3'>
 
         {/* Main section/ gallery / cart */}
         <div className='grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_22rem] gap-5 xl:gap-8'>
@@ -497,7 +497,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
         </div>
       </div>
 
-      <Footer marginClasses={'mt-16 md:mt-32'} />
+      <Footer marginClasses={'mt-10 md:20 lg:mt-32'} />
     </div>
   )
 }

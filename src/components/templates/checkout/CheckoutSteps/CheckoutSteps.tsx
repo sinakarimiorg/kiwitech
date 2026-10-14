@@ -25,22 +25,23 @@ export default function CheckoutSteps({ current }: { current: StepKey }) {
                             : isCompleted
                                 ? 'bg-primary-50 border-primary-500 text-primary-600'
                                 : 'bg-white border-gray-300 text-zinc-400'}`}>
-                        {isCompleted ? <HiMiniCheck className='w-4.5 h-4.5' /> : index + 1}
+                        {isCompleted ? <HiMiniCheck className='w-4.5 h-4.5' /> : (index + 1).toLocaleString('fa-IR')}
                     </span>
                 )
 
                 return (
                     <div key={step.key} className='flex items-center gap-2 sm:gap-3'>
                         <div className='flex flex-col items-center gap-1.5'>
-                            {isCompleted ? <Link href={step.href}>{circle}</Link> : circle}
-                            <span className={`hidden sm:block text-xs whitespace-nowrap
+                            {isCompleted ? <Link href={step.href}  aria-label={step.label}>{circle}</Link> : circle}
+
+                            <span className={`text-xs whitespace-nowrap ${isActive ? 'block' : 'hidden sm:block'}
                                 ${isActive ? 'text-primary-600 font-IranYekanMedium' : isCompleted ? 'text-zinc-500' : 'text-zinc-400'}`}>
                                 {step.label}
                             </span>
                         </div>
 
                         {index < steps.length - 1 &&
-                            <span className={`w-8 sm:w-16 h-0.5 rounded-full transition-colors ${isCompleted ? 'bg-primary-500' : 'bg-gray-200'}`}></span>
+                            <span className={`w-8 sm:w-16 h-0.5 mt-4 sm:mt-4.5 rounded-full transition-colors ${isCompleted ? 'bg-primary-500' : 'bg-gray-200'}`}></span>
                         }
                     </div>
                 )

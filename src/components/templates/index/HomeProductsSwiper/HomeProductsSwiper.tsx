@@ -53,7 +53,7 @@ export default function HomeProductsSwiper({ products, navId }: HomeProductsSwip
                                 title={product.name}
                                 price={product.price}
                                 exPrice={product.exPrice}
-                                discount={getDiscountPercent(product)}
+                                discount={getDiscountPercent(product || undefined)}
                             />
                         </SwiperSlide>
                     ))}

@@ -10,7 +10,6 @@ type SearchBoxProps = {
     placeholder?: string
 }
 
-// فونت ۱۶ پیکسلی در موبایل جلوی زوم خودکار iOS موقع فوکوس رو می‌گیره
 export default function SearchBox({ initialValue = '', placeholder = 'جستجو در محصولات و مقالات...' }: SearchBoxProps) {
     const router = useRouter()
     const [value, setValue] = useState(initialValue)
@@ -25,7 +24,7 @@ export default function SearchBox({ initialValue = '', placeholder = 'جستجو
         <form
             onSubmit={handleSubmit}
             role='search'
-            className='flex items-center gap-2 pl-2 pr-3 sm:pr-4 py-2 bg-white shadow-lg border border-gray-200 rounded-2xl focus-within:border-primary-400 transition-colors'
+            className='flex items-center gap-2 px-3 sm:px-4 py-2 bg-white shadow-lg border border-gray-200 rounded-2xl focus-within:border-primary-400 transition-colors'
         >
             <input
                 value={value}
