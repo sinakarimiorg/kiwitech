@@ -119,7 +119,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
                                 type='button'
                                 onClick={() => setIsLightboxOpen(true)}
                                 aria-label='نمایش تصویر بزرگ'
-                                className='flex items-center justify-center w-full h-full p-4 sm:p-6 cursor-zoom-in'
+                                className='flex items-center justify-center w-full h-full cursor-zoom-in'
                             >
                                 <img src={src} alt={name} className='max-w-full max-h-full object-contain' />
                             </button>

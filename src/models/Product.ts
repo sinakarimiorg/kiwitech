@@ -3,6 +3,22 @@ import { AdminProduct } from "../types/adminProductType"
 
 type IProduct = Omit<AdminProduct, "_id">
 
+const SpecSchema = new Schema(
+    {
+        label: { type: String, required: true, trim: true, maxlength: 40 },
+        value: { type: String, required: true, trim: true, maxlength: 200 },
+    },
+    { _id: false }
+)
+
+const ColorSchema = new Schema(
+    {
+        name: { type: String, required: true, trim: true, maxlength: 30 },
+        hex: { type: String, default: "#9ca3af" },
+    },
+    { _id: false }
+)
+
 const ProductSchema = new Schema<IProduct>(
     {
         name: { type: String, required: true },
@@ -15,6 +31,8 @@ const ProductSchema = new Schema<IProduct>(
         subCategory: { type: String, required: true },
         description: { type: String, required: false },
         colors: { type: String, required: false },
+        colorOptions: { type: [ColorSchema], default: [] },
+        specs: { type: [SpecSchema], default: [] },
         tags: { type: [String], required: false },
         img: { type: String, required: true },
         isFeatured: { type: Boolean, default: false },

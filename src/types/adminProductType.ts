@@ -1,3 +1,12 @@
+export interface ProductSpec {
+    label: string
+    value: string
+}
+
+export interface ProductColor {
+    name: string
+    hex: string
+}
 export interface AdminProduct {
     _id: string
     name: string
@@ -10,6 +19,8 @@ export interface AdminProduct {
     subCategory: string
     description?: string
     colors: string
+    colorOptions?: ProductColor[]
+    specs?: ProductSpec[]
     tags: string[]
     img: string
     isFeatured?: Boolean
