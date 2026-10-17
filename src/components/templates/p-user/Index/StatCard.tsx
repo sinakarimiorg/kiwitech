@@ -33,7 +33,7 @@ export default function StatCard({ label, value, icon: Icon, accent, unit, hint,
                 }
             </div>
 
-            <p className='mt-3 sm:mt-4 font-IranYekanBold text-lg sm:text-2xl text-zinc-800 break-words leading-tight'>
+            <p className='mt-3 sm:mt-4 font-IranYekanBold text-lg sm:text-2xl text-zinc-800 wrap-break-word leading-tight'>
                 {value}
                 {unit && <span className='block sm:inline sm:mr-1.5 mt-0.5 sm:mt-0 font-IranYekan text-[11px] sm:text-xs text-zinc-400'>{unit}</span>}
             </p>

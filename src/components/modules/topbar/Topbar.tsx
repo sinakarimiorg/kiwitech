@@ -2,37 +2,20 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { RiSearch2Line } from "react-icons/ri";
-import { HiArrowRightEndOnRectangle } from "react-icons/hi2";
-import { HiOutlineShoppingCart } from "react-icons/hi2";
-import { HiBars3 } from "react-icons/hi2";
-import { IoCartOutline } from "react-icons/io5";
-import { HiMiniXMark } from "react-icons/hi2";
-import { AiOutlineHome } from "react-icons/ai";
-import { HiMiniChevronDown } from "react-icons/hi2";
-import { HiMiniChevronUp } from "react-icons/hi2";
-import { MdOutlineAdminPanelSettings, MdOutlineShoppingBag } from "react-icons/md";
-import { IoDocumentTextOutline } from "react-icons/io5";
-import { BiPhone } from "react-icons/bi";
-import { RiGroupLine } from "react-icons/ri";
+import { HiArrowRightEndOnRectangle, HiMiniChevronDown } from "react-icons/hi2";
 import Overlay from '../overlay/Overlay';
-import { useEffect } from "react";
 import SearchSuggestions from './SearchSuggestions/SearchSuggestions'
 import { getSessionUserAction, logoutAction } from '@root/src/components/templates/Auth/action'
 import CartDropdown from './CartDropdown'
-import { CartBadge, CartMiniList, CartMiniFooter } from './CartMiniPanel'
-import { PiUserCircleLight } from 'react-icons/pi';
-import MobileMenuCategories from './MobileMenuCategories';
+import BottomNav from '../BottomNav/BottomNav'
 
 type SessionUser = { name: string; phone: string; role: string } | null
 
 const Topbar = () => {
     const [searchedValue, setSearchedValue] = useState('')
     const [visibleOverlay, setVisibleOverlay] = useState(false)
-    const [navClass, setNavClass] = useState('-right-64')
-    const [cartClass, setCartClass] = useState('-left-80')
-    const [isSubmenuOpen, setIsSubmenuOpen] = useState(false)
 
     const [currentUser, setCurrentUser] = useState<SessionUser>(null)
     useEffect(() => {
@@ -49,6 +32,7 @@ const Topbar = () => {
         const handleClickOutside = (event: MouseEvent) => {
             if (desktopSearchRef.current && !desktopSearchRef.current.contains(event.target as Node)) {
                 setShowDesktopSuggestions(false)
+                setVisibleOverlay(false)
             }
             if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target as Node)) {
                 setShowMobileSuggestions(false)
@@ -64,31 +48,12 @@ const Topbar = () => {
         window.scrollTo(0, 0);
     }, []);
 
-    const openMenuBar = () => {
-        setNavClass('right-0')
-        setVisibleOverlay(!visibleOverlay)
-    }
-    const closeNavBar = () => {
-        setNavClass('-right-64')
-        setVisibleOverlay(!visibleOverlay)
-    }
-
-    const openCartBar = () => {
-        setCartClass('left-0')
-        setVisibleOverlay(!visibleOverlay)
-    }
-    const closeCartBar = () => {
-        setCartClass('-left-80')
-        setVisibleOverlay(!visibleOverlay)
-    }
-
     const closeOverlayFunc = () => {
-        setNavClass('-right-64')
-        setCartClass('-left-80')
+        setShowDesktopSuggestions(false)
         setVisibleOverlay(false)
     }
 
-    ///////////// For Search Section 
+    ///////////// For Search Section
     const router = useRouter()
 
     const openSearchBox = () => {
@@ -100,6 +65,7 @@ const Topbar = () => {
         if (!value.trim()) return
         setShowDesktopSuggestions(false)
         setShowMobileSuggestions(false)
+        setVisibleOverlay(false)
         router.push(`/search/${encodeURIComponent(value.trim())}`)
     }
 
@@ -142,16 +108,15 @@ const Topbar = () => {
                     </div>
 
                     {showDesktopSuggestions &&
-                        <SearchSuggestions query={searchedValue} onNavigate={() => setShowDesktopSuggestions(false)} />
+                        <SearchSuggestions query={searchedValue} onNavigate={() => closeOverlayFunc()} />
                     }
                 </div>
 
                 {/* Cart & Login  */}
                 <div className="flex text-xl gap-x-2 md:gap-x-4 lg:gap-5 xl:gap-x-8 text-text-muted">
 
-                    {/* <!-- Cart & Theme Toggle --> */}
+                    {/* <!-- Cart --> */}
                     <div className="flex items-center gap-x-2 md:gap-x-4 lg:gap-x-5">
-
                         <CartDropdown />
                     </div>
 
@@ -159,7 +124,6 @@ const Topbar = () => {
                     <span className="block w-px h-14 bg-border"></span>
 
                     {/* <!-- Login Link --> */}
-
                     {currentUser ? (
                         <span className='group relative flex-center gap-1 text-sm custom-sc:text-base tracking-tighter cursor-pointer hover:text-neon transition-colors'>
                             {currentUser.name}
@@ -188,159 +152,18 @@ const Topbar = () => {
             </div >
 
             {/* <!-- TopBar for Mobile --> */}
-            < div className='w-full block sm:hidden' >
-                {/* TopBar Content */}
-                < div className='w-full flex items-center justify-between px-4 h-16 bg-dark text-text' >
-                    <button className='text-white' onClick={() => openMenuBar()}>
-                        <HiBars3 className='w-6 h-6 cursor-pointer' />
-                    </button>
-
-                    {/* Topbar Logo */}
-                    <div className='flex items-center gap-1 cursor-pointer text-white'>
+            <div className='w-full block sm:hidden'>
+                <div className='w-full flex items-center justify-center px-4 h-16 bg-dark text-text'>
+                    <Link href={'/'} className='flex items-center gap-1 cursor-pointer'>
                         <img src='/images/logo/logo1.png' className='w-12 h-12' />
                         <h5 className='text-neon font-MorabbaBold text-xl'>
                             کیـــوی  تِــــک
                         </h5>
-                    </div>
+                    </Link>
+                </div>
 
-                    <button className='relative text-white' onClick={() => openCartBar()}>
-                        <IoCartOutline className='w-6 h-6' />
-                        <CartBadge className='-top-1.5 -right-2' />
-                    </button>
-
-                    {/* <!-- Mobile Nav(menu) -------> */}
-                    <div className={`mobile-nav fixed ${navClass} top-0 bottom-0 w-64 px-4 pt-4 bg-dark-secondary border-l border-border z-20 transition-all overflow-y-auto`}>
-
-                        {/* <!-- Nav Header --> */}
-                        <div className="flex items-center justify-between pb-3 mb-6 border-b border-border-light ">
-
-                            {/* Nav Logo */}
-                            <Link href={'/'} className='flex items-center gap-1 cursor-pointer'>
-                                <img src='/images/logo/logo1.png' className='w-12 h-12' />
-                                <h5 className='font-MorabbaBold text-xl text-neon'>
-                                    کیـــوی تِــــک
-                                </h5>
-                            </Link>
-
-                            {/* <!-- Close Nav Icon --> */}
-                            <button onClick={() => closeNavBar()} aria-label='بستن' className='flex-center w-8 h-8 text-text hover:text-neon transition-colors cursor-pointer'>
-                                <HiMiniXMark className="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        {/* <!-- Nav Menu --> */}
-                        <div className="flex flex-col mb-8 text-text">
-                            <Link href={'/'} className="flex items-center gap-x-2 py-2.5 pr-2.5 bg-neon/5 text-primary-500 rounded-md">
-                                <AiOutlineHome className='w-5 h-5' />
-                                <span>صفحه اصلی</span>
-                            </Link>
-
-                            {/* <!-- menu --> */}
-                            <ul className="flex flex-col gap-y-6 mt-4 pr-2.5 [&>*:hover]:text-neon">
-
-                                <li>
-                                    <div className={`flex justify-between items-center ${isSubmenuOpen && 'text-primary-500 '}`}>
-                                        <div className="flex gap-2">
-                                            <MdOutlineShoppingBag className='w-5 h-5' />
-                                            <span>فروشگاه</span>
-                                        </div>
-                                        {/* <!-- Submenu Open/Close Btn --> */}
-                                        <div>
-                                            {
-                                                isSubmenuOpen ? <HiMiniChevronUp className="w-4 h-4 cursor-pointer" onClick={() => setIsSubmenuOpen(false)} /> : <HiMiniChevronDown className="w-4 h-4" onClick={() => setIsSubmenuOpen(true)} />
-                                            }
-                                        </div>
-                                    </div>
-
-                                    {/* <!-- Submenu --> */}
-                                    {isSubmenuOpen && <MobileMenuCategories />}
-                                </li>
-
-                                <li>
-                                    <Link href={'/about'} className="inline-flex gap-2">
-                                        <RiGroupLine className="w-5 h-5" />
-                                        <span>درباره ما</span>
-                                    </Link>
-                                </li>
-
-                                <li>
-                                    <Link href={'/'} className="inline-flex gap-2">
-                                        <IoDocumentTextOutline className="w-5 h-5" />
-                                        <span>موبو بلاگ</span>
-                                    </Link>
-                                </li>
-
-                                <li>
-                                    <Link href={'/'} className="inline-flex gap-2">
-                                        <BiPhone className="w-5 h-5" />
-                                        <span>تماس با ما</span>
-                                    </Link>
-                                </li>
-                            </ul>
-                        </div>
-
-                        {/* <!-- Nav Footer --> */}
-                        <div className="flex flex-col gap-y-6 w-full pr-2.5 py-8 border-t border-t-border-light text-primary-500 [&>*:hover]:text-neon">
-                            {currentUser ? (
-                                <>
-                                    <Link href='/p-user' className="flex items-center gap-x-2">
-                                        <PiUserCircleLight className="w-5 h-5" />
-                                        <span className='line-clamp-1'>{currentUser.name}</span>
-                                    </Link>
-
-                                    {currentUser.role === 'ادمین' &&
-                                        <Link href='/p-admin' className="flex items-center gap-x-2">
-                                            <MdOutlineAdminPanelSettings className="w-5 h-5" />
-                                            <span>ورود به ادمین پنل</span>
-                                        </Link>
-                                    }
-                                </>
-                            ) : (
-                                <Link href='/login-register' className="flex items-center gap-x-2">
-                                    <HiArrowRightEndOnRectangle className="w-5 h-5" />
-                                    <span>ورود | ثبت‌نام</span>
-                                </Link>
-                            )}
-
-                            <Link href='/checkout/cart' className="flex items-center gap-x-2">
-                                <HiOutlineShoppingCart className="w-5 h-5" />
-                                <span>سبد خرید</span>
-                            </Link>
-
-                            {currentUser &&
-                                <button onClick={exitUser} className="flex items-center gap-x-2 text-danger hover:text-danger! cursor-pointer">
-                                    <HiArrowRightEndOnRectangle className="w-5 h-5 rotate-180" />
-                                    <span>خروج</span>
-                                </button>
-                            }
-                        </div>
-                    </div>
-
-                    {/* <!-- Mobile Cart --> */}
-                    <div className={`mobile-cart fixed ${cartClass} top-0 bottom-0 flex flex-col w-80 max-w-[85vw] bg-white shadow-2xl z-20 text-zinc-700 font-IranYekan transition-all`}>
-
-                        {/* <!-- Cart Header --> */}
-                        <div className="flex items-center justify-between px-4 py-4 bg-dark-secondary text-white">
-                            <span className='font-IranYekanMedium'>سبد خرید</span>
-                            <button onClick={() => closeCartBar()} aria-label='بستن' className='flex-center w-8 h-8 rounded-lg hover:bg-white/10 cursor-pointer'>
-                                <HiMiniXMark className="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        {/* <!-- Cart Body --> */}
-                        <div className='flex-1 overflow-y-auto px-4 py-4'>
-                            <CartMiniList />
-                        </div>
-
-                        {/* <!-- Cart Footer --> */}
-                        <div className='px-4 pb-6 bg-white shadow-[0_-8px_20px_rgba(0,0,0,0.06)]'>
-                            <CartMiniFooter />
-                        </div>
-
-                    </div>
-                </div >
                 {/* Search Input For Mobile*/}
-                < div ref={mobileSearchRef} className='relative m-6' >
+                <div ref={mobileSearchRef} className='relative m-6'>
                     <div className='flex items-center bg-transparent rounded-xl border border-custom-dark/80 overflow-hidden'>
                         <button onClick={() => goToSearch(searchedValue)} className='flex-center p-3 bg-primary-500 cursor-pointer'>
                             <RiSearch2Line className='w-5 h-5 text-white' />
@@ -352,14 +175,18 @@ const Topbar = () => {
                             onFocus={() => setShowMobileSuggestions(true)}
                             type='text'
                             placeholder='جستجو در مـوبـولـــند'
-                            className='w-full text-neutral-600 text-center text-sm bg-transparent focus:outline-none' />
+                            className='w-full text-neutral-600 text-center text-base bg-transparent focus:outline-none' />
                     </div>
 
                     {showMobileSuggestions &&
                         <SearchSuggestions query={searchedValue} onNavigate={() => setShowMobileSuggestions(false)} />
                     }
-                </div >
-            </div >
+                </div>
+            </div>
+
+            {/* Mobile Bottom Navigation (sm:hidden) */}
+            <BottomNav currentUser={currentUser} />
+
             <Overlay isOpen={visibleOverlay} isClose={() => closeOverlayFunc()} />
         </>
     )
