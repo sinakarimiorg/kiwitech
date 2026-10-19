@@ -24,18 +24,13 @@ const Topbar = () => {
 
     ////////// Handle Search Suggestions Box
     const [showDesktopSuggestions, setShowDesktopSuggestions] = useState(false)
-    const [showMobileSuggestions, setShowMobileSuggestions] = useState(false)
     const desktopSearchRef = useRef<HTMLDivElement>(null)
-    const mobileSearchRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (desktopSearchRef.current && !desktopSearchRef.current.contains(event.target as Node)) {
                 setShowDesktopSuggestions(false)
                 setVisibleOverlay(false)
-            }
-            if (mobileSearchRef.current && !mobileSearchRef.current.contains(event.target as Node)) {
-                setShowMobileSuggestions(false)
             }
         }
         document.addEventListener('mousedown', handleClickOutside)
@@ -64,7 +59,6 @@ const Topbar = () => {
     const goToSearch = (value: string) => {
         if (!value.trim()) return
         setShowDesktopSuggestions(false)
-        setShowMobileSuggestions(false)
         setVisibleOverlay(false)
         router.push(`/search/${encodeURIComponent(value.trim())}`)
     }
@@ -160,27 +154,6 @@ const Topbar = () => {
                             کیـــوی  تِــــک
                         </h5>
                     </Link>
-                </div>
-
-                {/* Search Input For Mobile*/}
-                <div ref={mobileSearchRef} className='relative m-6'>
-                    <div className='flex items-center bg-transparent rounded-xl border border-custom-dark/80 overflow-hidden'>
-                        <button onClick={() => goToSearch(searchedValue)} className='flex-center p-3 bg-primary-500 cursor-pointer'>
-                            <RiSearch2Line className='w-5 h-5 text-white' />
-                        </button>
-                        <input
-                            value={searchedValue}
-                            onChange={event => { setSearchedValue(event.target.value) }}
-                            onKeyDown={event => enterInInput(event)}
-                            onFocus={() => setShowMobileSuggestions(true)}
-                            type='text'
-                            placeholder='جستجو در مـوبـولـــند'
-                            className='w-full text-neutral-600 text-center text-base bg-transparent focus:outline-none' />
-                    </div>
-
-                    {showMobileSuggestions &&
-                        <SearchSuggestions query={searchedValue} onNavigate={() => setShowMobileSuggestions(false)} />
-                    }
                 </div>
             </div>
 

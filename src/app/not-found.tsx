@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Header from '../components/modules/Header/Header'
 import Footer from '../components/modules/Footer/Footer'
-import SearchBox from '../components/modules/SearchBox/SearchBox'
 import BackButton from '../components/modules/BackButton/BackButton'
 import {
   PiLightningFill,
@@ -48,14 +47,10 @@ export default function NotFound() {
             </h1>
             <p className='mt-3 text-sm sm:text-base text-text-muted leading-8'>
               ممکن است آدرس اشتباه وارد شده باشد، یا صفحه منتقل یا حذف شده باشد.
-              می‌توانی جستجو کنی یا از لینک‌های زیر ادامه بدهی.
+              می‌توانی از قسمت جستجو یا لینک‌های زیر ادامه بدهی.
             </p>
 
-            <div className='mt-7 max-w-md mx-auto'>
-              <SearchBox placeholder='دنبال چی می‌گردی؟' />
-            </div>
-
-            <div className='flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mt-6'>
+            <div className='flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mt-7'>
               <Link
                 href='/'
                 className='group flex items-center justify-center gap-2 px-6 py-3 text-sm sm:text-base bg-neon text-surface rounded-2xl shadow-[0_0_30px_rgba(215,255,92,0.35)] hover:shadow-[0_0_45px_rgba(215,255,92,0.55)] transition-shadow'

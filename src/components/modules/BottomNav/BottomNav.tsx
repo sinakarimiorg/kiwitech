@@ -8,6 +8,8 @@ import {
     PiHouseFill,
     PiSquaresFourLight,
     PiSquaresFourFill,
+    PiMagnifyingGlassLight,
+    PiMagnifyingGlassFill,
     PiShoppingCartSimpleLight,
     PiShoppingCartSimpleFill,
     PiUserCircleLight,
@@ -16,6 +18,7 @@ import {
 import type { IconType } from 'react-icons'
 import { CartBadge } from '@root/src/components/modules/Topbar/CartMiniPanel'
 import CategorySheet from './CategorySheet'
+import MobileSearchSheet from '../topbar/MobileSearchSheet'
 
 type SessionUser = { name: string; phone: string; role: string } | null
 
@@ -49,6 +52,7 @@ function NavLink({ href, label, active, icon: Icon, activeIcon: ActiveIcon, badg
 export default function BottomNav({ currentUser }: { currentUser: SessionUser }) {
     const pathname = usePathname()
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false)
+    const [isSearchOpen, setIsSearchOpen] = useState(false)
 
     return (
         <>
@@ -71,6 +75,17 @@ export default function BottomNav({ currentUser }: { currentUser: SessionUser })
                     دسته‌بندی‌ها
                 </button>
 
+                <button
+                    type='button'
+                    onClick={() => setIsSearchOpen(true)}
+                    aria-haspopup='dialog'
+                    aria-expanded={isSearchOpen}
+                    className={itemClasses(isSearchOpen)}
+                >
+                    {isSearchOpen ? <PiMagnifyingGlassFill className='w-6 h-6' /> : <PiMagnifyingGlassLight className='w-6 h-6' />}
+                    جستجو
+                </button>
+
                 <NavLink
                     href='/checkout/cart'
                     label='سبد خرید'
@@ -88,6 +103,8 @@ export default function BottomNav({ currentUser }: { currentUser: SessionUser })
                     activeIcon={PiUserCircleFill}
                 />
             </nav>
+
+            {isSearchOpen && <MobileSearchSheet onClose={() => setIsSearchOpen(false)} />}
 
             {isCategoriesOpen && (
                 <CategorySheet currentUser={currentUser} onClose={() => setIsCategoriesOpen(false)} />
