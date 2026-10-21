@@ -17,6 +17,8 @@ import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 import { toggleFavoriteAction } from '../../P-user/Favorites/action'
 import { useAppDispatch, useAppSelector } from '@root/src/store/hooks'
 import { addToCart, incrementItem, decrementItem } from '@root/src/store/reducers/cartSlice'
+import { useIsClient } from '@root/src/hooks/useIsClient'
+import type { CartItem } from '@root/src/types/cartType'
 import { FaPlus, FaMinus } from 'react-icons/fa6'
 import { RiStarFill } from "react-icons/ri";
 import { GoShareAndroid } from "react-icons/go";
@@ -28,6 +30,8 @@ import { BsPatchCheck } from "react-icons/bs";
 import { CiBoxes } from "react-icons/ci";
 
 import styles from '@/styles/product.module.css'
+
+const EMPTY_CART_ITEMS: CartItem[] = []
 
 const toast = Swal.mixin({
   toast: true,
@@ -263,7 +267,10 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
 
   ////////// cart
   const dispatch = useAppDispatch()
-  const cartItems = useAppSelector(state => state.cart.items)
+  const storedCartItems = useAppSelector(state => state.cart.items)
+  // Cart lives in localStorage (client-only): render as empty during hydration to match the server HTML
+  const isClient = useIsClient()
+  const cartItems = isClient ? storedCartItems : EMPTY_CART_ITEMS
   const cartCounts = useMemo(() => {
     const map = new Map<string, number>()
     cartItems.forEach(item => {
@@ -271,6 +278,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
     })
     return map
   }, [cartItems, product._id])
+
 
   const colorViews = useMemo(
     () => (product.colorOptions ?? []).map(color => {
