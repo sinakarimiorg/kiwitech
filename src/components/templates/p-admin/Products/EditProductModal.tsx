@@ -3,13 +3,15 @@
 import { PiPackageLight, PiXBold } from "react-icons/pi"
 import ProductForm from "./ProductForm"
 import type { AdminProduct } from "@root/src/types/adminProductType"
+import type { AdminCategory } from "@root/src/types/adminCategoryType"
 
 type EditProductModalProps = {
     product: AdminProduct
     onClose: () => void
+    categories: AdminCategory[]
 }
 
-export default function EditProductModal({ product, onClose }: EditProductModalProps) {
+export default function EditProductModal({ product, onClose, categories }: EditProductModalProps) {
     return (
         <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
             <div className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
@@ -24,7 +26,7 @@ export default function EditProductModal({ product, onClose }: EditProductModalP
                     </button>
                 </div>
 
-                <ProductForm mode="edit" product={product} onSuccess={onClose} onCancel={onClose} />
+                <ProductForm mode="edit" categories={categories} product={product} onSuccess={onClose} onCancel={onClose} />
             </div>
         </div>
     )

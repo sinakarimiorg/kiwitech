@@ -1,5 +1,6 @@
 export interface CartItem {
     id: string
+    productId?: string
     title: string
     img: string
     price: number
@@ -7,4 +8,6 @@ export interface CartItem {
     count: number
     stock?: number
     linkName: string
+    color?: string
+    colorHex?: string
 }

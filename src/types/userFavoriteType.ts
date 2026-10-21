@@ -7,4 +7,5 @@ export interface FavoriteProduct {
     discount?: number
     img: string
     stock?: number
+    colorOptions?: { name: string; hex: string; stock?: number; price?: number; exPrice?: number }[]
 }

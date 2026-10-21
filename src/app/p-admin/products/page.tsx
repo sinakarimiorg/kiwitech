@@ -4,6 +4,8 @@ import ProductsList from "@root/src/components/templates/P-admin/Products/Produc
 import { connectDB } from "@root/src/lib/mongodb";
 import ProductModel from "@root/src/models/Product";
 import { AdminProduct } from "@root/src/types/adminProductType";
+import CategoriesModel from "@root/src/models/Category";
+import { AdminCategory } from "@root/src/types/adminCategoryType";
 
 export const dynamic = "force-dynamic"
 
@@ -11,13 +13,17 @@ const page = async () => {
     await connectDB()
     const products = await ProductModel.find({}).sort({ _id: -1 }).lean();
     const initialProducts: AdminProduct[] = JSON.parse(JSON.stringify(products));
+
+    const allCategories = await CategoriesModel.find({}).sort({ _id: -1 }).lean();
+    const categoriesList: AdminCategory[] = JSON.parse(JSON.stringify(allCategories));
+
     return (
         <Layout>
             <main className="flex-1 min-w-0">
                 <div className="p-4 sm:p-6 flex flex-col gap-6">
                     <h1 className="text-lg sm:text-xl font-semibold text-zinc-900">محصولات</h1>
                     <AddProduct />
-                    <ProductsList initialProducts={initialProducts} />
+                    <ProductsList initialProducts={initialProducts} categories={categoriesList} />
                 </div>
             </main>
         </Layout>

@@ -73,6 +73,12 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <p className="text-xs sm:text-sm text-zinc-700 line-clamp-1">{item.title}</p>
+                                        {item.color && (
+                                            <p className="inline-flex items-center gap-1.5 mt-1 text-xs text-zinc-500">
+                                                <i className="w-3 h-3 rounded-full border border-gray-300" style={{ backgroundColor: item.colorHex || "#9ca3af" }} />
+                                                رنگ: {item.color}
+                                            </p>
+                                        )}
                                         <p className="text-xs text-zinc-400 mt-1">{item.count} عدد × {item.price.toLocaleString()} تومان</p>
                                     </div>
                                     <span className="inline-flex items-center gap-1 text-xs sm:text-sm font-IranYekanMedium text-zinc-700 shrink-0">

@@ -6,6 +6,9 @@ export interface ProductSpec {
 export interface ProductColor {
     name: string
     hex: string
+    stock?: number
+    price?: number
+    exPrice?: number
 }
 export interface AdminProduct {
     _id: string

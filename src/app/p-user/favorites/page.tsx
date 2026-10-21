@@ -18,7 +18,7 @@ async function page() {
     await connectDB()
 
     const favorites = await FavoriteModel.find({ user: user._id })
-        .populate('product', 'name linkName price exPrice discount img stock')
+        .populate('product', 'name linkName price exPrice discount img stock colorOptions')
         .sort({ _id: -1 })
         .lean()
 
@@ -51,7 +51,6 @@ async function page() {
                         <Link href='/products/1' className='px-6 py-2.5 text-sm text-text linear_btn'>مشاهده محصولات</Link>
                     </div>
                 ) : (
-                    // پنل کنار سایدبار جا کم داره؛ پس ستون‌ها محافظه‌کارانه‌ان: ۱ ستون موبایل، ۲ ستون از ۴۸۰ پیکسل، ۳ ستون در xl، ۴ ستون در 2xl
                     <div className='grid grid-cols-1 xs:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 sm:gap-4'>
                         {products.map(product => (
                             <FavoriteProductCard key={product._id} product={product} />

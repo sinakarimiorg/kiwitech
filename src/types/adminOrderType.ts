@@ -6,6 +6,8 @@ export interface OrderItem {
     img: string
     price: number
     count: number
+    color?: string
+    colorHex?: string
 }
 
 export interface AdminOrderUser {

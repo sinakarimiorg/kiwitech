@@ -86,7 +86,7 @@ export default function CartClient({ shippingSettings }: CartClientProps) {
                                                 ? Math.round(((item.exPrice! - item.price) / item.exPrice!) * 100)
                                                 : 0
                                             const savedAmount = hasDiscount ? (item.exPrice! - item.price) * item.count : 0
-                                            const reachedStock = !!item.stock && item.count >= item.stock
+                                            const reachedStock = item.stock !== undefined && item.count >= item.stock
 
                                             return (
                                                 <div key={item.id} className='flex flex-col sm:flex-row sm:items-center gap-4 px-4 sm:px-6 py-5'>
@@ -97,6 +97,12 @@ export default function CartClient({ shippingSettings }: CartClientProps) {
                                                         </Link>
                                                         <div className='min-w-0'>
                                                             <Link href={`/product-info/${item.linkName}`} className='text-sm sm:text-base text-zinc-700 leading-6 line-clamp-2'>{item.title}</Link>
+                                                            {item.color && (
+                                                                <span className='inline-flex items-center gap-1.5 mt-1 text-xs text-zinc-500'>
+                                                                    <i className='w-3.5 h-3.5 rounded-full border border-gray-300' style={{ backgroundColor: item.colorHex || '#9ca3af' }} />
+                                                                    {item.color}
+                                                                </span>
+                                                            )}
                                                             <button
                                                                 onClick={() => removeItem(item.id)}
                                                                 className='flex items-center gap-1 mt-2 text-xs text-red-400 hover:text-red-500 transition-colors cursor-pointer'>

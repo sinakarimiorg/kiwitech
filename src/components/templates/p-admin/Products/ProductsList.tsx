@@ -10,18 +10,17 @@ import ProductBox from "./ProductBox"
 import EditProductModal from "./EditProductModal"
 import { AdminProduct } from "@root/src/types/adminProductType"
 import { deleteProductAction } from "./actions"
+import { AdminCategory } from "@root/src/types/adminCategoryType"
 
 type ProductsListProps = {
     initialProducts: AdminProduct[]
+    categories: AdminCategory[]
 }
 
-export default function ProductsList({ initialProducts }: ProductsListProps) {
+export default function ProductsList({ initialProducts, categories }: ProductsListProps) {
     const [search, setSearch] = useState<string>("")
     const [editingProduct, setEditingProduct] = useState<AdminProduct | null>(null)
     const [isDeleting, startDeleteTransition] = useTransition()
-
-
-
 
     ////////handle delete product
     const handleDelete = async (id: string) => {
@@ -122,6 +121,7 @@ export default function ProductsList({ initialProducts }: ProductsListProps) {
                 <EditProductModal
                     product={editingProduct}
                     onClose={() => setEditingProduct(null)}
+                    categories={categories}
                 />
             )}
         </div>

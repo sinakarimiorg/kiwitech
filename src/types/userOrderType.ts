@@ -10,6 +10,8 @@ export interface UserOrderItem {
     img: string
     price: number
     count: number
+    color?: string
+    colorHex?: string
     product?: UserOrderItemProduct | null
 }
 

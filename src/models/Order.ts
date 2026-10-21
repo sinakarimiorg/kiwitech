@@ -7,6 +7,8 @@ export interface IOrderItem {
     img: string
     price: number
     count: number
+    color?: string
+    colorHex?: string
 }
 
 export interface IOrder {
@@ -26,6 +28,8 @@ const OrderItemSchema = new Schema(
         img: { type: String, required: true },
         price: { type: Number, required: true },
         count: { type: Number, required: true, default: 1 },
+        color: { type: String, required: false },
+        colorHex: { type: String, required: false },
     },
     { _id: false }
 );

@@ -35,7 +35,8 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
 
     // handle Add To Cart Action
     const dispatch = useAppDispatch()
-    const cartItem = useAppSelector(state => state.cart.items.find(i => i.id === product._id))
+    const isColored = (product.colorOptions?.length ?? 0) > 0
+    const cartItem = useAppSelector(state => isColored ? undefined : state.cart.items.find(i => i.id === product._id))
 
     const productHref = `/product-info/${product.linkName || product._id}`
 
@@ -48,7 +49,7 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
                 : 0;
     const savedAmount = hasExPrice ? product.exPrice! - product.price : 0
 
-    const inStock = product.stock === undefined || product.stock > 0
+    const inStock = product.stock === undefined || product.stock > 0 // برای محصول رنگی stock مجموع رنگ‌هاست
     const lowStock = product.stock !== undefined && product.stock > 0 && product.stock <= 3
 
     /* ───────── Remove Favorite Product ───────── */
@@ -76,7 +77,7 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
 
     /* ───────── Add To Cart ───────── */
     const handleAddToCart = () => {
-        if (!inStock) return
+        if (!inStock || isColored) return
 
         dispatch(addToCart({
             id: product._id, linkName: product.linkName, title: product.name,
@@ -160,7 +161,7 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
                     </h3>
                 </Link>
 
-                {/* قیمت */}
+                {/* price */}
                 <div className='mt-3 pt-3 border-t border-dashed border-gray-200'>
                     <div className='flex items-end justify-between gap-2 min-h-11'>
                         <div className='flex flex-col'>
@@ -188,6 +189,14 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
                     <div className='flex-center gap-2 w-full h-11 mt-4 text-sm font-IranYekanMedium bg-gray-100 text-zinc-400 rounded-lg cursor-not-allowed'>
                         ناموجود
                     </div>
+                ) : isColored ? (
+                    <Link
+                        href={productHref}
+                        className='flex-center gap-2 w-full h-11 mt-4 text-sm font-IranYekanMedium linear_btn'
+                    >
+                        <PiEyeLight className='w-5 h-5' />
+                        انتخاب رنگ و خرید
+                    </Link>
                 ) : cartItem ? (
                     <div className='flex items-center justify-between gap-2 w-full h-11 mt-4 px-1.5 border border-primary-200 bg-primary-50/50 rounded-lg'>
                         <button
@@ -216,7 +225,7 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
                     </button>
                 )}
 
-                {/* اکشن‌های ثانویه */}
+                {/* secondary actions */}
                 <div className='flex items-center justify-between mt-3 pt-3 border-t border-gray-100'>
                     <Link
                         href={productHref}

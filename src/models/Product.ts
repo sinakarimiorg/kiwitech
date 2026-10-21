@@ -15,6 +15,9 @@ const ColorSchema = new Schema(
     {
         name: { type: String, required: true, trim: true, maxlength: 30 },
         hex: { type: String, default: "#9ca3af" },
+        stock: { type: Number, min: 0 },
+        price: { type: Number, min: 0 },
+        exPrice: { type: Number, min: 0 },
     },
     { _id: false }
 )
@@ -26,7 +29,7 @@ const ProductSchema = new Schema<IProduct>(
         price: { type: Number, required: true },
         exPrice: { type: Number },
         discount: { type: Number },
-        stock: { type: Number, default: 0 },
+        stock: { type: Number, default: 0, min: 0 },
         category: { type: String, required: true },
         subCategory: { type: String, required: true },
         description: { type: String, required: false },

@@ -136,7 +136,7 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                             const productHref = item.product?.linkName ? `/product-info/${item.product.linkName}` : null
 
                             return (
-                                <div key={item._id} className="flex items-center gap-3 px-5 sm:px-6 py-4">
+                                <div key={item._id ?? `${item.title}-${item.color ?? ""}`} className="flex items-center gap-3 px-5 sm:px-6 py-4">
                                     {productHref ? (
                                         <Link href={productHref} className="w-16 h-16 shrink-0 bg-gray-50 rounded-lg overflow-hidden">
                                             <img src={item.img} className="w-full h-full object-cover" alt={item.title} />
@@ -153,6 +153,12 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                                             </Link>
                                         ) : (
                                             <p className="text-sm text-zinc-700 line-clamp-2">{item.title}</p>
+                                        )}
+                                        {item.color && (
+                                            <p className="inline-flex items-center gap-1.5 mt-1.5 text-xs text-zinc-500">
+                                                <i className="w-3 h-3 rounded-full border border-gray-300" style={{ backgroundColor: item.colorHex || "#9ca3af" }} />
+                                                رنگ: {item.color}
+                                            </p>
                                         )}
                                         <p className="text-xs text-zinc-400 mt-1.5">
                                             {item.count.toLocaleString("fa-IR")} عدد × {item.price.toLocaleString()} تومان

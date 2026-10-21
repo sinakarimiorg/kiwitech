@@ -23,7 +23,7 @@ import {
 } from "react-icons/pi"
 import { addProductAction, updateProductAction } from "./actions"
 import type { AdminProduct, ProductColor, ProductSpec } from "@root/src/types/adminProductType"
-
+import { isLightColor } from "@root/src/lib/productVariants"
 
 /* ───────── Categories and Subcategories ───────── */
 export interface CategoryItem {
@@ -125,7 +125,39 @@ const toNum = (value: string) => Number(value) || 0
 const calcFinal = (base: number, pct: number) => Math.round(base * (1 - pct / 100))
 const calcPct = (base: number, final: number) => (base <= 0 || final >= base ? 0 : Math.round((1 - final / base) * 100))
 
-/* ───────── Form Types & Validation ───────── */
+export interface ColorFormValue {
+    name: string
+    hex: string
+    stock: string
+    customPrice: boolean
+    basePrice: string
+    discount: string
+    price: string
+}
+
+const emptyColor = (color: ProductColor): ColorFormValue => ({
+    name: color.name,
+    hex: color.hex,
+    stock: "",
+    customPrice: false,
+    basePrice: "",
+    discount: "",
+    price: "",
+})
+
+function getColorError(color: ColorFormValue): string | null {
+    if (color.stock === "" || !Number.isInteger(Number(color.stock)) || Number(color.stock) < 0) {
+        return `موجودی رنگ «${color.name}» را وارد کنید`
+    }
+    if (color.customPrice) {
+        const price = Number(color.price)
+        const base = Number(color.basePrice)
+        if (!price || price <= 0) return `قیمت نهایی رنگ «${color.name}» را وارد کنید`
+        if (base && price > base) return `قیمت نهایی رنگ «${color.name}» نمی‌تواند از قیمت اصلی آن بیشتر باشد`
+    }
+    return null
+}
+
 export interface ProductFormValues {
     name: string
     linkName: string
@@ -138,7 +170,7 @@ export interface ProductFormValues {
     description: string
     isFeatured: boolean
     tags: string[]
-    colorOptions: ProductColor[]
+    colorOptions: ColorFormValue[]
     specs: ProductSpec[]
 }
 
@@ -163,11 +195,26 @@ function getInitialValues(product?: AdminProduct): ProductFormValues {
 
     const base = product.exPrice && product.exPrice > product.price ? product.exPrice : product.price
 
-    const legacyColors: ProductColor[] = (product.colors ?? "")
+    const legacyColors: ColorFormValue[] = (product.colors ?? "")
         .split(/[،,]/)
         .map(name => name.trim())
         .filter(Boolean)
-        .map(name => ({ name, hex: "#9ca3af" }))
+        .map(name => emptyColor({ name, hex: "#9ca3af" }))
+
+    const savedColors: ColorFormValue[] = (product.colorOptions ?? []).map(color => {
+        const hasCustomPrice = typeof color.price === "number" && color.price > 0
+        const colorBase = hasCustomPrice ? (color.exPrice && color.exPrice > color.price! ? color.exPrice : color.price!) : 0
+        return {
+            name: color.name,
+            hex: color.hex,
+            // رنگ قدیمی بدون موجودی خالی می‌ماند تا ادمین مقدار را وارد کند
+            stock: typeof color.stock === "number" ? String(color.stock) : "",
+            customPrice: hasCustomPrice,
+            basePrice: hasCustomPrice ? String(colorBase) : "",
+            discount: hasCustomPrice ? String(calcPct(colorBase, color.price!)) : "",
+            price: hasCustomPrice ? String(color.price) : "",
+        }
+    })
 
     return {
         name: product.name ?? "",
@@ -181,7 +228,7 @@ function getInitialValues(product?: AdminProduct): ProductFormValues {
         description: product.description ?? "",
         isFeatured: product.isFeatured === true,
         tags: product.tags ?? [],
-        colorOptions: product.colorOptions?.length ? product.colorOptions : legacyColors,
+        colorOptions: savedColors.length ? savedColors : legacyColors,
         specs: product.specs ?? [],
     }
 }
@@ -202,7 +249,19 @@ const validationSchema = Yup.object({
         .positive("قیمت نهایی باید بیشتر از صفر باشد")
         .max(Yup.ref("basePrice"), "قیمت نهایی نمی‌تواند از قیمت اصلی بیشتر باشد")
         .required("قیمت نهایی الزامی است"),
-    stock: Yup.number().typeError("موجودی باید عدد باشد").integer("موجودی باید عدد صحیح باشد").min(0, "موجودی نمی‌تواند منفی باشد").required("موجودی الزامی است"),
+    stock: Yup.number().when("colorOptions", {
+        is: (colors: ColorFormValue[] | undefined) => (colors?.length ?? 0) > 0,
+        then: schema => schema.transform((value, original) => (original === "" ? 0 : value)).notRequired(),
+        otherwise: schema =>
+            schema.typeError("موجودی باید عدد باشد").integer("موجودی باید عدد صحیح باشد").min(0, "موجودی نمی‌تواند منفی باشد").required("موجودی الزامی است"),
+    }),
+    colorOptions: Yup.array().test("color-rows", "", function (list) {
+        for (const color of (list ?? []) as ColorFormValue[]) {
+            const message = getColorError(color)
+            if (message) return this.createError({ message })
+        }
+        return true
+    }),
     category: Yup.string().required("انتخاب دسته‌بندی الزامی است"),
     subCategory: Yup.string().required("انتخاب زیرمجموعه الزامی است"),
     description: Yup.string().max(5000, "حداکثر ۵۰۰۰ کاراکتر"),
@@ -469,46 +528,170 @@ function specColorSafe(list: string[], used: Set<string>) {
 }
 
 /* ───────── Colors ───────── */
+function ColorPriceEditor({ color, onChange }: { color: ColorFormValue; onChange: (patch: Partial<ColorFormValue>) => void }) {
+    const base = toNum(color.basePrice)
+    const pct = toNum(color.discount)
+    const final = toNum(color.price)
+    const saved = base > final ? base - final : 0
+
+    const onBase = (raw: string) => {
+        const d = digits(raw)
+        onChange({ basePrice: d, price: d ? String(calcFinal(Number(d), pct)) : "" })
+    }
+
+    const onPct = (raw: string) => {
+        let d = digits(raw).slice(0, 3)
+        if (Number(d) > 100) d = "100"
+        onChange({ discount: d, ...(base ? { price: String(calcFinal(base, Number(d))) } : {}) })
+    }
+
+    const onFinal = (raw: string) => {
+        const d = digits(raw)
+        const f = Number(d)
+        if (!f) return onChange({ price: d })
+        if (!base || f > base) return onChange({ price: d, basePrice: d, discount: "0" })
+        onChange({ price: d, discount: String(calcPct(base, f)) })
+    }
+
+    return (
+        <div className="mt-3 pt-3 border-t border-dashed border-gray-200">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                    <label className={labelCls}>قیمت اصلی (تومان)</label>
+                    <input inputMode="numeric" dir="ltr" value={fmt(color.basePrice)} onChange={e => onBase(e.target.value)} placeholder="850,000" className={`${inputCls} text-left`} />
+                </div>
+                <div>
+                    <label className={labelCls}>درصد تخفیف</label>
+                    <div className="relative">
+                        <input
+                            inputMode="numeric"
+                            dir="ltr"
+                            value={color.discount === "0" ? "" : color.discount}
+                            onChange={e => onPct(e.target.value)}
+                            placeholder="0"
+                            className={`${inputCls} text-left pr-9`}
+                        />
+                        <PiPercentLight className="absolute top-1/2 right-3 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
+                    </div>
+                </div>
+                <div>
+                    <label className={labelCls}>قیمت نهایی این رنگ *</label>
+                    <input
+                        inputMode="numeric"
+                        dir="ltr"
+                        value={fmt(color.price)}
+                        onChange={e => onFinal(e.target.value)}
+                        placeholder="595,000"
+                        className={`${inputCls} text-left bg-primary-50/60 border-primary-200 font-IranYekanMedium`}
+                    />
+                </div>
+            </div>
+            <p className="mt-2 text-[11px] leading-5 text-zinc-500">
+                {saved > 0
+                    ? <>مشتری با خرید این رنگ <b className="text-primary-700">{saved.toLocaleString("en-US")}</b> تومان سود می‌کند.</>
+                    : "بدون تخفیف برای این رنگ."}
+            </p>
+        </div>
+    )
+}
+
 function ColorsField() {
-    const { values, setFieldValue } = useFormikContext<ProductFormValues>()
+    const { values, setFieldValue, errors } = useFormikContext<ProductFormValues>()
     const colors = values.colorOptions
     const [name, setName] = useState("")
     const [hex, setHex] = useState("#9fbe23")
 
     const exists = (colorName: string) => colors.some(color => color.name === colorName.trim())
+    const totalStock = colors.reduce((sum, color) => sum + toNum(color.stock), 0)
 
     const addColor = (color: ProductColor) => {
         const colorName = color.name.trim()
         if (!colorName || exists(colorName) || colors.length >= 20) return
-        setFieldValue("colorOptions", [...colors, { name: colorName, hex: color.hex }])
+        setFieldValue("colorOptions", [...colors, emptyColor({ name: colorName, hex: color.hex })])
     }
 
     const removeColor = (colorName: string) =>
         setFieldValue("colorOptions", colors.filter(color => color.name !== colorName))
+
+    const updateColor = (index: number, patch: Partial<ColorFormValue>) =>
+        setFieldValue(`colorOptions.${index}`, { ...colors[index], ...patch })
+
+    const toggleCustomPrice = (index: number) => {
+        const color = colors[index]
+        if (color.customPrice) return updateColor(index, { customPrice: false })
+        updateColor(index, {
+            customPrice: true,
+            basePrice: color.basePrice || values.basePrice,
+            discount: color.discount || values.discount,
+            price: color.price || values.price,
+        })
+    }
 
     const submitCustom = () => {
         addColor({ name, hex })
         setName("")
     }
 
+    const listError = typeof errors.colorOptions === "string" ? errors.colorOptions : ""
+
     return (
         <div>
             {colors.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
-                    {colors.map(color => (
-                        <span key={color.name} className="inline-flex items-center gap-2 pl-1.5 pr-3 py-1.5 text-xs text-zinc-700 bg-white border border-gray-200 rounded-full">
-                            <i className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: color.hex }} />
-                            {color.name}
-                            <button
-                                type="button"
-                                onClick={() => removeColor(color.name)}
-                                aria-label={`حذف رنگ ${color.name}`}
-                                className="flex-center w-5 h-5 text-zinc-400 hover:text-danger hover:bg-danger/10 rounded-full transition-colors cursor-pointer"
-                            >
-                                <PiXBold className="w-3 h-3" />
-                            </button>
-                        </span>
-                    ))}
+                <div className="flex flex-col gap-3 mb-4">
+                    {colors.map((color, index) => {
+                        const rowError = getColorError(color)
+                        const light = isLightColor(color.hex)
+                        return (
+                            <div key={color.name} className={`p-3.5 bg-white border rounded-xl ${rowError ? "border-red-200" : "border-gray-200"}`}>
+                                <div className="flex flex-wrap items-center gap-3">
+                                    <span className="flex items-center gap-2.5 min-w-0 flex-1">
+                                        <i
+                                            className={`w-7 h-7 shrink-0 rounded-full border ${light ? "border-gray-300" : "border-black/10"}`}
+                                            style={{ backgroundColor: color.hex }}
+                                        />
+                                        <span className="text-sm font-IranYekanMedium text-zinc-700 truncate">{color.name}</span>
+                                    </span>
+
+                                    <div className="flex items-center gap-2">
+                                        <label className="text-xs text-zinc-500 shrink-0">موجودی *</label>
+                                        <input
+                                            inputMode="numeric"
+                                            value={color.stock}
+                                            onChange={e => updateColor(index, { stock: digits(e.target.value) })}
+                                            placeholder="تعداد"
+                                            aria-label={`موجودی رنگ ${color.name}`}
+                                            className={`${inputCls} w-24 text-center`}
+                                        />
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => removeColor(color.name)}
+                                        aria-label={`حذف رنگ ${color.name}`}
+                                        className="flex-center w-9 h-9 shrink-0 text-zinc-400 hover:text-danger hover:bg-danger/10 rounded-lg transition-colors cursor-pointer"
+                                    >
+                                        <PiTrashLight className="w-4 h-4" />
+                                    </button>
+                                </div>
+
+                                <label className="flex items-center gap-2.5 mt-3 cursor-pointer w-fit">
+                                    <ToggleSwitch checked={color.customPrice} onChange={() => toggleCustomPrice(index)} label={`قیمت اختصاصی برای ${color.name}`} />
+                                    <span className="text-xs text-zinc-600">قیمت / تخفیف اختصاصی برای این رنگ</span>
+                                </label>
+                                {!color.customPrice && (
+                                    <p className="mt-1.5 text-[11px] text-zinc-400">قیمت و تخفیف پایه‌ی محصول اعمال می‌شود.</p>
+                                )}
+
+                                {color.customPrice && <ColorPriceEditor color={color} onChange={patch => updateColor(index, patch)} />}
+                            </div>
+                        )
+                    })}
+
+                    <div className="flex items-center justify-between px-3.5 py-2.5 text-xs bg-primary-50/60 border border-primary-100 rounded-xl">
+                        <span className="text-zinc-500">موجودی کل محصول (جمع رنگ‌ها)</span>
+                        <b className="text-primary-700">{totalStock.toLocaleString("fa-IR")} عدد</b>
+                    </div>
+                    {listError && <span className={errCls}>{listError}</span>}
                 </div>
             )}
 
@@ -689,13 +872,29 @@ export default function ProductForm({ mode, product, categories, onSuccess, onCa
         payload.append("price", String(price))
         payload.append("exPrice", hasDiscount ? String(base) : "")
         payload.append("discount", String(hasDiscount ? calcPct(base, price) : 0))
-        payload.append("stock", values.stock)
+        payload.append("stock", values.colorOptions.length ? String(values.colorOptions.reduce((sum, color) => sum + toNum(color.stock), 0)) : values.stock)
         payload.append("category", values.category)
         payload.append("subCategory", values.subCategory)
         payload.append("description", values.description)
         payload.append("isFeatured", String(values.isFeatured))
         payload.append("tags", values.tags.join(","))
-        payload.append("colorOptions", JSON.stringify(values.colorOptions))
+        payload.append(
+            "colorOptions",
+            JSON.stringify(
+                values.colorOptions.map(color => {
+                    const finalPrice = toNum(color.price)
+                    const colorBase = toNum(color.basePrice)
+                    return {
+                        name: color.name,
+                        hex: color.hex,
+                        stock: toNum(color.stock),
+                        ...(color.customPrice && finalPrice > 0
+                            ? { price: finalPrice, exPrice: colorBase > finalPrice ? colorBase : null }
+                            : {}),
+                    }
+                })
+            )
+        )
         payload.append("specs", JSON.stringify(values.specs.filter(spec => spec.label.trim() && spec.value.trim())))
 
         if (isEdit) {
@@ -834,15 +1033,25 @@ export default function ProductForm({ mode, product, categories, onSuccess, onCa
                                                 موجودی انبار *
                                             </label>
                                             <Field name="stock">
-                                                {({ field, form }: FieldProps<string>) => (
-                                                    <input
-                                                        {...field}
-                                                        inputMode="numeric"
-                                                        placeholder="تعداد"
-                                                        onChange={e => form.setFieldValue("stock", digits(e.target.value))}
-                                                        className={inputCls}
-                                                    />
-                                                )}
+                                                {({ field, form }: FieldProps<string>) => {
+                                                    const colorList = form.values.colorOptions as ColorFormValue[]
+                                                    const hasColors = colorList.length > 0
+                                                    const sum = colorList.reduce((total, color) => total + toNum(color.stock), 0)
+                                                    return (
+                                                        <>
+                                                            <input
+                                                                {...field}
+                                                                value={hasColors ? String(sum) : field.value}
+                                                                readOnly={hasColors}
+                                                                inputMode="numeric"
+                                                                placeholder="تعداد"
+                                                                onChange={e => form.setFieldValue("stock", digits(e.target.value))}
+                                                                className={`${inputCls} ${hasColors ? "bg-gray-50 text-zinc-500 cursor-not-allowed" : ""}`}
+                                                            />
+                                                            {hasColors && <p className="mt-1 text-[11px] text-zinc-400">محصول رنگی است؛ موجودی هر رنگ را در بخش «رنگ‌ها» وارد کنید.</p>}
+                                                        </>
+                                                    )
+                                                }}
                                             </Field>
                                             <ErrorMessage name="stock" component="span" className={errCls} />
                                         </div>
@@ -850,11 +1059,11 @@ export default function ProductForm({ mode, product, categories, onSuccess, onCa
                                     </div>
                                 </Section>
 
-                                <Section icon={PiPercentLight} title="قیمت‌گذاری" hint="قیمت اصلی و درصد تخفیف را بنویسید؛ قیمت نهایی خودکار محاسبه می‌شود.">
+                                <Section icon={PiPercentLight} title="قیمت‌گذاری" hint="قیمت پایه‌ی محصول (برای رنگ‌هایی که قیمت اختصاصی ندارند). قیمت اصلی و درصد تخفیف را بنویسید؛ قیمت نهایی خودکار محاسبه می‌شود.">
                                     <PriceFields />
                                 </Section>
 
-                                <Section icon={PiPaletteLight} title="رنگ‌ها" hint="اختیاری؛ برای هر رنگ نام و نمونه‌ی رنگی ذخیره می‌شود.">
+                                <Section icon={PiPaletteLight} title="رنگ‌ها" hint="اختیاری؛ برای هر رنگ موجودی و در صورت نیاز قیمت و تخفیف اختصاصی تعیین کنید. رنگِ بدون موجودی در سایت غیرفعال می‌شود.">
                                     <ColorsField />
                                 </Section>
 

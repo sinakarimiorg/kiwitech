@@ -16,6 +16,7 @@ import AsideBox from '@root/src/components/templates/P-user/AsideBox/AsideBox'
 import { createOrderAction } from '@root/src/components/templates/P-user/Orders/actions'
 import { UserAddress } from '@root/src/types/userAddressType'
 import { ShippingSettings } from '@root/src/types/siteSettingsType'
+import { getProductIdFromLine } from '@root/src/lib/productVariants'
 
 type PaymentClientProps = {
     selectedAddress: UserAddress
@@ -59,15 +60,12 @@ export default function PaymentClient({ selectedAddress, shippingSettings }: Pay
         startTransition(async () => {
             const result = await createOrderAction({
                 items: activeCartItems.map(item => ({
-                    title: item.title,
-                    img: item.img,
-                    price: item.price,
+                    product: getProductIdFromLine(item.id, item.productId),
+                    color: item.color,
                     count: item.count,
-                    product: item.id,
                 })),
                 address: formatAddress(selectedAddress),
                 phone: selectedAddress.phone,
-                shippingCost: shippingCost,
             })
 
             if (result.success) {

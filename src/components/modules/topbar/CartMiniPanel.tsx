@@ -79,6 +79,12 @@ export function CartMiniList({ className = '' }: { className?: string }) {
                             >
                                 {item.title}
                             </Link>
+                            {item.color && (
+                                <span className='inline-flex items-center gap-1 text-[11px] text-zinc-500'>
+                                    <i className='w-2.5 h-2.5 rounded-full border border-gray-300' style={{ backgroundColor: item.colorHex || '#9ca3af' }} />
+                                    {item.color}
+                                </span>
+                            )}
 
                             <div className='flex items-end justify-between gap-2'>
                                 {/* Stepper: compact pill */}

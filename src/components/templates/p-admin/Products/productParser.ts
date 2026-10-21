@@ -20,6 +20,11 @@ function parseJsonArray(raw: FormDataEntryValue | null): unknown[] {
     }
 }
 
+const toInt = (value: unknown) => {
+    const number = Math.round(Number(value))
+    return Number.isFinite(number) ? number : NaN
+}
+
 export type ParsedProduct = {
     name: string
     linkName: string
@@ -52,7 +57,15 @@ export function parseProductFormData(formData: FormData): ParseResult {
     if (!name) return { ok: false, error: "نام محصول الزامی است" }
     if (!LINK_REGEX.test(linkName)) return { ok: false, error: "نام لینک فقط می‌تواند شامل حروف انگلیسی، عدد و خط تیره باشد" }
     if (!Number.isFinite(price) || price <= 0) return { ok: false, error: "قیمت محصول معتبر نیست" }
-    if (!Number.isFinite(stock) || stock < 0) return { ok: false, error: "موجودی انبار معتبر نیست" }
+    const hasColorOptions = (() => {
+        try {
+            const parsed = JSON.parse(String(formData.get("colorOptions") ?? "[]"))
+            return Array.isArray(parsed) && parsed.length > 0
+        } catch {
+            return false
+        }
+    })()
+    if (!hasColorOptions && (!Number.isFinite(stock) || stock < 0)) return { ok: false, error: "موجودی انبار معتبر نیست" }
     if (!category || !subCategory) return { ok: false, error: "دسته‌بندی و زیرمجموعه الزامی است" }
 
     const hasDiscount = basePrice > price
@@ -65,17 +78,42 @@ export function parseProductFormData(formData: FormData): ParseResult {
         .slice(0, MAX_SPECS)
 
     const seenColors = new Set<string>()
-    const colorOptions: ProductColor[] = parseJsonArray(formData.get("colorOptions"))
-        .map((item: any) => ({
-            name: clean(item?.name, 30),
+    const colorOptions: ProductColor[] = []
+    for (const item of parseJsonArray(formData.get("colorOptions")) as any[]) {
+        const colorName = clean(item?.name, 30)
+        if (!colorName || seenColors.has(colorName)) continue
+        if (colorOptions.length >= MAX_COLORS) break
+        seenColors.add(colorName)
+
+        const colorStock = toInt(item?.stock)
+        if (!Number.isFinite(colorStock) || colorStock < 0) {
+            return { ok: false, error: `موجودی رنگ «${colorName}» معتبر نیست` }
+        }
+
+        const color: ProductColor = {
+            name: colorName,
             hex: typeof item?.hex === "string" && HEX_REGEX.test(item.hex) ? item.hex.toLowerCase() : "#9ca3af",
-        }))
-        .filter(color => {
-            if (!color.name || seenColors.has(color.name)) return false
-            seenColors.add(color.name)
-            return true
-        })
-        .slice(0, MAX_COLORS)
+            stock: colorStock,
+        }
+
+        // product's specific color
+        const hasCustomPrice = item?.price !== undefined && item?.price !== null && item?.price !== ""
+        if (hasCustomPrice) {
+            const colorPrice = toInt(item.price)
+            if (!Number.isFinite(colorPrice) || colorPrice <= 0) {
+                return { ok: false, error: `قیمت رنگ «${colorName}» معتبر نیست` }
+            }
+            color.price = colorPrice
+
+            const colorBase = toInt(item?.exPrice) || 0
+            if (colorBase > colorPrice) color.exPrice = colorBase
+        }
+        colorOptions.push(color)
+    }
+
+    const totalStock = colorOptions.length
+        ? colorOptions.reduce((sum, color) => sum + (color.stock ?? 0), 0)
+        : stock
 
     const tags = Array.from(
         new Set(
@@ -96,7 +134,7 @@ export function parseProductFormData(formData: FormData): ParseResult {
             price,
             exPrice,
             discount,
-            stock,
+            stock: totalStock,
             category,
             subCategory,
             description: description || null,

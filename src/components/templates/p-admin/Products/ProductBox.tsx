@@ -13,12 +13,32 @@ function stockBadge(stock: number) {
     return { label: `${stock} عدد`, className: "bg-primary-50 text-primary-600" }
 }
 
+function ColorDots({ product }: { product: AdminProduct }) {
+    const colors = product.colorOptions ?? []
+    if (colors.length === 0) return null
+    return (
+        <div className='flex flex-wrap items-center gap-1 mt-1.5'>
+            {colors.map(color => {
+                const stock = typeof color.stock === "number" ? color.stock : product.stock
+                return (
+                    <i
+                        key={color.name}
+                        title={`${color.name}: ${stock > 0 ? `${stock} عدد` : "ناموجود"}`}
+                        className={`w-3.5 h-3.5 rounded-full border border-gray-300 ${stock > 0 ? "" : "opacity-30"}`}
+                        style={{ backgroundColor: color.hex }}
+                    />
+                )
+            })}
+        </div>
+    )
+}
+
 function ProductBox({ product, onDelete, onEdit }: ProductBoxProps) {
     const badge = stockBadge(product.stock)
 
     return (
         <>
-            {/* ردیف جدول - از md به بالا */}
+            {/* md + */}
             <tr key={product._id} className='hidden md:table-row hover:bg-primary-50/30 transition-colors'>
                 <td className='px-5 sm:px-6 py-3.5'>
                     <div className='flex items-center gap-3'>
@@ -39,6 +59,7 @@ function ProductBox({ product, onDelete, onEdit }: ProductBoxProps) {
                 </td>
                 <td className='px-3 py-3.5'>
                     <span className={`px-2.5 py-1 text-xs rounded-lg ${badge.className}`}>{badge.label}</span>
+                    <ColorDots product={product} />
                 </td>
                 <td className='px-3 py-3.5'>
                     <div className='flex items-center gap-2'>
@@ -58,7 +79,7 @@ function ProductBox({ product, onDelete, onEdit }: ProductBoxProps) {
                 </td>
             </tr>
 
-            {/* کارت - زیر md */}
+            {/* md - */}
             <tr className='md:hidden'>
                 <td colSpan={5} className='p-0'>
                     <div className='flex gap-3 px-4 py-4 border-b border-gray-50'>
@@ -68,6 +89,7 @@ function ProductBox({ product, onDelete, onEdit }: ProductBoxProps) {
                         <div className='flex-1 min-w-0'>
                             <p className='text-sm text-zinc-700 line-clamp-2'>{product.name}</p>
                             <p className='mt-1 text-xs text-zinc-400'>{product.category}</p>
+                            <ColorDots product={product} />
 
                             <div className='flex items-center justify-between mt-2.5 gap-2'>
                                 <div className='flex flex-col min-w-0'>

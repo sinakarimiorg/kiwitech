@@ -125,7 +125,7 @@ export default function UserOrdersList({ orders }: { orders: UserOrder[] }) {
                                 {/* Product thumbnails */}
                                 <div className='flex items-center gap-2 px-4 sm:px-5 pb-4 overflow-x-auto'>
                                     {visibleItems.map(item => (
-                                        <span key={item._id} title={item.title} className='w-14 h-14 shrink-0 bg-gray-50 border border-gray-100 rounded-xl overflow-hidden'>
+                                        <span key={item._id} title={item.color ? `${item.title} (${item.color})` : item.title} className='w-14 h-14 shrink-0 bg-gray-50 border border-gray-100 rounded-xl overflow-hidden'>
                                             <img src={item.img} alt={item.title} className='w-full h-full object-cover' />
                                         </span>
                                     ))}
