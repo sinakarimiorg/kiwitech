@@ -18,12 +18,12 @@ import {
 import type { IconType } from 'react-icons'
 import { CartBadge } from '@root/src/components/modules/Topbar/CartMiniPanel'
 import CategorySheet from './CategorySheet'
-import MobileSearchSheet from '../topbar/MobileSearchSheet'
+import MobileSearchSheet from '../Topbar/MobileSearchSheet'
 
 type SessionUser = { name: string; phone: string; role: string } | null
 
 const itemClasses = (active: boolean) =>
-    `relative flex flex-col items-center justify-center gap-1 flex-1 h-16 text-[11px] transition-colors cursor-pointer
+    `relative flex flex-col items-center justify-center gap-1 flex-1 h-(--bottom-nav-height) text-[11px] transition-colors cursor-pointer
     ${active ? 'text-neon' : 'text-text-muted'}`
 
 type NavLinkProps = {

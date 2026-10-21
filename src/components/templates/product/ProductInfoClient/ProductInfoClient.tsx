@@ -16,11 +16,12 @@ import { getCartLineId, getColorStock, getFirstAvailableColor, getTotalStock, ha
 import TomanIcon from '@root/src/components/modules/Icons/TomanIcon'
 import { toggleFavoriteAction } from '../../P-user/Favorites/action'
 import { useAppDispatch, useAppSelector } from '@root/src/store/hooks'
-import { addToCart } from '@root/src/store/reducers/cartSlice'
+import { addToCart, incrementItem, decrementItem } from '@root/src/store/reducers/cartSlice'
+import { FaPlus, FaMinus } from 'react-icons/fa6'
 import { RiStarFill } from "react-icons/ri";
 import { GoShareAndroid } from "react-icons/go";
 import { LiaComments } from "react-icons/lia";
-import { PiBellRingingLight, PiStorefront, PiWarningOctagonThin, PiPhoneCallLight } from "react-icons/pi";
+import { PiTrashLight, PiBellRingingLight, PiStorefront, PiWarningOctagonThin, PiPhoneCallLight } from "react-icons/pi";
 import { TbHeartPlus } from "react-icons/tb";
 import { IoSettingsOutline } from "react-icons/io5";
 import { BsPatchCheck } from "react-icons/bs";
@@ -90,6 +91,55 @@ function AddToCartButton({ inStock, onClick, className = '', outOfStockLabel = '
     >
       {inStock ? 'افزودن به سبد خرید' : outOfStockLabel}
     </button>
+  )
+}
+
+type CartControlProps = {
+  inStock: boolean
+  countInCart: number
+  maxCount: number
+  onAdd: () => void
+  onIncrement: () => void
+  onDecrement: () => void
+  outOfStockLabel?: string
+  className?: string
+}
+
+function CartControl({ inStock, countInCart, maxCount, onAdd, onIncrement, onDecrement, outOfStockLabel, className = '' }: CartControlProps) {
+  if (!inStock || countInCart === 0) {
+    return <AddToCartButton inStock={inStock} outOfStockLabel={outOfStockLabel} onClick={onAdd} className={className} />
+  }
+
+  const atMax = countInCart >= maxCount
+  const sizeClass = className.split(' ').filter(c => /^(h-|md:w-|xl:w-|xl:h-|lg:h-|w-|sm:w-)/.test(c) || c === 'shrink-0').join(' ')
+
+  return (
+    <div className={`flex items-center justify-between gap-2 px-1.5 border border-primary-300 bg-primary-50/60 rounded-lg ${sizeClass || 'h-11 w-full'}`}>
+      <button
+        type='button'
+        onClick={onIncrement}
+        disabled={atMax}
+        aria-label='افزایش تعداد'
+        title={atMax ? 'به حداکثر موجودی رسیده‌اید' : undefined}
+        className='flex-center w-9 h-9 shrink-0 text-primary-600 hover:bg-primary-100 rounded-md transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed'
+      >
+        <FaPlus className='w-3 h-3' />
+      </button>
+
+      <span className='flex flex-col items-center leading-4 min-w-0'>
+        <span className='font-IranYekanBold text-base text-zinc-800'>{countInCart.toLocaleString('fa-IR')}</span>
+        <span className='text-[10px] text-zinc-500 whitespace-nowrap'>{atMax ? 'حداکثر موجودی' : 'در سبد خرید'}</span>
+      </span>
+
+      <button
+        type='button'
+        onClick={onDecrement}
+        aria-label={countInCart === 1 ? 'حذف از سبد خرید' : 'کاهش تعداد'}
+        className={`flex-center w-9 h-9 shrink-0 rounded-md transition-colors cursor-pointer ${countInCart === 1 ? 'text-danger hover:bg-danger/10' : 'text-zinc-500 hover:bg-gray-100'}`}
+      >
+        {countInCart === 1 ? <PiTrashLight className='w-4 h-4' /> : <FaMinus className='w-3 h-3' />}
+      </button>
+    </div>
   )
 }
 
@@ -211,12 +261,24 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
   ////////// Color / Variant
   const colored = hasColors(product)
 
+  ////////// cart
+  const dispatch = useAppDispatch()
+  const cartItems = useAppSelector(state => state.cart.items)
+  const cartCounts = useMemo(() => {
+    const map = new Map<string, number>()
+    cartItems.forEach(item => {
+      if ((item.productId ?? item.id.split(':')[0]) === product._id) map.set(item.id, item.count)
+    })
+    return map
+  }, [cartItems, product._id])
+
   const colorViews = useMemo(
     () => (product.colorOptions ?? []).map(color => {
       const stock = getColorStock(product, color)
-      return { ...color, stock, available: stock > 0 }
+      const inCart = Math.min(cartCounts.get(getCartLineId(product._id, color.name)) ?? 0, stock)
+      return { ...color, stock, inCart, available: stock > 0 }
     }),
-    [product]
+    [product, cartCounts]
   )
 
   const [selectedColor, setSelectedColor] = useState<string | null>(() => getFirstAvailableColor(product)?.name ?? null)
@@ -236,6 +298,9 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
   const totalStock = getTotalStock(product)
   const inStock = colored ? variant.available : totalStock > 0
   const currentStock = colored ? variant.stock : totalStock
+  const lineId = getCartLineId(product._id, variant.color?.name)
+  const countInCart = cartCounts.get(lineId) ?? 0
+  const remainingStock = Math.max(currentStock - countInCart, 0)
 
   const colorNames = colorViews.map(color => color.name)
 
@@ -245,17 +310,16 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
     {
       name: 'وضعیت موجودی',
       status: inStock
-        ? `${currentStock.toLocaleString('fa-IR')} عدد موجود${variant.color ? ` (${variant.color.name})` : ''}`
+        ? remainingStock < 5
+          ? `${remainingStock.toLocaleString('fa-IR')} عدد موجود${variant.color ? ` (${variant.color.name})` : ''}${countInCart > 0 ? ` — ${countInCart.toLocaleString('fa-IR')} عدد در سبد شما` : ''}`
+          : 'موجود'
         : 'ناموجود',
     },
     colorNames.length > 0 ? { name: 'رنگ‌های موجود', status: colorViews.filter(color => color.available).map(color => color.name).join('، ') || 'ناموجود' } : null,
     tagList.length > 0 ? { name: 'برچسب‌ها', status: tagList.join('، ') } : null,
   ].filter(Boolean) as { name: string; status: string }[]
 
-  ////////// cart
-  const dispatch = useAppDispatch()
-  const lineId = getCartLineId(product._id, variant.color?.name)
-  const countInCart = useAppSelector(state => state.cart.items.find(item => item.id === lineId)?.count ?? 0)
+  ////////// cart actions
 
   const handleAddToCart = () => {
     if (colored && !variant.color) {
@@ -281,11 +345,21 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
     toast.fire({ icon: 'success', title: 'به سبد خرید اضافه شد' })
   }
 
+  const handleIncrement = () => {
+    if (countInCart >= currentStock) {
+      toast.fire({ icon: 'warning', title: 'به حداکثر موجودی این کالا رسیده‌اید' })
+      return
+    }
+    dispatch(incrementItem(lineId))
+  }
+
+  const handleDecrement = () => dispatch(decrementItem(lineId))
+
   const stockLabel = inStock ? 'موجود در انبار کیوی‌تک (ارسال فوری)' : 'ناموجود در انبار'
   const outOfStockLabel = colored && !colorViews.some(color => color.available) ? 'ناموجود' : colored && variant.color && !variant.available ? 'این رنگ ناموجود است' : 'ناموجود'
 
   return (
-    <div>
+    <div className='pb-(--product-bar-space)'>
       <Header />
       <BreadCrumb
         links={[
@@ -394,7 +468,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
 
                 <div className='flex flex-col md:flex-row xl:flex-col md:items-center xl:items-stretch gap-4 xl:gap-5 xl:mt-5'>
                   <PriceBlock price={price} exPrice={exPrice} discountPercent={discountPercent} className='md:flex-1 justify-start xl:justify-end xl:px-4' />
-                  <AddToCartButton inStock={inStock} outOfStockLabel={outOfStockLabel} onClick={handleAddToCart} className='h-11 md:w-64 xl:w-full xl:h-12 xl:text-lg' />
+                  <CartControl inStock={inStock} outOfStockLabel={outOfStockLabel} countInCart={countInCart} maxCount={currentStock} onAdd={handleAddToCart} onIncrement={handleIncrement} onDecrement={handleDecrement} className='h-11 md:w-64 xl:w-full xl:h-12 xl:text-lg' />
                 </div>
               </div>
             </div>
@@ -506,7 +580,7 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
                   <PriceBlock price={price} exPrice={exPrice} discountPercent={discountPercent} className='justify-end' />
                 </div>
 
-                <AddToCartButton inStock={inStock} outOfStockLabel={outOfStockLabel} onClick={handleAddToCart} className='h-11 lg:h-12 lg:text-lg' />
+                <CartControl inStock={inStock} outOfStockLabel={outOfStockLabel} countInCart={countInCart} maxCount={currentStock} onAdd={handleAddToCart} onIncrement={handleIncrement} onDecrement={handleDecrement} className='h-11 lg:h-12 lg:text-lg' />
               </div>
             </aside>
           </div>
@@ -514,8 +588,8 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
       </div>
 
       {/* ───────── Mobile Fixed Cart ───────── */}
-      <div className='md:hidden fixed bottom-0 inset-x-0 z-9 bg-white border-t border-gray-100 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]'>
-        <div className='flex items-center justify-between gap-3'>
+      <div className='md:hidden fixed inset-x-0 bottom-(--bottom-nav-offset) box-content h-(--product-bar-height) sm:pb-[env(safe-area-inset-bottom)] bg-white border-t border-gray-100 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] px-4 z-30'>
+        <div className='flex items-center justify-between gap-3 h-full'>
           <div className='flex flex-col min-w-0'>
             {hasExPrice && (
               <span className='flex items-center gap-2'>
@@ -539,3 +613,4 @@ export default function ProductInfoClient({ product, comments, ratingAverage, ra
     </div>
   )
 }
+

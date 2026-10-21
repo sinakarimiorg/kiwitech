@@ -45,6 +45,26 @@
     color: #3f3f46;
   }
 
+  :root {
+    --bottom-nav-height: 4rem;
+    --bottom-nav-offset: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom, 0px));
+    --product-bar-height: 4.5rem;
+    --product-bar-space: calc(var(--bottom-nav-offset) + var(--product-bar-height));
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --bottom-nav-offset: 0px;
+      --product-bar-space: calc(var(--product-bar-height) + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --product-bar-space: 0px;
+    }
+  }
+
   button {
     cursor: pointer;
   }

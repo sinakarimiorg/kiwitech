@@ -4,7 +4,7 @@ import { PiCheckBold } from "react-icons/pi"
 import type { ProductColor } from "@root/src/types/adminProductType"
 import { isLightColor } from "@root/src/lib/productVariants"
 
-export type ColorOptionView = ProductColor & { available: boolean; stock: number }
+export type ColorOptionView = ProductColor & { available: boolean; stock: number; inCart?: number }
 
 type ColorSelectorProps = {
     colors: ColorOptionView[]
@@ -17,7 +17,9 @@ export default function ColorSelector({ colors, selected, onSelect, className = 
     if (colors.length === 0) return null
 
     const current = colors.find(color => color.name === selected) ?? null
-    const lowStock = current && current.available && current.stock <= 3
+    const remaining = current ? Math.max(current.stock - (current.inCart ?? 0), 0) : 0
+    const allInCart = !!current && current.available && remaining === 0
+    const lowStock = !!current && current.available && !allInCart && remaining <= 3
 
     return (
         <div className={className}>
@@ -65,12 +67,14 @@ export default function ColorSelector({ colors, selected, onSelect, className = 
             </div>
 
             {current && (
-                <p className={`mt-3 text-xs ${current.available ? (lowStock ? "text-amber-600" : "text-primary-600") : "text-danger"}`}>
+                <p className={`mt-3 text-xs ${!current.available ? "text-danger" : allInCart || lowStock ? "text-amber-600" : "text-primary-600"}`}>
                     {!current.available
                         ? "این رنگ ناموجود است"
-                        : lowStock
-                            ? `تنها ${current.stock.toLocaleString("fa-IR")} عدد از این رنگ باقی مانده`
-                            : "موجود در انبار"}
+                        : allInCart
+                            ? "تمام موجودی این رنگ در سبد خرید شماست"
+                            : lowStock
+                                ? `تنها ${remaining.toLocaleString("fa-IR")} عدد از این رنگ باقی مانده`
+                                : "موجود در انبار"}
                 </p>
             )}
         </div>
