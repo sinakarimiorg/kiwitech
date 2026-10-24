@@ -15,6 +15,15 @@ type AddressInput = {
     fullAddress: string
 }
 
+function pickAddress(data: AddressInput): AddressInput {
+    return {
+        title: String(data?.title ?? "").trim().slice(0, 60),
+        receiver: String(data?.receiver ?? "").trim().slice(0, 80),
+        phone: String(data?.phone ?? "").trim().slice(0, 20),
+        fullAddress: String(data?.fullAddress ?? "").trim().slice(0, 500),
+    }
+}
+
 // ────────────────────────────────
 // Add new Address
 // ────────────────────────────────
@@ -26,7 +35,7 @@ export async function addAddressAction(data: AddressInput): Promise<ActionResult
 
     try {
         const count = await AddressModel.countDocuments({ user: user._id })
-        await AddressModel.create({ ...data, user: user._id, isDefault: count === 0 })
+        await AddressModel.create({ ...pickAddress(data), user: user._id, isDefault: count === 0 })
 
         revalidatePath("/p-user/addresses")
         return { success: true }
@@ -47,7 +56,7 @@ export async function updateAddressAction(id: string, data: AddressInput): Promi
     try {
         const updated = await AddressModel.findOneAndUpdate(
             { _id: id, user: user._id },
-            data,
+            pickAddress(data),
             { new: true, runValidators: true }
         )
         if (!updated) return { success: false, error: "آدرس یافت نشد!" }

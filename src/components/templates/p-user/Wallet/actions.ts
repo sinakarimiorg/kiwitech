@@ -16,7 +16,11 @@ export async function topUpWalletAction(amount: number): Promise<ActionResult> {
     const user = await getCurrentUser()
     if (!user) return { success: false, error: "ابتدا وارد حساب کاربری خود شوید" }
 
-    if (!amount || amount <= 0) {
+    if (process.env.NODE_ENV === "production" && process.env.ALLOW_FAKE_WALLET_TOPUP !== "true") {
+        return { success: false, error: "شارژ کیف پول فعلاً در دسترس نیست" }
+    }
+
+    if (typeof amount !== "number" || !Number.isFinite(amount) || amount <= 0 || amount > 100_000_000) {
         return { success: false, error: "مبلغ وارد شده معتبر نیست" }
     }
 

@@ -1,9 +1,10 @@
 "use server"
 
+import { requireAdmin, ADMIN_DENIED } from "@root/src/lib/auth/session"
 import { revalidatePath } from "next/cache"
-import { writeFile } from "fs/promises"
-import path from "path"
 import { connectDB } from "@root/src/lib/mongodb"
+import { saveImageFile, isUploadPath } from "@root/src/lib/uploads"
+import mongoose from "mongoose"
 import ArticleModel from "@root/src/models/Article"
 
 type ActionResult = { success: true } | { success: false; error: string }
@@ -12,6 +13,7 @@ type ActionResult = { success: true } | { success: false; error: string }
 // Add new article action
 // ────────────────────────────────
 export async function addArticleAction(formData: FormData): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     const imageFile = formData.get("image") as File | null
@@ -20,10 +22,8 @@ export async function addArticleAction(formData: FormData): Promise<ActionResult
     }
 
     try {
-        const buffer = Buffer.from(await imageFile.arrayBuffer())
-        const filename = `${Date.now()}-${imageFile.name.replace(/\s+/g, "-")}`
-        const imgPath = path.join(process.cwd(), "public/uploads", filename)
-        await writeFile(imgPath, buffer)
+        const saved = await saveImageFile(imageFile)
+        if ("error" in saved) return { success: false, error: saved.error }
 
         const tagsInput = formData.get("tags") as string | null
         const publish = formData.get("publish") === "true"
@@ -35,7 +35,7 @@ export async function addArticleAction(formData: FormData): Promise<ActionResult
             excerpt: formData.get("excerpt") || null,
             content: formData.get("content") || null,
             tags: tagsInput ? tagsInput.split(",").map(t => t.trim()).filter(Boolean) : [],
-            img: `/uploads/${filename}`,
+            img: saved.path,
             status: publish ? "منتشر شده" : "پیش‌نویس",
         })
 
@@ -51,6 +51,8 @@ export async function addArticleAction(formData: FormData): Promise<ActionResult
 // Update existing article action
 // ────────────────────────────────
 export async function updateArticleAction(id: string, formData: FormData): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
+    if (!mongoose.isValidObjectId(id)) return { success: false, error: "شناسه نامعتبر است" }
     await connectDB()
 
     try {
@@ -58,11 +60,11 @@ export async function updateArticleAction(id: string, formData: FormData): Promi
         let img = formData.get("existingImage") as string
 
         if (imageFile && imageFile.size) {
-            const buffer = Buffer.from(await imageFile.arrayBuffer())
-            const filename = `${Date.now()}-${imageFile.name.replace(/\s+/g, "-")}`
-            const imgPath = path.join(process.cwd(), "public/uploads", filename)
-            await writeFile(imgPath, buffer)
-            img = `/uploads/${filename}`
+            const saved = await saveImageFile(imageFile)
+            if ("error" in saved) return { success: false, error: saved.error }
+            img = saved.path
+        } else if (!isUploadPath(img)) {
+            return { success: false, error: "تصویر مقاله نامعتبر است" }
         }
 
         if (!img) {
@@ -101,6 +103,7 @@ export async function updateArticleAction(id: string, formData: FormData): Promi
 // Delete article action
 // ────────────────────────────────
 export async function deleteArticleAction(id: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {

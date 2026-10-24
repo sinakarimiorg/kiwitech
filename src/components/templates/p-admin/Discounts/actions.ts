@@ -1,5 +1,6 @@
 "use server"
 
+import { requireAdmin, ADMIN_DENIED } from "@root/src/lib/auth/session"
 import { revalidatePath } from "next/cache"
 import { connectDB } from "@root/src/lib/mongodb"
 import DiscountModel from "@root/src/models/Discount"
@@ -25,6 +26,7 @@ function isDuplicateKeyError(error: unknown): boolean {
 // Add new discount action
 // ────────────────────────────────
 export async function addDiscountAction(data: DiscountInput): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -49,6 +51,7 @@ export async function addDiscountAction(data: DiscountInput): Promise<ActionResu
 // Update existing discount action 
 // ────────────────────────────────
 export async function updateDiscountAction(id: string, data: DiscountInput): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -75,6 +78,7 @@ export async function updateDiscountAction(id: string, data: DiscountInput): Pro
 // Delete discount action
 // ────────────────────────────────
 export async function deleteDiscountAction(id: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {

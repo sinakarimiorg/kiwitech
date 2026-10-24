@@ -1,5 +1,6 @@
 "use server"
 
+import { requireAdmin, ADMIN_DENIED } from "@root/src/lib/auth/session"
 import { revalidatePath } from "next/cache"
 import { connectDB } from "@root/src/lib/mongodb"
 import CategoryModel from "@root/src/models/Category"
@@ -16,6 +17,7 @@ type CategoryInput = {
 // main category actions
 // ────────────────────────────────
 export async function addCategoryAction(data: CategoryInput): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -31,6 +33,7 @@ export async function addCategoryAction(data: CategoryInput): Promise<ActionResu
 }
 
 export async function updateCategoryAction(id: string, data: CategoryInput): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -46,6 +49,7 @@ export async function updateCategoryAction(id: string, data: CategoryInput): Pro
 }
 
 export async function toggleCategoryActiveAction(id: string, active: boolean): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -61,6 +65,7 @@ export async function toggleCategoryActiveAction(id: string, active: boolean): P
 }
 
 export async function deleteCategoryAction(id: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -79,6 +84,7 @@ export async function deleteCategoryAction(id: string): Promise<ActionResult> {
 // subCategory (item) actions
 // ────────────────────────────────
 export async function addCategoryItemAction(categoryId: string, title: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -97,6 +103,7 @@ export async function addCategoryItemAction(categoryId: string, title: string): 
 }
 
 export async function updateCategoryItemAction(categoryId: string, itemId: string, title: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -118,13 +125,14 @@ export async function updateCategoryItemAction(categoryId: string, itemId: strin
 }
 
 export async function deleteCategoryItemAction(categoryId: string, itemId: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
         const category = await CategoryModel.findById(categoryId)
-        if (!category) return { success: false, error: "دسته‌بندی یافت نشد" }
+        if (!category) return { success: false, error: "دسته‌بندی یافت نشد" };
 
-        ;(category.items as any).pull({ _id: itemId })
+        (category.items as any).pull({ _id: itemId })
         await category.save()
 
         revalidatePath("/p-admin/categories")

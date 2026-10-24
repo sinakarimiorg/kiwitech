@@ -1,9 +1,10 @@
 "use server"
 
+import { requireAdmin, ADMIN_DENIED } from "@root/src/lib/auth/session"
 import { revalidatePath } from "next/cache"
-import { writeFile } from "fs/promises"
-import path from "path"
 import { connectDB } from "@root/src/lib/mongodb"
+import { saveImageFile, isUploadPath } from "@root/src/lib/uploads"
+import mongoose from "mongoose"
 import BannerModel from "@root/src/models/Banner"
 import type { BannerPosition, BannerStatus } from "@root/src/types/adminBannerType"
 
@@ -13,6 +14,7 @@ type ActionResult = { success: true } | { success: false; error: string }
 // Add new banner
 // ────────────────────────────────
 export async function addBannerAction(formData: FormData): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     const imageFile = formData.get("image") as File | null
@@ -21,10 +23,8 @@ export async function addBannerAction(formData: FormData): Promise<ActionResult>
     }
 
     try {
-        const buffer = Buffer.from(await imageFile.arrayBuffer())
-        const filename = `${Date.now()}-${imageFile.name.replace(/\s+/g, "-")}`
-        const imgPath = path.join(process.cwd(), "public/uploads", filename)
-        await writeFile(imgPath, buffer)
+        const saved = await saveImageFile(imageFile)
+        if ("error" in saved) return { success: false, error: saved.error }
 
         const position = formData.get("position") as BannerPosition
         const siblingsCount = await BannerModel.countDocuments({ position })
@@ -32,7 +32,7 @@ export async function addBannerAction(formData: FormData): Promise<ActionResult>
         await BannerModel.create({
             title: formData.get("title"),
             position,
-            image: `/uploads/${filename}`,
+            image: saved.path,
             linkUrl: (formData.get("linkUrl") as string) || "#",
             order: siblingsCount + 1,
             status: (formData.get("status") as BannerStatus) || "active",
@@ -50,6 +50,8 @@ export async function addBannerAction(formData: FormData): Promise<ActionResult>
 // Update banner
 // ────────────────────────────────
 export async function updateBannerAction(id: string, formData: FormData): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
+    if (!mongoose.isValidObjectId(id)) return { success: false, error: "شناسه نامعتبر است" }
     await connectDB()
 
     try {
@@ -57,11 +59,11 @@ export async function updateBannerAction(id: string, formData: FormData): Promis
         let image = formData.get("existingImage") as string
 
         if (imageFile && imageFile.size) {
-            const buffer = Buffer.from(await imageFile.arrayBuffer())
-            const filename = `${Date.now()}-${imageFile.name.replace(/\s+/g, "-")}`
-            const imgPath = path.join(process.cwd(), "public/uploads", filename)
-            await writeFile(imgPath, buffer)
-            image = `/uploads/${filename}`
+            const saved = await saveImageFile(imageFile)
+            if ("error" in saved) return { success: false, error: saved.error }
+            image = saved.path
+        } else if (!isUploadPath(image)) {
+            return { success: false, error: "تصویر بنر نامعتبر است" }
         }
 
         if (!image) {
@@ -91,9 +93,10 @@ export async function updateBannerAction(id: string, formData: FormData): Promis
 }
 
 // ────────────────────────────────
-// حذف بنر
+// Delete banner
 // ────────────────────────────────
 export async function deleteBannerAction(id: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -112,6 +115,7 @@ export async function deleteBannerAction(id: string): Promise<ActionResult> {
 // Toggle banner status
 // ────────────────────────────────
 export async function toggleBannerStatusAction(id: string, status: BannerStatus): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -130,6 +134,7 @@ export async function toggleBannerStatusAction(id: string, status: BannerStatus)
 // change banner situation
 // ────────────────────────────────
 export async function moveBannerAction(id: string, direction: "up" | "down"): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {

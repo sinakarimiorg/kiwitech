@@ -1,5 +1,6 @@
 "use server"
 
+import { requireAdmin, ADMIN_DENIED } from "@root/src/lib/auth/session"
 import { revalidatePath } from "next/cache"
 import { connectDB } from "@root/src/lib/mongodb"
 import CommentModel from "@root/src/models/Comment"
@@ -10,6 +11,7 @@ type ActionResult = { success: true } | { success: false; error: string }
 // Approve Comment
 // ────────────────────────────────
 export async function approveCommentAction(id: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -28,6 +30,7 @@ export async function approveCommentAction(id: string): Promise<ActionResult> {
 // Recect
 // ────────────────────────────────
 export async function rejectCommentAction(id: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -46,6 +49,7 @@ export async function rejectCommentAction(id: string): Promise<ActionResult> {
 // Delete
 // ────────────────────────────────
 export async function deleteCommentAction(id: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {

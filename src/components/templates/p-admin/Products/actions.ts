@@ -1,16 +1,14 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { mkdir, writeFile } from "fs/promises"
-import path from "path"
 import { connectDB } from "@root/src/lib/mongodb"
 import { getCurrentUser } from "@root/src/lib/auth/session"
+import { saveImageFile } from "@root/src/lib/uploads"
 import ProductModel from "@root/src/models/Product"
 import { parseProductFormData } from "./productParser"
 
 type ActionResult = { success: true } | { success: false; error: string }
 
-const MAX_IMAGE_SIZE = 5 * 1024 * 1024
 const MAX_IMAGES = 10
 
 function isDuplicateKeyError(error: unknown): boolean {
@@ -29,20 +27,11 @@ async function saveImages(files: File[]): Promise<{ paths: string[] } | { error:
     const valid = files.filter(file => file && typeof file !== "string" && file.size > 0)
     if (valid.length > MAX_IMAGES) return { error: `حداکثر ${MAX_IMAGES} تصویر مجاز است` }
 
-    const uploadDir = path.join(process.cwd(), "public/uploads")
-    await mkdir(uploadDir, { recursive: true })
-
     const paths: string[] = []
     for (let i = 0; i < valid.length; i++) {
-        const file = valid[i]
-        if (!file.type.startsWith("image/")) return { error: "فقط فایل تصویری مجاز است" }
-        if (file.size > MAX_IMAGE_SIZE) return { error: "حجم هر تصویر حداکثر ۵ مگابایت است" }
-
-        const rawExt = path.extname(file.name).toLowerCase()
-        const ext = /^\.[a-z0-9]{1,5}$/.test(rawExt) ? rawExt : ".jpg"
-        const filename = `${Date.now()}-${i}${ext}`
-        await writeFile(path.join(uploadDir, filename), Buffer.from(await file.arrayBuffer()))
-        paths.push(`/uploads/${filename}`)
+        const saved = await saveImageFile(valid[i], i)
+        if ("error" in saved) return { error: saved.error }
+        paths.push(saved.path)
     }
     return { paths }
 }

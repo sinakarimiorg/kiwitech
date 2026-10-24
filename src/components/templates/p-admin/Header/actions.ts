@@ -1,5 +1,6 @@
 "use server"
 
+import { requireAdmin, ADMIN_DENIED } from "@root/src/lib/auth/session"
 import { connectDB } from "@root/src/lib/mongodb"
 import { revalidatePath } from "next/cache"
 import OrderModel from "@models/Order"
@@ -11,6 +12,7 @@ type ActionResult = { success: true } | { success: false, error: string }
 // Mark single order notification as read
 // ────────────────────────────────
 export async function markOrderNotificationReadAction(id: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -29,6 +31,7 @@ export async function markOrderNotificationReadAction(id: string): Promise<Actio
 // Mark single comment notification as read
 // ────────────────────────────────
 export async function markCommentNotificationReadAction(id: string): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {
@@ -50,6 +53,7 @@ export async function markAllNotificationsReadAction(
     orderIds: string[],
     commentIds: string[]
 ): Promise<ActionResult> {
+    if (!(await requireAdmin())) return ADMIN_DENIED
     await connectDB()
 
     try {

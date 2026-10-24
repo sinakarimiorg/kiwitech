@@ -1,6 +1,6 @@
 "use server"
 
-import { getCurrentUser } from "@root/src/lib/auth/session";
+import { getCurrentUser, requireAdmin } from "@root/src/lib/auth/session";
 import { connectDB } from "@root/src/lib/mongodb";
 import { HomeSectionConfig } from "@root/src/types/siteSettingsType";
 import { validateAndCleanSections } from "@/types/siteSettingsType"
@@ -69,6 +69,10 @@ export async function getShippingSettingsAction(): Promise<ShippingSettings> {
 // Update Shipping Settings (admin panel)
 // ────────────────────────────────
 export async function updateShippingSettingsAction(data: ShippingSettings): Promise<ActionResult> {
+    if (!(await requireAdmin())) {
+        return { success: false, error: "شما دسترسی لازم برای این کار را ندارید" }
+    }
+
     if (
         typeof data.freeShippingThreshold !== "number" ||
         typeof data.standardShippingCost !== "number" ||
