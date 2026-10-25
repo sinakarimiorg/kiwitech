@@ -1,14 +1,34 @@
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { Types } from 'mongoose'
+import { getCurrentUser } from '@root/src/lib/auth/session'
+import { connectDB } from '@root/src/lib/mongodb'
+import OrderModel from '@models/Order'
 import Header from '@root/src/components/modules/Header/Header'
 import Footer from '@root/src/components/modules/Footer/Footer'
 
 import { PiCheckCircleFill, PiPackageLight, PiPhoneCallLight } from 'react-icons/pi'
 import { HiMiniChevronLeft } from 'react-icons/hi2'
 
-// شماره‌ی سفارش نمونه - در پروژه‌ی واقعی از سرور برمی‌گردد
-const orderNumber = '۱۴۰۴۰۹۲۳۱۸'
+export const dynamic = 'force-dynamic'
 
-export default function CheckoutSuccessPage() {
+type SuccessPageProps = {
+    searchParams: Promise<{ order?: string }>
+}
+
+export default async function CheckoutSuccessPage({ searchParams }: SuccessPageProps) {
+    const user = await getCurrentUser()
+    if (!user) redirect('/login-register')
+
+    const { order: orderId } = await searchParams
+    if (!orderId || !Types.ObjectId.isValid(orderId)) redirect('/p-user/userOrders')
+
+    await connectDB()
+    const order = await OrderModel.findOne({ _id: orderId, user: user._id }).select('_id').lean()
+    if (!order) redirect('/p-user/userOrders')
+
+    const orderNumber = String(orderId).slice(-8).toUpperCase()
+
     return (
         <div>
             <Header />
@@ -30,7 +50,7 @@ export default function CheckoutSuccessPage() {
 
                         <div className='flex items-center justify-between mt-8 py-4 px-5 bg-primary-50/60 rounded-xl text-sm'>
                             <span className='text-zinc-500'>شماره سفارش</span>
-                            <span className='font-IranYekanBold text-zinc-800 tracking-wider'>{orderNumber}</span>
+                            <span dir='ltr' className='font-IranYekanBold text-zinc-800 tracking-wider'>#{orderNumber}</span>
                         </div>
 
                         <div className='flex items-center gap-3 mt-4 py-4 px-5 border border-gray-100 rounded-xl text-right'>
@@ -42,9 +62,9 @@ export default function CheckoutSuccessPage() {
 
                         <div className='flex flex-col sm:flex-row gap-3 mt-8'>
                             <Link
-                                href='/p-user'
+                                href={`/p-user/userOrders/${orderId}`}
                                 className='flex-1 flex-center gap-1.5 h-12 text-sm sm:text-base linear_btn'>
-                                مشاهده سفارش‌های من
+                                پیگیری سفارش
                             </Link>
                             <Link
                                 href='/'

@@ -10,7 +10,6 @@ import { AdminComment, CommentStatus } from "@root/src/types/adminCommentType";
 import { approveCommentAction, rejectCommentAction, deleteCommentAction } from "./actions"
 import CommentBox from "./CommentBox"
 
-
 const filters: ("همه" | CommentStatus)[] = ["همه", "در انتظار بررسی", "تایید شده", "رد شده"]
 
 type CommentsListProps = {
@@ -65,10 +64,14 @@ export default function CommentsList({ initialComments }: CommentsListProps) {
     }
 
     const filtered = initialComments.filter(c => {
-        const matchesSearch = c.author.includes(search) || (c.product?.name ?? "")
+        const query = search.trim().toLowerCase()
+        const matchesSearch = !query ||
+            c.author.toLowerCase().includes(query) ||
+            (c.product?.name ?? "").toLowerCase().includes(query)
         const matchesFilter = activeFilter === "همه" || c.status === activeFilter
         return matchesSearch && matchesFilter
     })
+
 
     return (
         <div className='bg-white shadow-lg rounded-2xl overflow-hidden'>

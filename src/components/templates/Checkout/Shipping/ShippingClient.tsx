@@ -33,11 +33,12 @@ export default function ShippingClient({ initialAddresses, shippingSettings }: S
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isPending, startTransition] = useTransition()
 
+
     const totalCount = cart.reduce((sum, item) => sum + item.count, 0)
     const subtotal = cart.reduce((sum, item) => sum + item.price * item.count, 0)
     const originalTotal = cart.reduce((sum, item) => sum + (item.exPrice ?? item.price) * item.count, 0)
     const totalDiscount = originalTotal - subtotal
-    const shippingCost = subtotal > 0 && subtotal < 1000000 ? 45000 : 0
+    const shippingCost = subtotal > 0 && subtotal < shippingSettings.freeShippingThreshold ? shippingSettings.standardShippingCost : 0
     const payable = subtotal + shippingCost
 
     const saveNewAddress = (data: Omit<UserAddress, "_id" | "isDefault">) => {

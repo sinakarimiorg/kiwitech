@@ -8,7 +8,8 @@ import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import CheckoutSteps from '@root/src/components/templates/Checkout/CheckoutSteps/CheckoutSteps'
 import { showSwal } from '@/utils/helpers'
-import { useAppSelector } from '@root/src/store/hooks'
+import { useAppDispatch, useAppSelector } from '@root/src/store/hooks'
+import { clearCart } from '@root/src/store/reducers/cartSlice'
 
 import { HiMiniChevronLeft } from 'react-icons/hi2'
 import { PiMapPinLight, PiCreditCardLight, PiCheckCircleFill } from 'react-icons/pi'
@@ -33,12 +34,14 @@ function formatAddress(address: UserAddress) {
 
 export default function PaymentClient({ selectedAddress, shippingSettings }: PaymentClientProps) {
     const router = useRouter()
+    const dispatch = useAppDispatch()
     const [isSubmitting, startTransition] = useTransition()
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
         setMounted(true)
     }, [])
+
     const cartItems = useAppSelector(state => state.cart.items)
     const activeCartItems = mounted ? cartItems : []
 
@@ -69,7 +72,8 @@ export default function PaymentClient({ selectedAddress, shippingSettings }: Pay
             })
 
             if (result.success) {
-                router.push('/checkout/success')
+                dispatch(clearCart())
+                router.push(`/checkout/success?order=${result.orderId}`)
             } else {
                 showSwal(result.error, 'error', 'متوجه شدم')
             }

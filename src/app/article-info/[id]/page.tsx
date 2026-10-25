@@ -7,7 +7,7 @@ import { AdminArticle } from "@/types/adminArticleType"
 import ArticleModel from "@models/Article"
 import { notFound } from 'next/navigation'
 import { connectDB } from '@root/src/lib/mongodb'
-import { cookies } from "next/headers";
+import ArticleViewTracker from '@root/src/components/templates/Articles/ArticleViewTracker/ArticleViewTracker'
 
 import { PiCalendarBlankLight, PiEyeLight } from 'react-icons/pi'
 import { IoLogoInstagram } from 'react-icons/io'
@@ -32,23 +32,7 @@ export default async function ArticleInfoPage({ params }: { params: Promise<{ id
 
     await connectDB()
 
-    //for increase article view count
-    // NOTE: I used cookies for handle the fake view counts when user refresh the page frequently
-    const cookieStore = await cookies();
-    const cookieName = `viewed_article_${id}`;
-    const hasViewed = cookieStore.get(cookieName);
-
-    let articleDoc = null;
-
-    if (!hasViewed) {
-        articleDoc = await ArticleModel.findOneAndUpdate(
-            { linkName: id, status: "منتشر شده" },
-            { $inc: { views: 1 } },
-            { returnDocument: 'after' }
-        )
-    } else {
-        articleDoc = await ArticleModel.findOne({ linkName: id, status: "منتشر شده" }).lean();
-    }
+    const articleDoc = await ArticleModel.findOne({ linkName: id, status: "منتشر شده" }).lean();
 
     if (!articleDoc) {
         notFound()
