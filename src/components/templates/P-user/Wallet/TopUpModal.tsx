@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import Swal from "sweetalert2"
 import { topUpWalletAction } from "./actions"
 import PanelModal, { panelFieldClasses, panelPrimaryButton, panelSecondaryButton } from "../PanelModal/PanelModal"
 
@@ -29,14 +28,7 @@ export default function TopUpModal({ onClose }: TopUpModalProps) {
             const result = await topUpWalletAction(numericAmount)
 
             if (result.success) {
-                Swal.fire({
-                    icon: "success",
-                    title: "موفقیت‌آمیز",
-                    text: "موجودی کیف پول شما با موفقیت افزایش یافت",
-                    timer: 1500,
-                    showConfirmButton: false,
-                })
-                onClose()
+                window.location.href = result.paymentUrl
             } else {
                 setError(result.error)
             }
@@ -52,7 +44,7 @@ export default function TopUpModal({ onClose }: TopUpModalProps) {
             footer={
                 <div className="flex items-center gap-3">
                     <button onClick={handleSubmit} disabled={isPending} className={panelPrimaryButton}>
-                        {isPending ? 'در حال پردازش...' : 'افزایش موجودی'}
+                        {isPending ? 'در حال پردازش...' : 'پرداخت و افزایش موجودی'}
                     </button>
                     <button onClick={onClose} disabled={isPending} className={panelSecondaryButton}>
                         انصراف

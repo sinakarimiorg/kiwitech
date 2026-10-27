@@ -6,6 +6,7 @@ import { connectDB } from '@root/src/lib/mongodb'
 import OrderModel from '@models/Order'
 import Header from '@root/src/components/modules/Header/Header'
 import Footer from '@root/src/components/modules/Footer/Footer'
+import ClearCartOnMount from '@root/src/components/templates/Checkout/ClearCartOnMount'
 
 import { PiCheckCircleFill, PiPackageLight, PiPhoneCallLight } from 'react-icons/pi'
 import { HiMiniChevronLeft } from 'react-icons/hi2'
@@ -31,6 +32,7 @@ export default async function CheckoutSuccessPage({ searchParams }: SuccessPageP
 
     return (
         <div>
+            <ClearCartOnMount />
             <Header />
 
             <div className='sm:pt-48 pt-24 pb-10'>

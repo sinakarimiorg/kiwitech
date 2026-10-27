@@ -2,15 +2,13 @@
 
 import { getCurrentUser } from "@root/src/lib/auth/session"
 import { connectDB } from "@root/src/lib/mongodb"
-import { revalidatePath } from "next/cache"
 import { Types } from "mongoose"
-import OrderModel from "@models/Order"
-import MessageModel from "@models/Message"
 import ProductModel from "@models/Product"
 import { getShippingSettingsAction } from "@root/src/components/templates/P-admin/Settings/actions"
 import { resolveVariant, hasColors, findColor } from "@root/src/lib/productVariants"
 import { reserveStock, releaseStock } from "@root/src/lib/orders/stock"
 import type { AdminProduct } from "@root/src/types/adminProductType"
+import { expireStalePayments, startPayment } from "@root/src/lib/payment/service"
 
 type OrderItemInput = {
     product: string
@@ -25,7 +23,7 @@ type CreateOrderInput = {
 }
 
 type ActionResult =
-    | { success: true; orderId: string }
+    | { success: true; paymentUrl: string }
     | { success: false; error: string }
 
 const MAX_ITEMS = 50
@@ -65,6 +63,7 @@ export async function createOrderAction(data: CreateOrderInput): Promise<ActionR
     const lines = [...merged.values()]
 
     await connectDB()
+    await expireStalePayments(20).catch(() => { })
 
     try {
         const productDocs = await ProductModel.find({ _id: { $in: lines.map(line => line.product) } }).lean()
@@ -120,40 +119,29 @@ export async function createOrderAction(data: CreateOrderInput): Promise<ActionR
             return { success: false, error: `موجودی «${reserved.title ?? "یکی از کالاها"}» هم‌اکنون کافی نیست؛ سبد خرید را بررسی کنید` }
         }
 
-        let order
+        // سفارش فقط بعد از تأیید پرداخت ساخته می‌شود (service.finalizePayment)؛ تا آن موقع موجودی رزرو است
+        let started
         try {
-            order = await OrderModel.create({
-                user: user._id,
-                items: orderItems,
-                address: data.address.trim(),
-                phone: data.phone.trim(),
-                shippingCost,
-                status: "در حال پردازش",
+            started = await startPayment({
+                userId: user._id,
+                userPhone: user.phone,
+                purpose: "order",
+                amount: itemsTotal + shippingCost,
+                description: `پرداخت سفارش کیوی‌تک (${orderItems.length} قلم)`,
+                orderSnapshot: {
+                    items: orderItems,
+                    address: data.address.trim().slice(0, 600),
+                    phone: data.phone.trim().slice(0, 20),
+                    shippingCost,
+                },
             })
         } catch (error) {
             await releaseStock(orderItems)
             throw error
         }
 
-        try {
-            await MessageModel.create({
-                user: user._id,
-                title: "سفارش شما ثبت شد",
-                body: "سفارش شما با موفقیت ثبت شد و در حال پردازش است. می‌توانید وضعیت آن را از بخش «سفارش‌های من» پیگیری کنید.",
-                type: "سفارش",
-                isRead: false,
-            })
-        } catch (messageError) {
-            console.error("Error creating order message:", messageError)
-        }
-
-        revalidatePath("/p-user/userOrders")
-        revalidatePath("/p-user/messages")
-        revalidatePath("/p-user")
-        revalidatePath("/p-admin/orders")
-        revalidatePath("/p-admin/products")
-        revalidatePath("/p-admin")
-        return { success: true, orderId: order._id.toString() }
+        if (!started.ok) return { success: false, error: started.error }
+        return { success: true, paymentUrl: started.paymentUrl }
     } catch (error) {
         console.error("Error creating order:", error)
         return { success: false, error: "خطا در ثبت سفارش" }

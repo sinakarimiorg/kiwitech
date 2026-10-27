@@ -2,14 +2,12 @@
 
 import { useEffect, useState, useTransition } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
 import CheckoutSteps from '@root/src/components/templates/Checkout/CheckoutSteps/CheckoutSteps'
 import { showSwal } from '@/utils/helpers'
-import { useAppDispatch, useAppSelector } from '@root/src/store/hooks'
-import { clearCart } from '@root/src/store/reducers/cartSlice'
+import { useAppSelector } from '@root/src/store/hooks'
 
 import { HiMiniChevronLeft } from 'react-icons/hi2'
 import { PiMapPinLight, PiCreditCardLight, PiCheckCircleFill } from 'react-icons/pi'
@@ -33,15 +31,12 @@ function formatAddress(address: UserAddress) {
 }
 
 export default function PaymentClient({ selectedAddress, shippingSettings }: PaymentClientProps) {
-    const router = useRouter()
-    const dispatch = useAppDispatch()
     const [isSubmitting, startTransition] = useTransition()
     const [mounted, setMounted] = useState(false)
 
     useEffect(() => {
         setMounted(true)
     }, [])
-
     const cartItems = useAppSelector(state => state.cart.items)
     const activeCartItems = mounted ? cartItems : []
 
@@ -72,8 +67,7 @@ export default function PaymentClient({ selectedAddress, shippingSettings }: Pay
             })
 
             if (result.success) {
-                dispatch(clearCart())
-                router.push(`/checkout/success?order=${result.orderId}`)
+                window.location.href = result.paymentUrl
             } else {
                 showSwal(result.error, 'error', 'متوجه شدم')
             }
@@ -156,7 +150,7 @@ export default function PaymentClient({ selectedAddress, shippingSettings }: Pay
                         shippingCost={shippingCost}
                         finalPayableAmount={finalPayableAmount}
                         onSubmit={submitOrder}
-                        submitLabel='ثبت نهایی و پرداخت'
+                        submitLabel='پرداخت و ثبت نهایی'
                         isSubmitting={isSubmitting}
                     />
                 </div>
