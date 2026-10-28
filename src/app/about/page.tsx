@@ -16,7 +16,8 @@ import {
 } from 'react-icons/pi'
 
 export const metadata = {
-    title: 'درباره ما | کیوی‌تک',
+    title: 'درباره ما',
+    alternates: { canonical: '/about' },
     description: 'آشنایی با فروشگاه کیوی‌تک، بزرگترین واردکننده و پخش‌کننده لوازم جانبی موبایل',
 }
 

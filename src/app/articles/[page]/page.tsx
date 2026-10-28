@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
@@ -12,9 +13,15 @@ import { getArticleCategories, getArticleListing } from '@root/src/lib/listings/
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = {
-    title: 'موبولند مگ | کیوی‌تک',
-    description: 'آخرین مطالب، اخبار و راهنمای خرید لوازم جانبی موبایل',
+// canonical بدون query string (فیلتر و مرتب‌سازی) و مخصوص هر صفحه‌ی صفحه‌بندی
+export async function generateMetadata({ params }: { params: Promise<{ page: string }> }): Promise<Metadata> {
+    const { page } = await params
+    const pageNumber = Number(page) > 1 ? Math.floor(Number(page)) : 1
+    return {
+        title: pageNumber > 1 ? `موبولند مگ - صفحه ${pageNumber.toLocaleString('fa-IR')}` : 'موبولند مگ',
+        description: 'آخرین مطالب، اخبار و راهنمای خرید لوازم جانبی موبایل',
+        alternates: { canonical: `/articles/${pageNumber}` },
+    }
 }
 
 const PER_PAGE = 9

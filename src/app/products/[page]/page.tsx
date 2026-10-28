@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
@@ -18,9 +19,14 @@ import {
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = {
-    title: 'همه محصولات | کیوی‌تک',
-    description: 'مشاهده و خرید انواع لوازم جانبی موبایل و کامپیوتر از کیوی‌تک',
+export async function generateMetadata({ params }: { params: Promise<{ page: string }> }): Promise<Metadata> {
+    const { page } = await params
+    const pageNumber = Number(page) > 1 ? Math.floor(Number(page)) : 1
+    return {
+        title: pageNumber > 1 ? `همه محصولات - صفحه ${pageNumber.toLocaleString('fa-IR')}` : 'همه محصولات',
+        description: 'مشاهده و خرید انواع لوازم جانبی موبایل و کامپیوتر از کیوی‌تک',
+        alternates: { canonical: `/products/${pageNumber}` },
+    }
 }
 
 const PER_PAGE = 12

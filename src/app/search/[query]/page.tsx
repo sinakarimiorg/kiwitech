@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
@@ -11,6 +12,12 @@ import { getPersianDateParts } from '@root/src/utils/date'
 import { getDiscountPercent } from '@root/src/types/homeType'
 
 export const dynamic = 'force-dynamic'
+
+// صفحه‌های نتیجه‌ی جست‌وجو بی‌نهایت URL کم‌ارزش می‌سازند؛ ایندکس نشوند ولی لینک‌ها دنبال شوند
+export const metadata: Metadata = {
+    title: 'جست‌وجو',
+    robots: { index: false, follow: true },
+}
 
 type TabKey = 'all' | 'products' | 'articles'
 

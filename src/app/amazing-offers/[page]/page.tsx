@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
@@ -13,9 +14,15 @@ import { getDiscountPercent } from '@root/src/types/homeType'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = {
-    title: 'تخفیفات شگفت‌انگیز | کیوی‌تک',
-    description: 'بهترین تخفیف‌های کیوی‌تک روی لوازم جانبی موبایل و کامپیوتر',
+// canonical بدون query string (فیلتر و مرتب‌سازی) و مخصوص هر صفحه‌ی صفحه‌بندی
+export async function generateMetadata({ params }: { params: Promise<{ page: string }> }): Promise<Metadata> {
+    const { page } = await params
+    const pageNumber = Number(page) > 1 ? Math.floor(Number(page)) : 1
+    return {
+        title: pageNumber > 1 ? `تخفیفات شگفت‌انگیز - صفحه ${pageNumber.toLocaleString('fa-IR')}` : 'تخفیفات شگفت‌انگیز',
+        description: 'بهترین تخفیف‌های کیوی‌تک روی لوازم جانبی موبایل و کامپیوتر',
+        alternates: { canonical: `/amazing-offers/${pageNumber}` },
+    }
 }
 
 const PER_PAGE = 12

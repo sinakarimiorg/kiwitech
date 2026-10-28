@@ -10,7 +10,8 @@ import { MdOutlineWhatsapp } from 'react-icons/md'
 import { RiTwitterXFill } from 'react-icons/ri'
 
 export const metadata = {
-    title: 'ارتباط با ما | کیوی‌تک',
+    title: 'ارتباط با ما',
+    alternates: { canonical: '/contact' },
     description: 'راه‌های تماس با فروشگاه کیوی‌تک و ارسال پیام به تیم پشتیبانی',
 }
 

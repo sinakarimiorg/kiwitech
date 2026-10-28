@@ -13,7 +13,8 @@ import {
 } from 'react-icons/pi'
 
 export const metadata = {
-    title: 'قوانین و مقررات | کیوی‌تک',
+    title: 'قوانین و مقررات',
+    alternates: { canonical: '/rules' },
     description: 'قوانین و مقررات استفاده از فروشگاه کیوی‌تک: ثبت سفارش، پرداخت، ارسال، بازگشت کالا، حریم خصوصی و ...',
 }
 
@@ -38,7 +39,7 @@ const policy = {
 
 const money = (value: number) => `${value.toLocaleString('fa-IR')} تومان`
 
-/* ───────── محتوا ───────── */
+/* ───────── Contents ───────── */
 type Block =
     | { type: 'p'; text: string }
     | { type: 'list'; items: string[] }

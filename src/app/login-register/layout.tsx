@@ -1,6 +1,12 @@
+import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { getCurrentUser } from "@root/src/lib/auth/session"
 import { DEFAULT_USER_NAME } from "@root/src/utils/profileValidation"
+
+export const metadata: Metadata = {
+    title: "ورود / ثبت‌نام",
+    robots: { index: false, follow: false },
+}
 
 export const dynamic = "force-dynamic"
 

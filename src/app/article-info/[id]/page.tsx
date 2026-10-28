@@ -1,4 +1,8 @@
+import { cache } from 'react'
+import type { Metadata } from 'next'
 import Link from 'next/link'
+import JsonLd from '@root/src/components/modules/JsonLd/JsonLd'
+import { abs, articlePath, getSiteUrl, plainText, SITE_NAME } from '@root/src/lib/seo'
 import Header from '@root/src/components/modules/Header/Header'
 import BreadCrumb from '@root/src/components/modules/BreadCrumb/BreadCrumb'
 import Footer from '@root/src/components/modules/Footer/Footer'
@@ -26,13 +30,46 @@ function getPersianDateParts(dateStr?: string) {
     }
 }
 
+const getArticle = cache(async (linkName: string) => {
+    await connectDB()
+    return ArticleModel.findOne({ linkName, status: "منتشر شده" }).lean()
+})
+
+const safeDecode = (value: string) => {
+    try { return decodeURIComponent(value) } catch { return value }
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+    const { id } = await params
+    const article = await getArticle(safeDecode(id)) as AdminArticle | null
+    if (!article) return { title: 'مقاله یافت نشد', robots: { index: false } }
+
+    const description = plainText(article.excerpt || article.content) || article.title
+    const canonical = articlePath(article.linkName)
+    const image = abs(article.img)
+
+    return {
+        title: article.title,
+        description,
+        alternates: { canonical },
+        openGraph: {
+            type: 'article',
+            title: article.title,
+            description,
+            url: canonical,
+            publishedTime: article.createdAt,
+            images: image ? [{ url: image, alt: article.title }] : undefined,
+        },
+    }
+}
+
 export default async function ArticleInfoPage({ params }: { params: Promise<{ id: string }> }) {
     const resolvedParams = await params
-    const id = decodeURIComponent(resolvedParams.id)
+    const id = safeDecode(resolvedParams.id)
 
-    await connectDB()
-
-    const articleDoc = await ArticleModel.findOne({ linkName: id, status: "منتشر شده" }).lean();
+    // شمارش بازدید در Server Component ممکن نیست (کوکی قابل نوشتن نیست)؛
+    // ArticleViewTracker بعد از لود، اکشن شمارش را صدا می‌زند.
+    const articleDoc = await getArticle(id);
 
     if (!articleDoc) {
         notFound()
@@ -65,6 +102,19 @@ export default async function ArticleInfoPage({ params }: { params: Promise<{ id
 
     return (
         <div>
+            <JsonLd data={{
+                '@context': 'https://schema.org',
+                '@type': 'Article',
+                headline: article.title,
+                image: article.img ? [abs(article.img)] : undefined,
+                datePublished: article.createdAt ? new Date(article.createdAt).toISOString() : undefined,
+                dateModified: new Date((article as AdminArticle & { updatedAt?: string }).updatedAt ?? article.createdAt ?? Date.now()).toISOString(),
+                author: { '@type': 'Organization', name: SITE_NAME },
+                publisher: { '@type': 'Organization', name: SITE_NAME, logo: { '@type': 'ImageObject', url: abs('/images/logo/logo.png') } },
+                mainEntityOfPage: `${getSiteUrl()}${articlePath(article.linkName)}`,
+                inLanguage: 'fa-IR',
+            }} />
+            <ArticleViewTracker linkName={article.linkName} />
             <Header />
 
             <BreadCrumb

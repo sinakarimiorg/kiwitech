@@ -3,7 +3,7 @@ import { notFound, redirect } from 'next/navigation'
 import { getCurrentUser } from '@root/src/lib/auth/session'
 
 export const metadata: Metadata = {
-    title: 'پنل مدیریت | کیوی‌تک',
+    title: { absolute: 'پنل مدیریت | کیوی‌تک' },
     robots: { index: false, follow: false },
 }
 
