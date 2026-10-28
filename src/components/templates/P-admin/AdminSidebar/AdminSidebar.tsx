@@ -10,6 +10,7 @@ import {
     PiTagLight,
     PiUsersLight,
     PiChatCircleTextLight,
+    PiEnvelopeSimpleLight,
     PiPercentLight,
     PiImagesLight,
     PiGearLight,
@@ -31,7 +32,6 @@ type NavItem = {
     badge?: number
 }
 
-
 type AdminSidebarProps = {
     badges?: AdminSidebarBadges
 }
@@ -49,6 +49,7 @@ export default function AdminSidebar({ badges }: AdminSidebarProps) {
         { key: 'categories', label: 'دسته‌بندی‌ها', href: '/p-admin/categories', icon: PiTagLight },
         { key: 'users', label: 'کاربران', href: '/p-admin/users', icon: PiUsersLight, badge: badges?.users },
         { key: 'comments', label: 'نظرات کاربران', href: '/p-admin/comments', icon: PiChatCircleTextLight, badge: badges?.comments },
+        { key: 'messages', label: 'صندوق پیام‌ها', href: '/p-admin/messages', icon: PiEnvelopeSimpleLight, badge: badges?.messages },
         { key: 'discounts', label: 'کدهای تخفیف', href: '/p-admin/discounts', icon: PiPercentLight },
         { key: 'articles', label: 'مقالات', href: '/p-admin/articles', icon: PiArticleLight },
         { key: 'banners', label: 'بنرها و اسلایدر', href: '/p-admin/banners', icon: PiImagesLight },
@@ -75,7 +76,7 @@ export default function AdminSidebar({ badges }: AdminSidebarProps) {
                         }
                     >
                         <Icon className="w-5 h-5 shrink-0" />
-                        { showLabel && <span className="whitespace-nowrap">{item.label}</span>}
+                        {showLabel && <span className="whitespace-nowrap">{item.label}</span>}
                         {hasBadge && showLabel && (
                             <span className="mr-auto flex-center min-w-5 h-5 px-1 text-[11px] bg-neon text-surface font-IranYekanBold rounded-full">
                                 {item.badge}
