@@ -7,11 +7,10 @@ import MessageModel from "@models/Message"
 import UserModel from "@models/User"
 import WalletTransactionModel from "@models/WalletTransaction"
 import { releaseStock, type StockItem } from "@root/src/lib/orders/stock"
+import { invalidate } from "@root/src/lib/cache"
 import { requestPayment, verifyPayment } from "./zarinpal"
 
-// قبل از این مدت، کاربر باید پرداخت را کامل کند؛ بعدش موجودی رزروشده آزاد می‌شود
 const PAYMENT_TTL_MS = 20 * 60 * 1000
-// اگر callback وسط verify قطع شد، بعد از این مدت اجازه‌ی تلاش مجدد داده می‌شود
 const VERIFYING_STALE_MS = 60 * 1000
 
 type OrderSnapshot = { items: (StockItem & { price: number })[]; address: string; phone: string; shippingCost: number }
@@ -26,7 +25,6 @@ async function getBaseUrl(): Promise<string> {
 
 type StartResult = { ok: true; paymentUrl: string } | { ok: false; error: string }
 
-/** رکورد پرداخت می‌سازد و کاربر را به درگاه می‌فرستد. اگر درگاه جواب نداد، رزرو موجودی آزاد می‌شود. */
 export async function startPayment(params: {
     userId: string
     userPhone?: string
@@ -55,7 +53,10 @@ export async function startPayment(params: {
 
     if (!gateway.ok) {
         await PaymentModel.updateOne({ _id: payment._id }, { status: "failed" })
-        if (params.orderSnapshot) await releaseStock(params.orderSnapshot.items)
+        if (params.orderSnapshot) {
+            await releaseStock(params.orderSnapshot.items)
+            invalidate("products")
+        }
         return { ok: false, error: gateway.error }
     }
 
@@ -70,13 +71,12 @@ export type FinalizeResult =
 
 async function failPayment(paymentId: unknown, snapshot: OrderSnapshot | undefined, status: "failed" | "expired" = "failed") {
     await PaymentModel.updateOne({ _id: paymentId }, { status })
-    if (snapshot) await releaseStock(snapshot.items)
+    if (snapshot) {
+        await releaseStock(snapshot.items)
+        invalidate("products")
+    }
 }
 
-/**
- * نتیجه‌ی بازگشت از درگاه را نهایی می‌کند. چند بار صدا زدن (رفرش، دوبل‌کلیک) امن است:
- * فقط یک درخواست می‌تواند پرداخت را از pending به verifying ببرد.
- */
 export async function finalizePayment(authority: string, userCancelled: boolean): Promise<FinalizeResult> {
     await connectDB()
     const now = Date.now()
@@ -197,7 +197,10 @@ export async function expireStalePayments(limit = 50): Promise<number> {
         )
         if (!stale) break
         const snapshot = stale.orderSnapshot as OrderSnapshot | undefined
-        if (snapshot) await releaseStock(snapshot.items)
+        if (snapshot) {
+            await releaseStock(snapshot.items)
+            invalidate("products")
+        }
         count++
     }
     return count

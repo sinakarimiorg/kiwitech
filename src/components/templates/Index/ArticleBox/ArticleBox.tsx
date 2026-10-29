@@ -1,6 +1,7 @@
 "use client"
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { FaChevronLeft } from "react-icons/fa6";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 
@@ -34,7 +35,7 @@ export default function ArticleBox({ shortName, img, title, date }: ArticleCardP
                 </div>
                 <div
                     className="absolute w-full h-full hidden sm:flex-center flex-col invisible opacity-0 group-hover:visible group-hover:opacity-100 inset-0 bg-linear-to-r from-orange-200/80 to-orange-300/80 transition-all delay-75">
-                    <img src='/images/logo/logo' />
+                    <Image src='/images/logo/logo.png' alt='' width={64} height={64} />
                     <p className='pt-3 font-sans font-extrabold text-lg text-purple-custom'>Kiwi Mag</p>
                 </div>
             </div>

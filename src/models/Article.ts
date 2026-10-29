@@ -27,4 +27,6 @@ const ArticleSchema = new Schema<IArticle>(
     { timestamps: true }
 )
 
+ArticleSchema.index({ status: 1, _id: -1 })
+
 export default models.Article || model<IArticle>('Article', ArticleSchema)

@@ -1,6 +1,7 @@
 "use client"
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { LazyLoadImage } from 'react-lazy-load-image-component'
 import 'react-lazy-load-image-component/src/effects/blur.css'
 import { FaChevronLeft } from 'react-icons/fa6'
@@ -27,7 +28,7 @@ export default function ArticleCard({ shortName, img, title, date, category }: A
             href={`/article-info/${shortName}`}
             className='group flex flex-col w-full h-full bg-white shadow-lg rounded-2xl overflow-hidden cursor-pointer transition-transform hover:-translate-y-1'>
 
-            {/* تصویر مقاله */}
+            {/* Article Image */}
             <div className='relative w-full aspect-video shrink-0 overflow-hidden'>
                 <LazyLoadImage
                     src={img}
@@ -45,12 +46,12 @@ export default function ArticleCard({ shortName, img, title, date, category }: A
                 }
 
                 <div className='absolute inset-0 flex-center flex-col invisible opacity-0 group-hover:visible group-hover:opacity-100 bg-linear-to-r from-orange-200/80 to-orange-300/80 transition-all delay-75'>
-                    <img src='/images/logo/logo.png' className='w-10 h-10 object-contain' />
+                    <Image src='/images/logo/logo.png' alt='' width={40} height={40} className='w-10 h-10 object-contain' />
                     <p className='pt-2 font-sans font-extrabold text-sm text-purple-custom'>Mobo Mag</p>
                 </div>
             </div>
 
-            {/* بدنه کارت */}
+            {/* Cart Body */}
             <div className='flex flex-col flex-1 p-4'>
                 <h2 className='flex-1 text-sm sm:text-base leading-6 sm:leading-7 text-zinc-700 line-clamp-2 min-h-12 sm:min-h-14 group-hover:text-primary-500 transition-colors'>
                     {title}

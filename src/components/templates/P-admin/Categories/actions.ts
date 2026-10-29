@@ -2,6 +2,7 @@
 
 import { requireAdmin, ADMIN_DENIED } from "@root/src/lib/auth/session"
 import { revalidatePath } from "next/cache"
+import { invalidate } from "@root/src/lib/cache"
 import { connectDB } from "@root/src/lib/mongodb"
 import CategoryModel from "@root/src/models/Category"
 
@@ -24,6 +25,8 @@ export async function addCategoryAction(data: CategoryInput): Promise<ActionResu
         const count = await CategoryModel.countDocuments()
         await CategoryModel.create({ ...data, order: count + 1, items: [] })
 
+        invalidate("categories")
+
         revalidatePath("/p-admin/categories")
         return { success: true }
     } catch (error) {
@@ -39,6 +42,8 @@ export async function updateCategoryAction(id: string, data: CategoryInput): Pro
     try {
         const updated = await CategoryModel.findByIdAndUpdate(id, data, { new: true, runValidators: true })
         if (!updated) return { success: false, error: "دسته‌بندی یافت نشد" }
+
+        invalidate("categories")
 
         revalidatePath("/p-admin/categories")
         return { success: true }
@@ -56,6 +61,8 @@ export async function toggleCategoryActiveAction(id: string, active: boolean): P
         const updated = await CategoryModel.findByIdAndUpdate(id, { active }, { returnDocument: 'after' })
         if (!updated) return { success: false, error: "دسته‌بندی یافت نشد" }
 
+        invalidate("categories")
+
         revalidatePath("/p-admin/categories")
         return { success: true }
     } catch (error) {
@@ -71,6 +78,8 @@ export async function deleteCategoryAction(id: string): Promise<ActionResult> {
     try {
         const deleted = await CategoryModel.findByIdAndDelete(id)
         if (!deleted) return { success: false, error: "دسته‌بندی یافت نشد" }
+
+        invalidate("categories")
 
         revalidatePath("/p-admin/categories")
         return { success: true }
@@ -94,6 +103,8 @@ export async function addCategoryItemAction(categoryId: string, title: string): 
         category.items.push({ title } as any)
         await category.save()
 
+        invalidate("categories")
+
         revalidatePath("/p-admin/categories")
         return { success: true }
     } catch (error) {
@@ -116,6 +127,8 @@ export async function updateCategoryItemAction(categoryId: string, itemId: strin
         item.title = title
         await category.save()
 
+        invalidate("categories")
+
         revalidatePath("/p-admin/categories")
         return { success: true }
     } catch (error) {
@@ -134,6 +147,8 @@ export async function deleteCategoryItemAction(categoryId: string, itemId: strin
 
         (category.items as any).pull({ _id: itemId })
         await category.save()
+
+        invalidate("categories")
 
         revalidatePath("/p-admin/categories")
         return { success: true }

@@ -1,16 +1,13 @@
 import { connectDB } from "./mongodb";
+import { cachedQuery } from "./cache";
 import SiteSettingsModel from '@root/src/models/SiteSettings'
 import { mergeHomeSections} from "../types/siteSettingsType";
 import type { HomeSectionConfig } from '@root/src/types/siteSettingsType'
 
+const loadHomeSections = cachedQuery('settings:home-sections', ['settings'], async (): Promise<HomeSectionConfig[]> => {
+    await connectDB()
+    const settings = await SiteSettingsModel.findOne({ key: 'main' }).lean()
+    return mergeHomeSections(settings?.homeSections)
+}, mergeHomeSections())
 
-export async function getHomeSections(): Promise<HomeSectionConfig[]> {
-    try {
-        await connectDB()
-        const settings = await SiteSettingsModel.findOne({key: 'main'}).lean()
-        return mergeHomeSections(settings?.homeSections)
-    } catch (error) {
-        console.error('[settings] failed to load home sections:', error)
-        return mergeHomeSections()
-    }
-}
+export const getHomeSections = loadHomeSections

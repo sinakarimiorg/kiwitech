@@ -2,6 +2,7 @@
 
 import { requireAdmin, ADMIN_DENIED } from "@root/src/lib/auth/session"
 import { revalidatePath } from "next/cache"
+import { invalidate } from "@root/src/lib/cache"
 import { connectDB } from "@root/src/lib/mongodb"
 import { saveImageFile, isUploadPath } from "@root/src/lib/uploads"
 import mongoose from "mongoose"
@@ -37,6 +38,8 @@ export async function addBannerAction(formData: FormData): Promise<ActionResult>
             order: siblingsCount + 1,
             status: (formData.get("status") as BannerStatus) || "active",
         })
+
+        invalidate("banners")
 
         revalidatePath("/p-admin/banners")
         return { success: true }
@@ -84,6 +87,8 @@ export async function updateBannerAction(id: string, formData: FormData): Promis
 
         if (!updated) return { success: false, error: "بنری با این شناسه یافت نشد" }
 
+        invalidate("banners")
+
         revalidatePath("/p-admin/banners")
         return { success: true }
     } catch (error) {
@@ -103,6 +108,8 @@ export async function deleteBannerAction(id: string): Promise<ActionResult> {
         const deleted = await BannerModel.findByIdAndDelete(id)
         if (!deleted) return { success: false, error: "بنر یافت نشد" }
 
+        invalidate("banners")
+
         revalidatePath("/p-admin/banners")
         return { success: true }
     } catch (error) {
@@ -121,6 +128,8 @@ export async function toggleBannerStatusAction(id: string, status: BannerStatus)
     try {
         const updated = await BannerModel.findByIdAndUpdate(id, { status }, { returnDocument: 'after' })
         if (!updated) return { success: false, error: "بنر یافت نشد" }
+
+        invalidate("banners")
 
         revalidatePath("/p-admin/banners")
         return { success: true }
@@ -153,6 +162,8 @@ export async function moveBannerAction(id: string, direction: "up" | "down"): Pr
 
         await target.save()
         await swapWith.save()
+
+        invalidate("banners")
 
         revalidatePath("/p-admin/banners")
         return { success: true }

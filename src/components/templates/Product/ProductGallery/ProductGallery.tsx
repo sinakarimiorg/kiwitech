@@ -151,6 +151,8 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
                                 <img
                                     src={src}
                                     alt={`${name} - ${index + 1}`}
+                                    loading='lazy'
+                                    decoding='async'
                                     className='w-full h-full object-cover bg-primary-50/50 border-2 border-transparent in-[.swiper-slide-thumb-active]:border-primary-500 rounded-xl'
                                 />
                             </SwiperSlide>
@@ -158,6 +160,7 @@ export default function ProductGallery({ images, name }: ProductGalleryProps) {
                     </Swiper>
                 </div>
             }
+
 
             {isLightboxOpen &&
                 <Lightbox

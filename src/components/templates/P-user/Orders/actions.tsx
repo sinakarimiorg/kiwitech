@@ -7,8 +7,9 @@ import ProductModel from "@models/Product"
 import { getShippingSettingsAction } from "@root/src/components/templates/P-admin/Settings/actions"
 import { resolveVariant, hasColors, findColor } from "@root/src/lib/productVariants"
 import { reserveStock, releaseStock } from "@root/src/lib/orders/stock"
-import type { AdminProduct } from "@root/src/types/adminProductType"
+import { invalidate } from "@root/src/lib/cache"
 import { expireStalePayments, startPayment } from "@root/src/lib/payment/service"
+import type { AdminProduct } from "@root/src/types/adminProductType"
 
 type OrderItemInput = {
     product: string
@@ -119,7 +120,9 @@ export async function createOrderAction(data: CreateOrderInput): Promise<ActionR
             return { success: false, error: `موجودی «${reserved.title ?? "یکی از کالاها"}» هم‌اکنون کافی نیست؛ سبد خرید را بررسی کنید` }
         }
 
-        // سفارش فقط بعد از تأیید پرداخت ساخته می‌شود (service.finalizePayment)؛ تا آن موقع موجودی رزرو است
+        invalidate("products")  //Reserve stock invalidated
+
+        // The order is only created after payment confirmation (service.finalizePayment); until then, the stock is reserved
         let started
         try {
             started = await startPayment({

@@ -1,4 +1,5 @@
 import { connectDB } from "../mongodb"
+import { cachedQuery } from "../cache"
 import ProductModel from '@root/src/models/Product'
 import BannerModel from '@root/src/models/Banner'
 import CategoryModel from '@root/src/models/Category'
@@ -13,19 +14,8 @@ const PRODUCT_FIELDS = 'name linkName price exPrice discount img stock category'
 
 const serialize = <T,>(value: unknown): T => JSON.parse(JSON.stringify(value))
 
-//Preventing the entire homepage breaking due to a database error in a single section.
-async function safe<T>(label: string, task: () => Promise<T>, fallback: T): Promise<T> {
-    try {
-        return await task()
-    } catch (error) {
-        console.error(`[home] ${label}:`, error)
-        return fallback
-    }
-}
-
 /* ───────── Products ───────── */
-export async function getFeaturedProducts(limit = 6): Promise<HomeProduct[]> {
-    return safe('featured', async () => {
+export const getFeaturedProducts = cachedQuery('home:featured', ['products'], async (limit: number = 6): Promise<HomeProduct[]> => {
         await connectDB()
 
         const featured = await ProductModel.find({ isFeatured: true, stock: { $gt: 0 } })
@@ -35,20 +25,16 @@ export async function getFeaturedProducts(limit = 6): Promise<HomeProduct[]> {
         const latest = await ProductModel.find({ stock: { $gt: 0 } })
             .sort({ _id: -1 }).limit(limit).select(PRODUCT_FIELDS).lean()
         return serialize<HomeProduct[]>(latest)
-    }, [])
-}
+}, [])
 
-export function getLatestProducts(limit = 10): Promise<HomeProduct[]> {
-    return safe('latest products', async () => {
+export const getLatestProducts = cachedQuery('home:latest', ['products'], async (limit: number = 10): Promise<HomeProduct[]> => {
         await connectDB()
         const docs = await ProductModel.find({ stock: { $gt: 0 } })
             .sort({ _id: -1 }).limit(limit).select(PRODUCT_FIELDS).lean()
         return serialize<HomeProduct[]>(docs)
-    }, [])
-}
+}, [])
 
-export function getTopRatedProducts(limit = 10): Promise<HomeProduct[]> {
-    return safe('top rated', async () => {
+export const getTopRatedProducts = cachedQuery('home:toprated', ['products', 'comments'], async (limit: number = 10): Promise<HomeProduct[]> => {
         await connectDB()
 
         const rated = await CommentModel.aggregate([
@@ -76,55 +62,44 @@ export function getTopRatedProducts(limit = 10): Promise<HomeProduct[]> {
         const latest = await ProductModel.find({ stock: { $gt: 0 } })
             .sort({ _id: -1 }).limit(limit).select(PRODUCT_FIELDS).lean()
         return serialize<HomeProduct[]>(latest)
-    }, [])
-}
+}, [])
 
-async function loadOfferProducts(): Promise<HomeProduct[]> {
+const loadOfferProducts = cachedQuery('home:offers-all', ['products'], async (): Promise<HomeProduct[]> => {
     await connectDB()
     const docs = await ProductModel.find({ stock: { $gt: 0 }, exPrice: { $gt: 0 } })
         .select(PRODUCT_FIELDS).limit(300).lean()
 
     return serialize<HomeProduct[]>(docs).filter(product => getDiscountPercent(product) > 0)
+}, [])
+
+export async function getOfferProducts(limit = 10): Promise<HomeProduct[]> {
+    const products = await loadOfferProducts()
+    return [...products].sort((a, b) => getDiscountPercent(b) - getDiscountPercent(a)).slice(0, limit)
 }
 
-export function getOfferProducts(limit = 10): Promise<HomeProduct[]> {
-    return safe('offers', async () => {
-        const products = await loadOfferProducts()
-        return products.sort((a, b) => getDiscountPercent(b) - getDiscountPercent(a)).slice(0, limit)
-    }, [])
-}
-
-export function getAllOfferProducts(): Promise<HomeProduct[]> {
-    return safe('all offers', loadOfferProducts, [])
-}
+export const getAllOfferProducts = loadOfferProducts
 
 /* ───────── Banners ───────── */
-export function getBannersByPosition(position: BannerPosition, limit = 10): Promise<HomeBanner[]> {
-    return safe(`banners:${position}`, async () => {
+export const getBannersByPosition = cachedQuery('home:banners', ['banners'], async (position: BannerPosition, limit: number = 10): Promise<HomeBanner[]> => {
         await connectDB()
         const banners = await BannerModel.find({ position, status: 'active' })
             .sort({ order: 1 }).limit(limit).select('title image linkUrl').lean()
         return serialize<HomeBanner[]>(banners)
-    }, [])
-}
+}, [])
 
 export const getLandingBanners = () => getBannersByPosition('landing', 10)
 
 /* ───────── Categories & Articles ───────── */
-export function getPopularCategories(limit = 8): Promise<MenuCategory[]> {
-    return safe('categories', async () => {
+export const getPopularCategories = cachedQuery('home:categories', ['categories'], async (limit: number = 8): Promise<MenuCategory[]> => {
         await connectDB()
         const categories = await CategoryModel.find({ active: true })
             .sort({ order: 1 }).limit(limit).select('title icon items').lean()
         return serialize<MenuCategory[]>(categories)
-    }, [])
-}
+}, [])
 
-export function getLatestArticles(limit = 4): Promise<HomeArticle[]> {
-    return safe('articles', async () => {
+export const getLatestArticles = cachedQuery('home:articles', ['articles'], async (limit: number = 4): Promise<HomeArticle[]> => {
         await connectDB()
         const articles = await ArticleModel.find({ status: 'منتشر شده' })
             .sort({ _id: -1 }).limit(limit).select('title linkName img createdAt').lean()
         return serialize<HomeArticle[]>(articles)
-    }, [])
-}
+}, [])

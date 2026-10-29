@@ -34,4 +34,6 @@ const MessageSchema = new Schema<IMessage>(
     { timestamps: true }
 );
 
+MessageSchema.index({ user: 1, _id: -1 })
+
 export default models.Message || model<IMessage>("Message", MessageSchema)

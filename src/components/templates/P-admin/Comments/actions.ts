@@ -2,6 +2,7 @@
 
 import { requireAdmin, ADMIN_DENIED } from "@root/src/lib/auth/session"
 import { revalidatePath } from "next/cache"
+import { invalidate } from "@root/src/lib/cache"
 import { connectDB } from "@root/src/lib/mongodb"
 import CommentModel from "@root/src/models/Comment"
 
@@ -17,6 +18,8 @@ export async function approveCommentAction(id: string): Promise<ActionResult> {
     try {
         const updated = await CommentModel.findByIdAndUpdate(id, { status: "تایید شده" }, { returnDocument: 'after' })
         if (!updated) return { success: false, error: "نظر یافت نشد" }
+
+        invalidate("comments")
 
         revalidatePath("/p-admin/comments")
         return { success: true }
@@ -37,6 +40,8 @@ export async function rejectCommentAction(id: string): Promise<ActionResult> {
         const updated = await CommentModel.findByIdAndUpdate(id, { status: "رد شده" }, { returnDocument: 'after' })
         if (!updated) return { success: false, error: "نظر یافت نشد" }
 
+        invalidate("comments")
+
         revalidatePath("/p-admin/comments")
         return { success: true }
     } catch (error) {
@@ -55,6 +60,8 @@ export async function deleteCommentAction(id: string): Promise<ActionResult> {
     try {
         const deleted = await CommentModel.findByIdAndDelete(id)
         if (!deleted) return { success: false, error: "نظر یافت نشد" }
+
+        invalidate("comments")
 
         revalidatePath("/p-admin/comments")
         return { success: true }

@@ -44,4 +44,9 @@ const ProductSchema = new Schema<IProduct>(
     { timestamps: true }
 )
 
+ProductSchema.index({ stock: 1, _id: -1 })
+ProductSchema.index({ isFeatured: 1, stock: 1 })
+ProductSchema.index({ category: 1, subCategory: 1 })
+ProductSchema.index({ exPrice: 1 })
+
 export default models.Product || model<IProduct>("Product", ProductSchema)

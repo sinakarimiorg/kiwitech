@@ -20,4 +20,6 @@ const WalletTransactionSchema = new Schema <IWalletTransaction> (
     }
 )
 
+WalletTransactionSchema.index({ user: 1, _id: -1 })
+
 export default models.WalletTransaction || model<IWalletTransaction>("WalletTransaction", WalletTransactionSchema)

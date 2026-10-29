@@ -6,6 +6,7 @@ import { HomeSectionConfig } from "@root/src/types/siteSettingsType";
 import { validateAndCleanSections } from "@/types/siteSettingsType"
 import SiteSettingsModel from "@models/SiteSettings"
 import { revalidatePath } from "next/cache";
+import { invalidate } from "@root/src/lib/cache"
 import SettingModel from "@root/src/models/Setting"
 import type { ShippingSettings } from "@root/src/types/siteSettingsType"
 
@@ -35,6 +36,8 @@ export async function saveHomeSectionsAction(sections: HomeSectionConfig[]): Pro
             { key: "main", homeSections: clean },
             { upsert: true, returnDocument: "after" }
         )
+
+        invalidate("settings")
 
         revalidatePath("/")
         revalidatePath("/p-admin/settings")

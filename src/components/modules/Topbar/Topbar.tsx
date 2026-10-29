@@ -1,11 +1,12 @@
 "use client"
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { RiSearch2Line } from "react-icons/ri";
 import { HiArrowRightEndOnRectangle, HiMiniChevronDown } from "react-icons/hi2";
-import Overlay from '../overlay/Overlay';
+import Overlay from '../Overlay/Overlay';
 import SearchSuggestions from './SearchSuggestions/SearchSuggestions'
 import { getSessionUserAction, logoutAction } from '@root/src/components/templates/Auth/action'
 import CartDropdown from './CartDropdown'
@@ -79,7 +80,7 @@ const Topbar = () => {
             <div className='fixed top-0 w-full hidden sm:flex items-center justify-between py-3 md:py-4 px-4 md:px-6 bg-dark z-50'>
                 {/* Topbar Logo */}
                 <Link href={'/'} className='flex items-center gap-1 cursor-pointer'>
-                    <img src='/images/logo/logo1.png' className='w-10 md:w-14 h-10 md:h-14 lg:w-16 xl:h-16' />
+                    <Image src='/images/logo/logo1.png' alt='کیوی‌تک' width={64} height={64} preload className='w-10 md:w-14 h-10 md:h-14 lg:w-16 xl:h-16' />
                     <h5 className='text-neon font-MorabbaBold text-xl md:text-2xl xl:text-3xl'>
                         کیـــوی تِــــک
                     </h5>
@@ -149,7 +150,7 @@ const Topbar = () => {
             <div className='w-full block sm:hidden'>
                 <div className='w-full flex items-center justify-center px-4 h-16 bg-dark text-text'>
                     <Link href={'/'} className='flex items-center gap-1 cursor-pointer'>
-                        <img src='/images/logo/logo1.png' className='w-12 h-12' />
+                        <Image src='/images/logo/logo1.png' alt='کیوی‌تک' width={48} height={48} className='w-12 h-12' />
                         <h5 className='text-neon font-MorabbaBold text-xl'>
                             کیـــوی  تِــــک
                         </h5>
@@ -160,7 +161,7 @@ const Topbar = () => {
             {/* Mobile Bottom Navigation (sm:hidden) */}
             <BottomNav currentUser={currentUser} />
 
-            <Overlay isOpen={visibleOverlay} isClose={() => closeOverlayFunc()} />
+            <Overlay isOpen={visibleOverlay} onClose={() => closeOverlayFunc()} />
         </>
     )
 }

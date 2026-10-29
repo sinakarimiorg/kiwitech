@@ -15,4 +15,6 @@ const BannerSchema = new Schema<IBanner>(
     { timestamps: true }
 )
 
+BannerSchema.index({ position: 1, status: 1, order: 1 })
+
 export default models.Banner || model<IBanner>("Banner", BannerSchema);

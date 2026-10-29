@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import { invalidate } from "@root/src/lib/cache"
 import { connectDB } from "@root/src/lib/mongodb"
 import { getCurrentUser } from "@root/src/lib/auth/session"
 import { saveImageFile } from "@root/src/lib/uploads"
@@ -62,6 +63,8 @@ export async function addProductAction(formData: FormData): Promise<ActionResult
             images: saved.paths.slice(1),
         })
 
+        invalidate("products")
+
         revalidatePath("/p-admin/products")
         return { success: true }
     } catch (error) {
@@ -105,6 +108,8 @@ export async function updateProductAction(id: string, formData: FormData): Promi
         )
         if (!updated) return { success: false, error: "محصولی با این شناسه یافت نشد" }
 
+        invalidate("products")
+
         revalidatePath("/p-admin/products")
         return { success: true }
     } catch (error) {
@@ -126,6 +131,8 @@ export async function deleteProductAction(id: string): Promise<ActionResult> {
     try {
         const deleted = await ProductModel.findByIdAndDelete(id)
         if (!deleted) return { success: false, error: "محصول یافت نشد" }
+
+        invalidate("products")
 
         revalidatePath("/p-admin/products")
         return { success: true }

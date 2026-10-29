@@ -15,4 +15,7 @@ const CommentSchema = new Schema<Icomment>(
     { timestamps: true }
 );
 
+CommentSchema.index({ product: 1, status: 1 })
+CommentSchema.index({ status: 1 })
+
 export default models.Comment || model<Icomment>("Comment", CommentSchema);

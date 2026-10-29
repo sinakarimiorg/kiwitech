@@ -25,4 +25,6 @@ const AddressSchema = new Schema<IAddress>(
     { timestamps: true }
 );
 
+AddressSchema.index({ user: 1 })
+
 export default models.Address || model<IAddress>("Address", AddressSchema);

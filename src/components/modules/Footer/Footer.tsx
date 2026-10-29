@@ -1,6 +1,7 @@
 "use client";
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { HiMiniChevronUp } from "react-icons/hi2";
 import { IoLogoInstagram } from "react-icons/io";
 import { MdOutlineWhatsapp } from "react-icons/md";
@@ -16,7 +17,6 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
     return (
         <div className={`footer bg-linear-to-br from-primary-50 via-white to-primary-100 ${marginClasses}`}>
             {/* Footer Header  */}
-
             <div 
             className="relative overflow-hidden rounded-t-3xl border border-primary-100/20 bg-linear-to-br from-primary-100 via-white 
             to-primary-200 px-4 py-5 sm:px-8 sm:py-6  sm:mx-6 md:mx-10 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
@@ -26,8 +26,11 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
 
                 <div className="relative z-10 flex flex-wrap items-center justify-between gap-3 sm:gap-4">
                     <Link href="/" className="flex items-center gap-2">
-                        <img
+                        <Image
                             src="/images/logo/logo.png"
+                            alt="کیوی‌تک"
+                            width={64}
+                            height={64}
                             className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
                         />
 
@@ -151,16 +154,16 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                                 className='mySwiper overflow-visible'
                             >
                                 <SwiperSlide>
-                                    <img className='w-full h-25 xs:h-28 md:h-30 cursor-pointer' src='/images/licenses/enemad.png' />
+                                    <Image className='w-full h-25 xs:h-28 md:h-30 cursor-pointer' src='/images/licenses/enemad.png' alt='نماد اعتماد' width={125} height={136} />
                                 </SwiperSlide>
                                 <SwiperSlide>
-                                    <img className='w-full h-25 xs:h-28 md:h-30 cursor-pointer' src='/images/licenses/rezi.jpg' />
+                                    <Image className='w-full h-25 xs:h-28 md:h-30 cursor-pointer' src='/images/licenses/rezi.jpg' alt='نماد اعتماد' width={150} height={150} />
                                 </SwiperSlide>
                                 <SwiperSlide>
-                                    <img className='w-full h-25 xs:h-28 md:h-30 cursor-pointer' src='/images/licenses/white.png' />
+                                    <Image className='w-full h-25 xs:h-28 md:h-30 cursor-pointer' src='/images/licenses/white.png' alt='نماد اعتماد' width={200} height={238} />
                                 </SwiperSlide>
                                 <SwiperSlide>
-                                    <img className='w-full h-25 xs:h-28 md:h-30 cursor-pointer' src='/images/licenses/zarin.png' />
+                                    <Image className='w-full h-25 xs:h-28 md:h-30 cursor-pointer' src='/images/licenses/zarin.png' alt='نماد اعتماد' width={248} height={353} />
                                 </SwiperSlide>
 
                             </Swiper>

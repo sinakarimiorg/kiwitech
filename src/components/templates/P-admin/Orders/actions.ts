@@ -6,6 +6,7 @@ import { OrderStatus } from "@/types/adminOrderType";
 import OrderModel from "@root/src/models/Order"
 import { reserveStock, releaseStock, type StockItem } from "@root/src/lib/orders/stock"
 import { revalidatePath } from "next/cache";
+import { invalidate } from "@root/src/lib/cache"
 
 type ActionResult = { success: true } | { success: false; error: string }
 
@@ -32,6 +33,7 @@ const toStockItems = (items: any[]): StockItem[] =>
 
 function revalidateAll() {
     revalidatePath("/p-admin/orders")
+    invalidate("products")
     revalidatePath("/p-admin/products")
     revalidatePath("/p-admin")
     revalidatePath("/p-user/userOrders")

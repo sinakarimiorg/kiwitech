@@ -25,7 +25,9 @@ export default async function categoriesByPhone({ config }: { config: HomeSectio
                             <img
                                 src={banner.image}
                                 alt={banner.title}
-                                className='w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-105'
+                                loading='lazy'
+                                decoding='async'
+                                className='w-full aspect-4/3 object-cover transition-transform duration-500 group-hover:scale-105'
                             />
                             <span className='absolute inset-0 rounded-2xl ring-0 group-hover:ring-2 ring-neon/70 transition-all duration-500' />
                         </Link>

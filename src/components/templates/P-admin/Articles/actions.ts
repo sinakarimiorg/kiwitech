@@ -2,6 +2,7 @@
 
 import { requireAdmin, ADMIN_DENIED } from "@root/src/lib/auth/session"
 import { revalidatePath } from "next/cache"
+import { invalidate } from "@root/src/lib/cache"
 import { connectDB } from "@root/src/lib/mongodb"
 import { saveImageFile, isUploadPath } from "@root/src/lib/uploads"
 import mongoose from "mongoose"
@@ -38,6 +39,8 @@ export async function addArticleAction(formData: FormData): Promise<ActionResult
             img: saved.path,
             status: publish ? "منتشر شده" : "پیش‌نویس",
         })
+
+        invalidate("articles")
 
         revalidatePath("/p-admin/articles")
         return { success: true }
@@ -91,6 +94,8 @@ export async function updateArticleAction(id: string, formData: FormData): Promi
 
         if (!updated) return { success: false, error: "مقاله‌ای با این شناسه یافت نشد" }
 
+        invalidate("articles")
+
         revalidatePath("/p-admin/articles")
         return { success: true }
     } catch (error) {
@@ -109,6 +114,8 @@ export async function deleteArticleAction(id: string): Promise<ActionResult> {
     try {
         const deleted = await ArticleModel.findByIdAndDelete(id)
         if (!deleted) return { success: false, error: "مقاله یافت نشد" }
+
+        invalidate("articles")
 
         revalidatePath("/p-admin/articles")
         return { success: true }

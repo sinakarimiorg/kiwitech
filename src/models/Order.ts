@@ -53,4 +53,7 @@ const OrderSchema = new Schema<IOrder>(
     }
 );
 
+OrderSchema.index({ user: 1, _id: -1 })
+OrderSchema.index({ status: 1 })
+
 export default models.Order || model<IOrder>("Order", OrderSchema);

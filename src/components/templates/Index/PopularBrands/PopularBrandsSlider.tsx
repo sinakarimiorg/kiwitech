@@ -42,6 +42,8 @@ export default function PopularBrandsSlider({ title, brands }: { title: string; 
                                             <img
                                                 src={brand.image}
                                                 alt={brand.title}
+                                                loading='lazy'
+                                                decoding='async'
                                                 className='object-contain grayscale opacity-70 hover:grayscale-0 hover:opacity-100 transition-all duration-300'
                                             />
                                         </Link>
