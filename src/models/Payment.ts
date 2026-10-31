@@ -6,7 +6,6 @@ export type PaymentStatus = "pending" | "verifying" | "paid" | "failed" | "expir
 export interface IPayment {
     user: Types.ObjectId
     purpose: PaymentPurpose
-    /** مبلغ به تومان */
     amount: number
     authority?: string
     status: PaymentStatus
@@ -20,6 +19,8 @@ export interface IPayment {
         address: string
         phone: string
         shippingCost: number
+        discountCode?: string
+        discountAmount?: number
     }
 }
 

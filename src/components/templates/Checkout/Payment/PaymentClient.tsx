@@ -13,6 +13,7 @@ import { HiMiniChevronLeft } from 'react-icons/hi2'
 import { PiMapPinLight, PiCreditCardLight, PiCheckCircleFill } from 'react-icons/pi'
 import AsideBox from '@root/src/components/templates/P-user/AsideBox/AsideBox'
 import { createOrderAction } from '@root/src/components/templates/P-user/Orders/actions'
+import { previewDiscountAction } from './actions'
 import { UserAddress } from '@root/src/types/userAddressType'
 import { ShippingSettings } from '@root/src/types/siteSettingsType'
 import { getProductIdFromLine } from '@root/src/lib/productVariants'
@@ -33,6 +34,10 @@ function formatAddress(address: UserAddress) {
 export default function PaymentClient({ selectedAddress, shippingSettings }: PaymentClientProps) {
     const [isSubmitting, startTransition] = useTransition()
     const [mounted, setMounted] = useState(false)
+    const [couponInput, setCouponInput] = useState('')
+    const [coupon, setCoupon] = useState<{ code: string; amount: number } | null>(null)
+    const [couponError, setCouponError] = useState('')
+    const [isApplying, startApplying] = useTransition()
 
     useEffect(() => {
         setMounted(true)
@@ -47,7 +52,26 @@ export default function PaymentClient({ selectedAddress, shippingSettings }: Pay
     const totalDiscount = originalTotal - itemsTotalPrice
 
     const shippingCost = itemsTotalPrice > 0 && itemsTotalPrice < shippingSettings.freeShippingThreshold ? shippingSettings.standardShippingCost : 0
-    const finalPayableAmount = itemsTotalPrice + shippingCost
+    const couponDiscount = coupon?.amount ?? 0
+    const finalPayableAmount = itemsTotalPrice + shippingCost - couponDiscount
+
+    const applyCoupon = () => {
+        setCouponError('')
+        startApplying(async () => {
+            const result = await previewDiscountAction(couponInput, itemsTotalPrice)
+            if (result.success) setCoupon({ code: result.code, amount: result.amount })
+            else {
+                setCoupon(null)
+                setCouponError(result.error)
+            }
+        })
+    }
+
+    const removeCoupon = () => {
+        setCoupon(null)
+        setCouponInput('')
+        setCouponError('')
+    }
 
     const submitOrder = () => {
         if (!activeCartItems.length) {
@@ -62,11 +86,13 @@ export default function PaymentClient({ selectedAddress, shippingSettings }: Pay
                     color: item.color,
                     count: item.count,
                 })),
+                discountCode: coupon?.code,
                 address: formatAddress(selectedAddress),
                 phone: selectedAddress.phone,
             })
 
             if (result.success) {
+                // سبد بعد از تأیید پرداخت (صفحه‌ی success) پاک می‌شود، نه قبل از آن
                 window.location.href = result.paymentUrl
             } else {
                 showSwal(result.error, 'error', 'متوجه شدم')
@@ -137,6 +163,44 @@ export default function PaymentClient({ selectedAddress, shippingSettings }: Pay
                             </div>
                         </div>
 
+                        {/* کد تخفیف */}
+                        <div className='bg-white shadow-lg rounded-2xl p-5 sm:p-6'>
+                            <h2 className='font-IranYekanBold text-base sm:text-lg text-zinc-800 pb-4 mb-4 border-b border-gray-100'>
+                                کد تخفیف
+                            </h2>
+
+                            {coupon ? (
+                                <div className='flex items-center justify-between gap-3 px-4 py-3 bg-primary-50/60 rounded-xl text-sm'>
+                                    <span className='text-primary-700'>
+                                        کد <span dir='ltr' className='font-IranYekanBold'>{coupon.code}</span> اعمال شد
+                                    </span>
+                                    <button onClick={removeCoupon} className='text-xs text-zinc-500 hover:text-danger transition-colors cursor-pointer'>
+                                        حذف
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className='flex items-center gap-3'>
+                                        <input
+                                            value={couponInput}
+                                            onChange={event => setCouponInput(event.target.value)}
+                                            onKeyDown={event => { if (event.key === 'Enter' && couponInput.trim() && !isApplying) applyCoupon() }}
+                                            placeholder='کد تخفیف را وارد کنید'
+                                            dir='ltr'
+                                            className='flex-1 min-w-0 px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors'
+                                        />
+                                        <button
+                                            onClick={applyCoupon}
+                                            disabled={isApplying || !couponInput.trim()}
+                                            className='px-5 py-3 text-sm text-white bg-primary-500 hover:bg-primary-600 rounded-xl transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed'>
+                                            {isApplying ? '...' : 'اعمال'}
+                                        </button>
+                                    </div>
+                                    {couponError && <p className='mt-2 text-xs text-danger'>{couponError}</p>}
+                                </>
+                            )}
+                        </div>
+
                         <Link href='/checkout/shipping' className='inline-flex items-center gap-1.5 text-sm text-zinc-500 hover:text-primary-600 transition-colors'>
                             <HiMiniChevronLeft className='w-4 h-4 rotate-180' />
                             بازگشت به اطلاعات ارسال
@@ -147,6 +211,7 @@ export default function PaymentClient({ selectedAddress, shippingSettings }: Pay
                         totalCount={totalCount}
                         originalTotal={originalTotal}
                         totalDiscount={totalDiscount}
+                        couponDiscount={couponDiscount}
                         shippingCost={shippingCost}
                         finalPayableAmount={finalPayableAmount}
                         onSubmit={submitOrder}

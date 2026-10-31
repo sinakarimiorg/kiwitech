@@ -17,6 +17,8 @@ export interface IOrder {
     address: string
     phone: string
     shippingCost: number
+    discountCode?: string
+    discountAmount?: number
     status: OrderStatus
     isRead: Boolean
 }
@@ -41,6 +43,8 @@ const OrderSchema = new Schema<IOrder>(
         address: { type: String, required: true },
         phone: { type: String, required: true },
         shippingCost: { type: Number, default: 0 },
+        discountCode: { type: String },
+        discountAmount: { type: Number, default: 0 },
         isRead: { type: Boolean, default: false },
         status: {
             type: String,

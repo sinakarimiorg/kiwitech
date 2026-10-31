@@ -5,7 +5,8 @@ import TransactionsList from "@root/src/components/templates/P-admin/Wallet/Tran
 import WalletOverview from "@root/src/components/templates/P-admin/Wallet/WalletOverview";
 import { connectDB } from "@root/src/lib/mongodb";
 import { AdminTransaction } from "@/types/adminTransactionType"
-import TransationModel from "@models/Transaction"
+import PaymentModel from "@models/Payment"
+import UserModel from "@models/User"
 
 import {
     PiWalletLight,
@@ -18,8 +19,21 @@ export const dynamic = "force-dynamic"
 
 const page = async () => {
     await connectDB()
-    const transactions = await TransationModel.find({}).sort({ _id: -1 }).lean()
-    const initialTransactions: AdminTransaction[] = JSON.parse(JSON.stringify(transactions))
+    const payments = await PaymentModel.find({}).populate("user", "name phone").sort({ _id: -1 }).limit(500).lean()
+    const initialTransactions: AdminTransaction[] = (JSON.parse(JSON.stringify(payments)) as any[]).map(payment => ({
+        _id: payment._id,
+        user: payment.user?.name || payment.user?.phone || "کاربر حذف‌شده",
+        type: payment.purpose === "wallet" ? "واریز" : "خرید",
+        amount: payment.amount,
+        method: "درگاه بانکی",
+        status: payment.status === "paid" ? "موفق"
+            : payment.status === "pending" || payment.status === "verifying" ? "در انتظار"
+            : "ناموفق",
+        createdAt: payment.createdAt,
+    }))
+
+    const balances = await UserModel.aggregate([{ $group: { _id: null, total: { $sum: "$walletBalance" } } }])
+    const totalBalance: number = balances[0]?.total ?? 0
 
     const startOfToday = new Date()
     startOfToday.setHours(0, 0, 0, 0)
@@ -28,14 +42,6 @@ const page = async () => {
     const depositToday = todaysTx.filter(tx => tx.type === "واریز" && tx.status === "موفق").reduce((s, t) => s + t.amount, 0)
     const withdrawToday = todaysTx.filter(tx => tx.type === "برداشت" && tx.status === "موفق").reduce((s, t) => s + t.amount, 0)
     const pendingCount = initialTransactions.filter(tx => tx.status === "در انتظار").length
-
-    const totalBalance = initialTransactions
-        .filter(tx => tx.status === "موفق")
-        .reduce((sum, tx) => {
-            if (tx.type === "واریز" || tx.type === "بازگشت وجه") return sum + tx.amount
-            if (tx.type === "برداشت" || tx.type === "خرید") return sum - tx.amount
-            return sum
-        }, 0)
 
     return (
         <Layout>

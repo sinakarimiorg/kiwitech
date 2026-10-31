@@ -49,7 +49,8 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
     const order: UserOrder = JSON.parse(JSON.stringify(orderDoc))
     const currentStepIndex = progressSteps.indexOf(order.status)
     const itemsTotal = getItemsTotal(order)
-    const finalTotal = itemsTotal + order.shippingCost
+    const discountAmount = order.discountAmount ?? 0
+    const finalTotal = itemsTotal + order.shippingCost - discountAmount
 
     return (
         <Layout>
@@ -182,6 +183,12 @@ export default async function OrderDetailPage({ params }: OrderDetailPageProps) 
                                 <TomanIcon className="w-3 h-3" />
                             </span>
                         </div>
+                        {discountAmount > 0 && (
+                            <div className="flex items-center justify-between text-primary-600">
+                                <span>کد تخفیف{order.discountCode ? ` (${order.discountCode})` : ""}</span>
+                                <span>-{discountAmount.toLocaleString()} تومان</span>
+                            </div>
+                        )}
                         <div className="flex items-center justify-between text-zinc-500">
                             <span>هزینه ارسال</span>
                             <span className={order.shippingCost === 0 ? "text-primary-600 font-IranYekanMedium" : "text-zinc-700"}>

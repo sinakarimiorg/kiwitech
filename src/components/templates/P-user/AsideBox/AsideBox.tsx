@@ -6,6 +6,7 @@ type AsideBoxProps = {
     totalCount: number;
     originalTotal: number;
     totalDiscount: number;
+    couponDiscount?: number;
     shippingCost: number;
     payable?: number;
     href?: string;
@@ -19,6 +20,7 @@ export default function AsideBox({
     totalCount,
     originalTotal,
     totalDiscount,
+    couponDiscount = 0,
     shippingCost,
     payable,
     href,
@@ -51,6 +53,16 @@ export default function AsideBox({
                             <span>سود شما از خرید</span>
                             <span className='inline-flex items-center gap-1'>
                                 {totalDiscount.toLocaleString()}
+                                <TomanIcon />
+                            </span>
+                        </div>
+                    }
+
+                    {couponDiscount > 0 &&
+                        <div className='flex items-center justify-between text-primary-600'>
+                            <span>کد تخفیف</span>
+                            <span className='inline-flex items-center gap-1'>
+                                -{couponDiscount.toLocaleString()}
                                 <TomanIcon />
                             </span>
                         </div>

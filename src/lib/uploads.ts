@@ -1,7 +1,3 @@
-// Secure image upload utility. 
-// Validates file size, detects real MIME type via magic bytes, and saves with
-//  a random safe filename.
-
 import { mkdir, writeFile } from "fs/promises"
 import path from "path"
 import { randomBytes } from "crypto"
@@ -10,7 +6,8 @@ export const MAX_IMAGE_SIZE = 5 * 1024 * 1024
 
 type ImageKind = "jpg" | "png" | "gif" | "webp" | "avif"
 
-function detectImageKind(buf: Buffer): ImageKind | null {
+// نوع واقعی فایل از روی بایت‌های ابتدایی تشخیص داده می‌شود؛ file.type و پسوند را کاربر کنترل می‌کند
+export function detectImageKind(buf: Buffer): ImageKind | null {
     if (buf.length < 12) return null
     if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return "jpg"
     if (buf.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))) return "png"
@@ -22,6 +19,7 @@ function detectImageKind(buf: Buffer): ImageKind | null {
 
 export type SaveImageResult = { path: string } | { error: string }
 
+// ذخیره‌ی امن یک تصویر در public/uploads با نام تصادفی و پسوند مطمئن
 export async function saveImageFile(file: File, index = 0): Promise<SaveImageResult> {
     if (!file || typeof file === "string" || !file.size) return { error: "فایل تصویر نامعتبر است" }
     if (file.size > MAX_IMAGE_SIZE) return { error: "حجم هر تصویر حداکثر ۵ مگابایت است" }
@@ -38,5 +36,6 @@ export async function saveImageFile(file: File, index = 0): Promise<SaveImageRes
     return { path: `/uploads/${filename}` }
 }
 
+// مسیر عکس موجود که از فرم می‌آید باید دقیقاً یکی از فایل‌های آپلودی خودمان باشد
 export const isUploadPath = (value: unknown): value is string =>
     typeof value === "string" && /^\/uploads\/[A-Za-z0-9._-]+$/.test(value)

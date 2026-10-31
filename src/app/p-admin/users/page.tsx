@@ -3,11 +3,11 @@ import StatCard from "@root/src/components/templates/P-admin/Index/StatCard";
 import UsersList from "@root/src/components/templates/P-admin/Users/UsersList";
 import { connectDB } from "@root/src/lib/mongodb";
 import UserModel from "@models/User"
+import OrderModel from "@models/Order"
 
 import {
     PiUsersLight,
     PiUserPlusLight,
-    PiWalletLight,
     PiProhibitLight,
 } from "react-icons/pi";
 import { UserType } from "@root/src/types/userType";
@@ -17,11 +17,34 @@ export const dynamic = "force-dynamic"
 const page = async () => {
     await connectDB()
     const users = await UserModel.find({}).sort({ _id: -1 }).lean()
-    const initialUsers: UserType[] = JSON.parse(JSON.stringify(users))
+    // Real stats for ordersCount and totalSpent are calculated from actual (non-canceled) orders in the database
+    const stats = await OrderModel.aggregate([
+        { $match: { status: { $ne: "لغو شده" } } },
+        {
+            $group: {
+                _id: "$user",
+                ordersCount: { $sum: 1 },
+                totalSpent: {
+                    $sum: {
+                        $subtract: [
+                            { $add: [{ $sum: { $map: { input: "$items", as: "i", in: { $multiply: ["$$i.price", "$$i.count"] } } } }, { $ifNull: ["$shippingCost", 0] }] },
+                            { $ifNull: ["$discountAmount", 0] },
+                        ],
+                    },
+                },
+            },
+        },
+    ])
+    const statsByUser = new Map(stats.map((s: any) => [String(s._id), s]))
+    const initialUsers: UserType[] = (JSON.parse(JSON.stringify(users)) as UserType[]).map(user => ({
+        ...user,
+        ordersCount: statsByUser.get(user._id)?.ordersCount ?? 0,
+        totalSpent: statsByUser.get(user._id)?.totalSpent ?? 0,
+    }))
 
     const totalCount = initialUsers.length
     const blockedCount = initialUsers.filter(u => u.status === "مسدود").length
-
+    
     //reset new users badge count
     await UserModel.updateMany({ isSeenByAdmin: false }, { isSeenByAdmin: true })
 

@@ -1,13 +1,12 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
 import { connectDB } from "@root/src/lib/mongodb"
 import mongoose from "mongoose"
 import { getCurrentUser } from "@root/src/lib/auth/session"
 import { getClientIp, rateLimit } from "@root/src/lib/rateLimit"
 import CommentModel from "@root/src/models/Comment"
 
-type ActionResult = { success: true } | { success: false; error: string }
+type ActionResult = { success: true } | { success: false; error: string; needsLogin?: boolean }
 
 // ────────────────────────────────
 // Add New Comment IN Client Side
@@ -18,7 +17,7 @@ export async function addCommentAction(
     formData: FormData
 ): Promise<ActionResult> {
     const user = await getCurrentUser()
-    if (!user) return { success: false, error: "برای ثبت نظر ابتدا وارد حساب کاربری شوید" }
+    if (!user) return { success: false, error: "برای ثبت نظر ابتدا وارد حساب کاربری شوید", needsLogin: true }
 
     if (!mongoose.isValidObjectId(productId)) return { success: false, error: "محصول نامعتبر است" }
 

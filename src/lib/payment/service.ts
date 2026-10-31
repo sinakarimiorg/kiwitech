@@ -7,13 +7,21 @@ import MessageModel from "@models/Message"
 import UserModel from "@models/User"
 import WalletTransactionModel from "@models/WalletTransaction"
 import { releaseStock, type StockItem } from "@root/src/lib/orders/stock"
+import { consumeDiscount } from "@root/src/lib/discounts"
 import { invalidate } from "@root/src/lib/cache"
 import { requestPayment, verifyPayment } from "./zarinpal"
 
 const PAYMENT_TTL_MS = 20 * 60 * 1000
 const VERIFYING_STALE_MS = 60 * 1000
 
-type OrderSnapshot = { items: (StockItem & { price: number })[]; address: string; phone: string; shippingCost: number }
+type OrderSnapshot = {
+    items: (StockItem & { price: number })[]
+    address: string
+    phone: string
+    shippingCost: number
+    discountCode?: string
+    discountAmount?: number
+}
 
 async function getBaseUrl(): Promise<string> {
     if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "")
@@ -138,10 +146,12 @@ export async function finalizePayment(authority: string, userCancelled: boolean)
                 address: snapshot.address,
                 phone: snapshot.phone,
                 shippingCost: snapshot.shippingCost,
+                ...(snapshot.discountCode ? { discountCode: snapshot.discountCode, discountAmount: snapshot.discountAmount ?? 0 } : {}),
                 status: "در حال پردازش",
             })
             orderId = order._id.toString()
             await PaymentModel.updateOne({ _id: payment._id }, { order: order._id })
+            if (snapshot.discountCode) await consumeDiscount(snapshot.discountCode).catch(error => console.error("[discount] consume failed:", error))
 
             try {
                 await MessageModel.create({
@@ -208,4 +218,3 @@ export async function expireStalePayments(limit = 50): Promise<number> {
 
 export const isValidAuthority = (value: unknown): value is string =>
     typeof value === "string" && /^[A-Za-z0-9]{10,64}$/.test(value)
-

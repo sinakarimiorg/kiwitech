@@ -7,6 +7,7 @@ import ProductModel from "@models/Product"
 import { getShippingSettingsAction } from "@root/src/components/templates/P-admin/Settings/actions"
 import { resolveVariant, hasColors, findColor } from "@root/src/lib/productVariants"
 import { reserveStock, releaseStock } from "@root/src/lib/orders/stock"
+import { evaluateDiscount } from "@root/src/lib/discounts"
 import { invalidate } from "@root/src/lib/cache"
 import { expireStalePayments, startPayment } from "@root/src/lib/payment/service"
 import type { AdminProduct } from "@root/src/types/adminProductType"
@@ -19,6 +20,7 @@ type OrderItemInput = {
 
 type CreateOrderInput = {
     items: OrderItemInput[]
+    discountCode?: string
     address: string
     phone: string
 }
@@ -115,6 +117,18 @@ export async function createOrderAction(data: CreateOrderInput): Promise<ActionR
         const itemsTotal = orderItems.reduce((sum, item) => sum + item.price * item.count, 0)
         const shippingCost = itemsTotal > 0 && itemsTotal < shipping.freeShippingThreshold ? shipping.standardShippingCost : 0
 
+        let discountCode: string | undefined
+        let discountAmount = 0
+        if (data.discountCode?.trim()) {
+            const evaluation = await evaluateDiscount(data.discountCode, itemsTotal)
+            if (!evaluation.ok) return { success: false, error: evaluation.error }
+            discountCode = evaluation.code
+            discountAmount = evaluation.amount
+        }
+
+        const payable = itemsTotal + shippingCost - discountAmount
+        if (payable < 1000) return { success: false, error: "حداقل مبلغ قابل پرداخت ۱٬۰۰۰ تومان است" }
+
         const reserved = await reserveStock(orderItems)
         if (!reserved.ok) {
             return { success: false, error: `موجودی «${reserved.title ?? "یکی از کالاها"}» هم‌اکنون کافی نیست؛ سبد خرید را بررسی کنید` }
@@ -129,13 +143,14 @@ export async function createOrderAction(data: CreateOrderInput): Promise<ActionR
                 userId: user._id,
                 userPhone: user.phone,
                 purpose: "order",
-                amount: itemsTotal + shippingCost,
+                amount: payable,
                 description: `پرداخت سفارش کیوی‌تک (${orderItems.length} قلم)`,
                 orderSnapshot: {
                     items: orderItems,
                     address: data.address.trim().slice(0, 600),
                     phone: data.phone.trim().slice(0, 20),
                     shippingCost,
+                    ...(discountCode ? { discountCode, discountAmount } : {}),
                 },
             })
         } catch (error) {

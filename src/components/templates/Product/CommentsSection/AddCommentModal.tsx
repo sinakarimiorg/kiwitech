@@ -4,6 +4,7 @@ import { useEffect, useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
 import { HiStar } from 'react-icons/hi2'
 import { PiXBold, PiChatCircleTextLight, PiInfoLight, PiPaperPlaneRightLight } from 'react-icons/pi'
+import Link from 'next/link'
 import Swal from 'sweetalert2'
 import { addCommentAction } from './actions'
 
@@ -32,6 +33,7 @@ export default function AddCommentModal({ productId, linkName, productName, onCl
     const [text, setText] = useState('')
     const [errors, setErrors] = useState<FieldErrors>({})
     const [serverError, setServerError] = useState('')
+    const [needsLogin, setNeedsLogin] = useState(false)
     const [isPending, startTransition] = useTransition()
 
     useEffect(() => {
@@ -60,6 +62,7 @@ export default function AddCommentModal({ productId, linkName, productName, onCl
 
     const handleSubmit = () => {
         setServerError('')
+        setNeedsLogin(false)
         if (!validate()) return
 
         const formData = new FormData()
@@ -81,6 +84,7 @@ export default function AddCommentModal({ productId, linkName, productName, onCl
                 })
             } else {
                 setServerError(res.error)
+                setNeedsLogin(!!res.needsLogin)
             }
         })
     }
@@ -204,7 +208,12 @@ export default function AddCommentModal({ productId, linkName, productName, onCl
                         نظر شما پس از بررسی و تایید مدیر فروشگاه در صفحه‌ی محصول نمایش داده می‌شود.
                     </div>
 
-                    {serverError && <p className='text-sm text-danger'>{serverError}</p>}
+                    {serverError && (
+                        <p className='text-sm text-danger'>
+                            {serverError}
+                            {needsLogin && <> — <Link href='/login-register' className='underline text-primary-600'>ورود / ثبت‌نام</Link></>}
+                        </p>
+                    )}
                 </div>
 
                 {/* Footer */}

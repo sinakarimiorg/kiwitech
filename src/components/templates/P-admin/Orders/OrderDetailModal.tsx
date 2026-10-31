@@ -105,6 +105,12 @@ export default function OrderDetailModal({ order, onClose }: OrderDetailModalPro
                                 {order.shippingCost === 0 ? "رایگان" : `${order.shippingCost.toLocaleString()} تومان`}
                             </span>
                         </div>
+                        {(order.discountAmount ?? 0) > 0 && (
+                            <div className="flex items-center justify-between text-primary-600">
+                                <span>کد تخفیف</span>
+                                <span>-{(order.discountAmount ?? 0).toLocaleString()} تومان</span>
+                            </div>
+                        )}
                         <div className="flex items-center justify-between pt-2.5 mt-1 border-t border-dashed border-gray-200">
                             <span className="font-IranYekanMedium text-zinc-700">مبلغ نهایی</span>
                             <span className="inline-flex items-center gap-1 font-IranYekanBold text-base sm:text-lg text-zinc-800">

@@ -21,6 +21,8 @@ export interface UserOrder {
     address: string
     phone: string
     shippingCost: number
+    discountCode?: string
+    discountAmount?: number
     status: OrderStatus
     createdAt: string
     isRead: Boolean

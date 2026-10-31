@@ -23,6 +23,7 @@ export interface AdminOrder {
     address: string
     items: OrderItem[]
     shippingCost: number
+    discountAmount?: number
     status: OrderStatus
     isRead?: boolean
     createdAt?: string
@@ -36,5 +37,5 @@ export const statusStyle: Record<OrderStatus, string> = {
 }
 
 export function getOrderTotal(order: AdminOrder) {
-    return order.items.reduce((sum, item) => sum + item.price * item.count, 0) + order.shippingCost
+    return order.items.reduce((sum, item) => sum + item.price * item.count, 0) + order.shippingCost - (order.discountAmount ?? 0)
 }
