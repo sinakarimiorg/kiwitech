@@ -205,8 +205,8 @@ export default function HomeSectionsManager({ initialSections }: HomeSectionsMan
                                     <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
                                         {meta.hasTitle &&
                                             <div className={meta.hasSubtitle ? '' : 'sm:col-span-2'}>
-                                                <label className='block mb-1.5 text-xs text-zinc-500'>عنوان بخش</label>
-                                                <input
+                                                <label htmlFor={`hs-title-${section.key}`} className='block mb-1.5 text-xs text-zinc-500'>عنوان بخش</label>
+                                                <input id={`hs-title-${section.key}`}
                                                     value={section.title}
                                                     onChange={event => updateSection(section.key, { title: event.target.value })}
                                                     maxLength={60}
@@ -217,8 +217,8 @@ export default function HomeSectionsManager({ initialSections }: HomeSectionsMan
 
                                         {meta.hasSubtitle &&
                                             <div>
-                                                <label className='block mb-1.5 text-xs text-zinc-500'>توضیح زیر عنوان (اختیاری)</label>
-                                                <input
+                                                <label htmlFor={`hs-subtitle-${section.key}`} className='block mb-1.5 text-xs text-zinc-500'>توضیح زیر عنوان (اختیاری)</label>
+                                                <input id={`hs-subtitle-${section.key}`}
                                                     value={section.subtitle}
                                                     onChange={event => updateSection(section.key, { subtitle: event.target.value })}
                                                     maxLength={120}
@@ -229,10 +229,10 @@ export default function HomeSectionsManager({ initialSections }: HomeSectionsMan
 
                                         {meta.hasLimit &&
                                             <div>
-                                                <label className='block mb-1.5 text-xs text-zinc-500'>
+                                                <label htmlFor={`hs-limit-${section.key}`} className='block mb-1.5 text-xs text-zinc-500'>
                                                     تعداد نمایش ({meta.minLimit.toLocaleString('fa-IR')} تا {meta.maxLimit.toLocaleString('fa-IR')})
                                                 </label>
-                                                <input
+                                                <input id={`hs-limit-${section.key}`}
                                                     type='number'
                                                     min={meta.minLimit}
                                                     max={meta.maxLimit}

@@ -1,5 +1,7 @@
 "use client"
 
+import { useId } from 'react'
+import { useDialog } from '@root/src/hooks/useDialog'
 import { useRef, useState, useTransition } from "react"
 import {
     PiArticleLight,
@@ -27,6 +29,8 @@ type EditArticleModalProps = {
 }
 
 export default function EditArticleModal({ article, onClose }: EditArticleModalProps) {
+    const titleId = useId()
+    const dialogRef = useDialog<HTMLDivElement>(onClose)
     const [title, setTitle] = useState(article.title)
     const [shortName, setShortName] = useState(article.linkName)
     const [category, setCategory] = useState(article.category)
@@ -85,14 +89,14 @@ export default function EditArticleModal({ article, onClose }: EditArticleModalP
 
     return (
         <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
-            <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className="w-full max-w-focus:outline-none 3xl bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
 
                 <div className="flex items-center justify-between pb-4 mb-6 border-b border-gray-100">
-                    <h2 className="flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800">
+                    <h2 id={titleId} className="flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800">
                         <PiArticleLight className="w-5 h-5 text-primary-500" />
                         ویرایش مقاله
                     </h2>
-                    <button onClick={onClose} className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                    <button type="button" onClick={onClose} aria-label="بستن" className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                         <PiXBold className="w-4 h-4" />
                     </button>
                 </div>
@@ -133,8 +137,8 @@ export default function EditArticleModal({ article, onClose }: EditArticleModalP
                     {/* Fields */}
                     <div className='flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5'>
                         <div className='sm:col-span-2'>
-                            <label className='block mb-1.5 text-xs text-zinc-500'>عنوان مقاله</label>
-                            <input
+                            <label htmlFor="EditArticleModal-1" className='block mb-1.5 text-xs text-zinc-500'>عنوان مقاله</label>
+                            <input id="EditArticleModal-1"
                                 value={title}
                                 onChange={e => setTitle(e.target.value)}
                                 className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
@@ -158,11 +162,11 @@ export default function EditArticleModal({ article, onClose }: EditArticleModalP
                         </div>
 
                         <div>
-                            <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
+                            <label htmlFor="EditArticleModal-2" className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
                                 <PiTagLight className='w-3.5 h-3.5' />
                                 دسته‌بندی
                             </label>
-                            <select
+                            <select id="EditArticleModal-2"
                                 value={category}
                                 onChange={e => setCategory(e.target.value)}
                                 className='w-full px-3.5 py-2.5 text-sm bg-white border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
@@ -174,8 +178,8 @@ export default function EditArticleModal({ article, onClose }: EditArticleModalP
                         </div>
 
                         <div>
-                            <label className='block mb-1.5 text-xs text-zinc-500'>تگ‌ها (با کاما جدا کنید)</label>
-                            <input
+                            <label htmlFor="EditArticleModal-3" className='block mb-1.5 text-xs text-zinc-500'>تگ‌ها (با کاما جدا کنید)</label>
+                            <input id="EditArticleModal-3"
                                 value={tags}
                                 onChange={e => setTags(e.target.value)}
                                 className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
@@ -183,8 +187,8 @@ export default function EditArticleModal({ article, onClose }: EditArticleModalP
                         </div>
 
                         <div className='sm:col-span-2'>
-                            <label className='block mb-1.5 text-xs text-zinc-500'>خلاصه مقاله</label>
-                            <input
+                            <label htmlFor="EditArticleModal-4" className='block mb-1.5 text-xs text-zinc-500'>خلاصه مقاله</label>
+                            <input id="EditArticleModal-4"
                                 value={excerpt}
                                 onChange={e => setExcerpt(e.target.value)}
                                 className='w-full px-3.5 py-2.5 text-sm border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
@@ -192,11 +196,11 @@ export default function EditArticleModal({ article, onClose }: EditArticleModalP
                         </div>
 
                         <div className='sm:col-span-2'>
-                            <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
+                            <label htmlFor="EditArticleModal-5" className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
                                 <PiTextAlignRightLight className='w-3.5 h-3.5' />
                                 متن کامل مقاله
                             </label>
-                            <textarea
+                            <textarea id="EditArticleModal-5"
                                 value={content}
                                 onChange={e => setContent(e.target.value)}
                                 rows={8}

@@ -186,6 +186,7 @@ export default function PaymentClient({ selectedAddress, shippingSettings }: Pay
                                             onChange={event => setCouponInput(event.target.value)}
                                             onKeyDown={event => { if (event.key === 'Enter' && couponInput.trim() && !isApplying) applyCoupon() }}
                                             placeholder='کد تخفیف را وارد کنید'
+                                            aria-label='کد تخفیف'
                                             dir='ltr'
                                             className='flex-1 min-w-0 px-4 py-3 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors'
                                         />

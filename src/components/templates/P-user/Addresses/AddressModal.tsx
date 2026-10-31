@@ -62,8 +62,8 @@ export default function AddressModal({ initialData, onClose, onSave, isSaving }:
     >
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block mb-1.5 text-xs text-zinc-500">عنوان آدرس</label>
-          <input
+          <label htmlFor="AddressModal-1" className="block mb-1.5 text-xs text-zinc-500">عنوان آدرس</label>
+          <input id="AddressModal-1"
             value={title}
             onChange={e => setTitle(e.target.value)}
             placeholder="مثال: خانه، محل کار"
@@ -72,8 +72,8 @@ export default function AddressModal({ initialData, onClose, onSave, isSaving }:
         </div>
 
         <div>
-          <label className="block mb-1.5 text-xs text-zinc-500">نام تحویل‌گیرنده</label>
-          <input
+          <label htmlFor="AddressModal-2" className="block mb-1.5 text-xs text-zinc-500">نام تحویل‌گیرنده</label>
+          <input id="AddressModal-2"
             value={receiver}
             onChange={e => setReceiver(e.target.value)}
             placeholder="مثال: سینا کریمی"
@@ -83,8 +83,8 @@ export default function AddressModal({ initialData, onClose, onSave, isSaving }:
         </div>
 
         <div className="sm:col-span-2">
-          <label className="block mb-1.5 text-xs text-zinc-500">شماره موبایل</label>
-          <input
+          <label htmlFor="AddressModal-3" className="block mb-1.5 text-xs text-zinc-500">شماره موبایل</label>
+          <input id="AddressModal-3"
             value={phone}
             onChange={e => setPhone(e.target.value)}
             placeholder="۰۹۱۲۳۴۵۶۷۸۹"
@@ -97,8 +97,8 @@ export default function AddressModal({ initialData, onClose, onSave, isSaving }:
         </div>
 
         <div>
-          <label className="block mb-1.5 text-xs text-zinc-500">استان</label>
-          <select
+          <label htmlFor="AddressModal-4" className="block mb-1.5 text-xs text-zinc-500">استان</label>
+          <select id="AddressModal-4"
             value={province}
             onChange={e => handleProvinceChange(e.target.value)}
             className={`${panelFieldClasses} cursor-pointer`}
@@ -111,8 +111,8 @@ export default function AddressModal({ initialData, onClose, onSave, isSaving }:
         </div>
 
         <div>
-          <label className="block mb-1.5 text-xs text-zinc-500">شهر</label>
-          <select
+          <label htmlFor="AddressModal-5" className="block mb-1.5 text-xs text-zinc-500">شهر</label>
+          <select id="AddressModal-5"
             value={city}
             onChange={e => setCity(e.target.value)}
             disabled={!province}
@@ -126,8 +126,8 @@ export default function AddressModal({ initialData, onClose, onSave, isSaving }:
         </div>
 
         <div className="sm:col-span-2">
-          <label className="block mb-1.5 text-xs text-zinc-500">آدرس کامل (خیابان، پلاک، واحد)</label>
-          <textarea
+          <label htmlFor="AddressModal-6" className="block mb-1.5 text-xs text-zinc-500">آدرس کامل (خیابان، پلاک، واحد)</label>
+          <textarea id="AddressModal-6"
             value={fullAddress}
             onChange={e => setFullAddress(e.target.value)}
             rows={3}

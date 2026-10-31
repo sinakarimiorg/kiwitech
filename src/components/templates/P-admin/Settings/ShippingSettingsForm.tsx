@@ -51,8 +51,8 @@ export default function ShippingSettingsForm({ initialSettings }: { initialSetti
 
             <div className="flex flex-col gap-5">
                 <div>
-                    <label className="block mb-1.5 text-xs text-zinc-500">حداقل مبلغ خرید برای ارسال رایگان (تومان)</label>
-                    <input
+                    <label htmlFor="ShippingSettingsForm-1" className="block mb-1.5 text-xs text-zinc-500">حداقل مبلغ خرید برای ارسال رایگان (تومان)</label>
+                    <input id="ShippingSettingsForm-1"
                         value={freeShippingThreshold ? Number(freeShippingThreshold).toLocaleString("en-US") : ""}
                         onChange={e => setFreeShippingThreshold(e.target.value.replace(/\D/g, ""))}
                         type="text"
@@ -63,8 +63,8 @@ export default function ShippingSettingsForm({ initialSettings }: { initialSetti
                 </div>
 
                 <div>
-                    <label className="block mb-1.5 text-xs text-zinc-500">هزینه ارسال استاندارد (تومان)</label>
-                    <input
+                    <label htmlFor="ShippingSettingsForm-2" className="block mb-1.5 text-xs text-zinc-500">هزینه ارسال استاندارد (تومان)</label>
+                    <input id="ShippingSettingsForm-2"
                         value={standardShippingCost ? Number(standardShippingCost).toLocaleString("en-US") : ""}
                         onChange={e => setStandardShippingCost(e.target.value.replace(/\D/g, ""))}
                         type="text"

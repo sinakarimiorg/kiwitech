@@ -1,12 +1,13 @@
 "use client"
 
-import { useEffect, useState, useTransition } from 'react'
+import { useState, useTransition } from 'react'
 import { createPortal } from 'react-dom'
 import { HiStar } from 'react-icons/hi2'
 import { PiXBold, PiChatCircleTextLight, PiInfoLight, PiPaperPlaneRightLight } from 'react-icons/pi'
 import Link from 'next/link'
 import Swal from 'sweetalert2'
 import { addCommentAction } from './actions'
+import { useDialog } from '@root/src/hooks/useDialog'
 
 const MAX_TEXT = 500
 const MIN_TEXT = 10
@@ -36,20 +37,7 @@ export default function AddCommentModal({ productId, linkName, productName, onCl
     const [needsLogin, setNeedsLogin] = useState(false)
     const [isPending, startTransition] = useTransition()
 
-    useEffect(() => {
-        const previousOverflow = document.body.style.overflow
-        document.body.style.overflow = 'hidden'
-
-        const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape' && !isPending) onClose()
-        }
-        document.addEventListener('keydown', onKeyDown)
-
-        return () => {
-            document.body.style.overflow = previousOverflow
-            document.removeEventListener('keydown', onKeyDown)
-        }
-    }, [onClose, isPending])
+    const dialogRef = useDialog<HTMLDivElement>(onClose, isPending)
 
     const validate = () => {
         const next: FieldErrors = {}
@@ -103,10 +91,12 @@ export default function AddCommentModal({ productId, linkName, productName, onCl
             }}
         >
             <div
+                ref={dialogRef}
+                tabIndex={-1}
                 role='dialog'
                 aria-modal='true'
                 aria-labelledby='add-comment-title'
-                className='w-full max-w-xl max-h-[92vh] overflow-y-auto bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl'
+                className='w-full max-w-xl focus:outline-none max-h-[92vh] overflow-y-auto bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl'
             >
                 {/* Header */}
                 <div className='sticky top-0 z-10 flex items-center justify-between gap-3 px-5 sm:px-7 py-4 bg-white border-b border-gray-100'>

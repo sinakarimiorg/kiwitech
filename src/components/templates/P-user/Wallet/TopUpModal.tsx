@@ -14,7 +14,7 @@ export default function TopUpModal({ onClose }: TopUpModalProps) {
     const [amount, setAmount] = useState('')
     const [error, setError] = useState('')
     const [isPending, startTransition] = useTransition()
-    
+
     const numericAmount = Number(amount.replace(/,/g, ''))
 
     const handleSubmit = () => {
@@ -28,6 +28,7 @@ export default function TopUpModal({ onClose }: TopUpModalProps) {
             const result = await topUpWalletAction(numericAmount)
 
             if (result.success) {
+                // انتقال به درگاه؛ بعد از پرداخت درگاه به /p-user/wallet برمی‌گرداند
                 window.location.href = result.paymentUrl
             } else {
                 setError(result.error)
@@ -52,8 +53,8 @@ export default function TopUpModal({ onClose }: TopUpModalProps) {
                 </div>
             }
         >
-            <label className="block mb-1.5 text-xs text-zinc-500">مبلغ (تومان)</label>
-            <input
+            <label htmlFor="TopUpModal-1" className="block mb-1.5 text-xs text-zinc-500">مبلغ (تومان)</label>
+            <input id="TopUpModal-1"
                 value={amount}
                 onChange={e => setAmount(e.target.value.replace(/[^\d]/g, ''))}
                 placeholder="مثال: 500000"

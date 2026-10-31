@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { RiSearch2Line } from 'react-icons/ri'
 import { PiArrowRightLight, PiClockCounterClockwiseLight, PiXCircleLight } from 'react-icons/pi'
 import SearchSuggestions from './SearchSuggestions/SearchSuggestions'
+import { useDialog } from '@root/src/hooks/useDialog'
 
 const RECENT_KEY = 'kiwitech_recent_searches'
 const MAX_RECENT = 5
@@ -36,21 +37,11 @@ export default function MobileSearchSheet({ onClose }: { onClose: () => void }) 
 
     const trimmed = value.trim()
 
+    const dialogRef = useDialog<HTMLDivElement>(onClose)
+
     useEffect(() => {
-        const previousOverflow = document.body.style.overflow
-        document.body.style.overflow = 'hidden'
         inputRef.current?.focus()
-
-        const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') onClose()
-        }
-        document.addEventListener('keydown', onKeyDown)
-
-        return () => {
-            document.body.style.overflow = previousOverflow
-            document.removeEventListener('keydown', onKeyDown)
-        }
-    }, [onClose])
+    }, [])
 
     const submit = (term: string) => {
         const clean = term.trim()
@@ -71,10 +62,12 @@ export default function MobileSearchSheet({ onClose }: { onClose: () => void }) 
 
     return createPortal(
         <div
+            ref={dialogRef}
+            tabIndex={-1}
             role='dialog'
             aria-modal='true'
             aria-label='جستجو'
-            className='sm:hidden fixed inset-0 z-70 flex flex-col h-dvh bg-dark text-text'
+            className='sm:hidden focus:outline-none fixed inset-0 z-70 flex flex-col h-dvh bg-dark text-text'
         >
             <form
                 role='search'

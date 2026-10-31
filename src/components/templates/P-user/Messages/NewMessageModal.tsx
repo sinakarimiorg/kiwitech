@@ -72,8 +72,8 @@ export default function NewMessageModal({ onClose }: NewMessageModalProps) {
         >
             <div className="flex flex-col gap-4">
                 <div>
-                    <label className="block mb-1.5 text-xs text-zinc-500">موضوع پیام</label>
-                    <select
+                    <label htmlFor="NewMessageModal-1" className="block mb-1.5 text-xs text-zinc-500">موضوع پیام</label>
+                    <select id="NewMessageModal-1"
                         value={subject}
                         onChange={e => setSubject(e.target.value as MessageType)}
                         className={`${panelFieldClasses} cursor-pointer`}
@@ -85,8 +85,8 @@ export default function NewMessageModal({ onClose }: NewMessageModalProps) {
                 </div>
 
                 <div>
-                    <label className="block mb-1.5 text-xs text-zinc-500">متن پیام</label>
-                    <textarea
+                    <label htmlFor="NewMessageModal-2" className="block mb-1.5 text-xs text-zinc-500">متن پیام</label>
+                    <textarea id="NewMessageModal-2"
                         value={body}
                         onChange={e => setBody(e.target.value)}
                         rows={5}

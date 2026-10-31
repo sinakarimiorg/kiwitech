@@ -137,6 +137,8 @@ export default function AddArticle() {
                         <div className='relative w-full h-48 sm:h-56 rounded-xl overflow-hidden border border-gray-200'>
                             <img src={imagePreview} className='w-full h-full object-cover' alt='پیش‌نمایش کاور' />
                             <button
+                                type='button'
+                                aria-label='حذف تصویر'
                                 onClick={removeImage}
                                 className='absolute top-2 left-2 text-white bg-black/50 hover:bg-black/70 rounded-full transition-colors cursor-pointer'>
                                 <PiXCircleFill className='w-6 h-6' />
@@ -173,8 +175,8 @@ export default function AddArticle() {
                 {/* Fields */}
                 <div className='flex-1 grid grid-cols-1 sm:grid-cols-2 gap-5'>
                     <div className='sm:col-span-2'>
-                        <label className='block mb-1.5 text-xs text-zinc-500'>عنوان مقاله</label>
-                        <input
+                        <label htmlFor="AddArticle-1" className='block mb-1.5 text-xs text-zinc-500'>عنوان مقاله</label>
+                        <input id="AddArticle-1"
                             value={form.title}
                             onChange={e => handleTitleChange(e.target.value)}
                             placeholder='مثال: راهنمای خرید اسپیکر بلوتوث قابل حمل'
@@ -200,11 +202,11 @@ export default function AddArticle() {
                     </div>
 
                     <div>
-                        <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
+                        <label htmlFor="AddArticle-2" className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
                             <PiTagLight className='w-3.5 h-3.5' />
                             دسته‌بندی
                         </label>
-                        <select
+                        <select id="AddArticle-2"
                             value={form.category}
                             onChange={e => updateField("category", e.target.value)}
                             className='w-full px-3.5 py-2.5 text-sm bg-white border border-gray-200 focus:border-primary-400 rounded-lg outline-none transition-colors'
@@ -216,8 +218,8 @@ export default function AddArticle() {
                     </div>
 
                     <div>
-                        <label className='block mb-1.5 text-xs text-zinc-500'>تگ‌ها (با کاما جدا کنید)</label>
-                        <input
+                        <label htmlFor="AddArticle-3" className='block mb-1.5 text-xs text-zinc-500'>تگ‌ها (با کاما جدا کنید)</label>
+                        <input id="AddArticle-3"
                             value={form.tags}
                             onChange={e => updateField("tags", e.target.value)}
                             placeholder='اسپیکر، بلوتوث، راهنمای خرید'
@@ -226,8 +228,8 @@ export default function AddArticle() {
                     </div>
 
                     <div className='sm:col-span-2'>
-                        <label className='block mb-1.5 text-xs text-zinc-500'>خلاصه مقاله</label>
-                        <input
+                        <label htmlFor="AddArticle-4" className='block mb-1.5 text-xs text-zinc-500'>خلاصه مقاله</label>
+                        <input id="AddArticle-4"
                             value={form.excerpt}
                             onChange={e => updateField("excerpt", e.target.value)}
                             placeholder='یک یا دو خط برای نمایش در کارت مقاله'
@@ -236,11 +238,11 @@ export default function AddArticle() {
                     </div>
 
                     <div className='sm:col-span-2'>
-                        <label className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
+                        <label htmlFor="AddArticle-5" className='flex items-center gap-1.5 mb-1.5 text-xs text-zinc-500'>
                             <PiTextAlignRightLight className='w-3.5 h-3.5' />
                             متن کامل مقاله
                         </label>
-                        <textarea
+                        <textarea id="AddArticle-5"
                             value={form.content}
                             onChange={e => updateField("content", e.target.value)}
                             rows={8}

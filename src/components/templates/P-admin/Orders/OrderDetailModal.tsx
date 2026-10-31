@@ -1,5 +1,7 @@
 "use client"
 
+import { useId } from 'react'
+import { useDialog } from '@root/src/hooks/useDialog'
 import { PiXBold, PiMapPinLight, PiUserCircleLight, PiCreditCardLight, PiPackageLight } from "react-icons/pi"
 import TomanIcon from "@root/src/components/modules/Icons/TomanIcon"
 import { statusStyle, getOrderTotal } from "@root/src/types/adminOrderType"
@@ -11,19 +13,21 @@ type OrderDetailModalProps = {
 }
 
 export default function OrderDetailModal({ order, onClose }: OrderDetailModalProps) {
+    const titleId = useId()
+    const dialogRef = useDialog<HTMLDivElement>(onClose)
     const itemsTotal = order.items.reduce((sum, item) => sum + item.price * item.count, 0)
 
     return (
         <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
-            <div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl max-h-[92vh] overflow-y-auto">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className="w-full max-w-focus:outline-none 2xl bg-white rounded-2xl shadow-2xl max-h-[92vh] overflow-y-auto">
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
                     <div>
-                        <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">جزئیات سفارش</h2>
+                        <h2 id={titleId} className="font-IranYekanBold text-base sm:text-lg text-zinc-800">جزئیات سفارش</h2>
                         <p className="text-xs text-zinc-400 mt-0.5 tracking-wide" dir='ltr'>#{order._id.slice(-8).toUpperCase()}</p>
                     </div>
-                    <button onClick={onClose} className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                    <button type="button" onClick={onClose} aria-label="بستن" className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                         <PiXBold className="w-4 h-4" />
                     </button>
                 </div>

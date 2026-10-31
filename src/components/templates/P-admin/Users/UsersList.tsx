@@ -103,7 +103,7 @@ export default function UsersList({ initialUsers }: UsersListProps) {
                         لیست مشتریان
                         <span className='text-xs font-IranYekan text-zinc-400'>({filtered.length})</span>
                     </h2>
-                    <button onClick={openAddModal} className='flex sm:hidden flex-center w-9 h-9 text-text bg-primary-500 rounded-lg shrink-0'>
+                    <button type='button' aria-label='مشتری جدید' onClick={openAddModal} className='flex sm:hidden flex-center w-9 h-9 text-text bg-primary-500 rounded-lg shrink-0'>
                         <PiPlusCircleLight className='w-5 h-5' />
                     </button>
                 </div>

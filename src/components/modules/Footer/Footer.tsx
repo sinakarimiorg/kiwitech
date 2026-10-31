@@ -17,8 +17,8 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
     return (
         <div className={`footer bg-linear-to-br from-primary-50 via-white to-primary-100 ${marginClasses}`}>
             {/* Footer Header  */}
-            <div 
-            className="relative overflow-hidden rounded-t-3xl border border-primary-100/20 bg-linear-to-br from-primary-100 via-white 
+            <div
+                className="relative overflow-hidden rounded-t-3xl border border-primary-100/20 bg-linear-to-br from-primary-100 via-white 
             to-primary-200 px-4 py-5 sm:px-8 sm:py-6  sm:mx-6 md:mx-10 shadow-[0_-10px_40px_rgba(0,0,0,0.08)]">
 
                 <div className="absolute -top-20 left-0 w-60 h-60 bg-primary-300/60 blur-3xl rounded-full" />
@@ -175,10 +175,10 @@ export default function Footer({ marginClasses }: { marginClasses: string }) {
                         <div>
                             <h2 className='footer-title'>شبکه های اجتماعی</h2>
                             <div className='flex-center gap-x-2 pt-1 text-center text-text'>
-                                <a className='social-button bg-black hover:bg-white hover:text-black hover:border-2 hover:border-black' href='https://twitter.com/'><RiTwitterXFill className='social-button__icon' /></a>
-                                <a className='social-button bg-green-600 hover:bg-white hover:text-green-600 hover:border-2 hover:border-green-600' href='https://web.whatsapp.com/'><MdOutlineWhatsapp className='social-button__icon' /></a>
-                                <a className='social-button bg-red-600 hover:bg-white hover:text-red-600 hover:border-2 hover:border-red-600' href='https://www.youtube.com/'><FaYoutube className='social-button__icon' /></a>
-                                <a className='social-button bg-pink-600 hover:bg-white hover:text-pink-600 hover:border-2 hover:border-pink-600' href='https://www.instagram.com/'><IoLogoInstagram className='social-button__icon' /></a>
+                                <a className='social-button bg-black hover:bg-white hover:text-black hover:border-2 hover:border-black' href='https://twitter.com/' aria-label="ایکس (توییتر)" target="_blank" rel="noopener noreferrer"><RiTwitterXFill className='social-button__icon' /></a>
+                                <a className='social-button bg-green-600 hover:bg-white hover:text-green-600 hover:border-2 hover:border-green-600' href='https://web.whatsapp.com/' aria-label="واتساپ" target="_blank" rel="noopener noreferrer"><MdOutlineWhatsapp className='social-button__icon' /></a>
+                                <a className='social-button bg-red-600 hover:bg-white hover:text-red-600 hover:border-2 hover:border-red-600' href='https://www.youtube.com/' aria-label="یوتیوب" target="_blank" rel="noopener noreferrer"><FaYoutube className='social-button__icon' /></a>
+                                <a className='social-button bg-pink-600 hover:bg-white hover:text-pink-600 hover:border-2 hover:border-pink-600' href='https://www.instagram.com/' aria-label="اینستاگرام" target="_blank" rel="noopener noreferrer"><IoLogoInstagram className='social-button__icon' /></a>
                             </div>
                         </div>
 

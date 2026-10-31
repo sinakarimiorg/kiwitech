@@ -7,7 +7,6 @@ import TomanIcon from '@root/src/components/modules/Icons/TomanIcon';
 
 import './ProductBox.css'
 
-
 type ProductCardProps = {
     shortName: string
     img: string
@@ -29,6 +28,7 @@ export default function ProductBox({ shortName, img, img2, title, classes, price
                         <div className='absolute group-hover:opacity-0 group-hover:invisible w-full h-full inset-0 cursor-pointer transition-all duration-500'>
                             <LazyLoadImage
                                 src={img}
+                                alt={title}
                                 height={'100%'}
                                 width={'100%'}
                                 effect='blur'
@@ -38,6 +38,7 @@ export default function ProductBox({ shortName, img, img2, title, classes, price
                             <div className='absolute opacity-0 invisible group-hover:block group-hover:opacity-100 group-hover:visible w-full h-full inset-0 cursor-pointer transition-all duration-500'>
                                 <LazyLoadImage
                                     src={img2}
+                                    alt=''
                                     height={'100%'}
                                     width={'100%'}
                                     effect='blur'
@@ -56,7 +57,7 @@ export default function ProductBox({ shortName, img, img2, title, classes, price
                             }
                             <p className='flex justify-end items-center xs:gap-1 w-full text-zinc-800'>
                                 <span className='font-DanaDemiBold text-sm sm:text-base md:text-lg'>{price.toLocaleString()}</span>
-                                <span><TomanIcon/></span>
+                                <span><TomanIcon /></span>
                             </p>
                         </div>
                         {

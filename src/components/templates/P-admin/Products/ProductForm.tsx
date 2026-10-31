@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState, useTransition, type KeyboardEvent, type ReactNode } from "react"
+import { useEffect, useId, useRef, useState, useTransition, type KeyboardEvent, type ReactNode } from "react"
 import { Formik, Form, Field, ErrorMessage, useFormikContext, type FieldProps } from "formik"
 import * as Yup from "yup"
 import Swal from "sweetalert2"
@@ -341,8 +341,8 @@ function PriceFields() {
         <div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                    <label className={labelCls}>قیمت اصلی (تومان) *</label>
-                    <input
+                    <label htmlFor="ProductForm-1" className={labelCls}>قیمت اصلی (تومان) *</label>
+                    <input id="ProductForm-1"
                         inputMode="numeric"
                         dir="ltr"
                         value={fmt(values.basePrice)}
@@ -372,8 +372,8 @@ function PriceFields() {
                 </div>
 
                 <div>
-                    <label className={labelCls}>قیمت نهایی فروش (تومان) *</label>
-                    <input
+                    <label htmlFor="ProductForm-2" className={labelCls}>قیمت نهایی فروش (تومان) *</label>
+                    <input id="ProductForm-2"
                         inputMode="numeric"
                         dir="ltr"
                         value={fmt(values.price)}
@@ -529,6 +529,7 @@ function specColorSafe(list: string[], used: Set<string>) {
 
 /* ───────── Colors ───────── */
 function ColorPriceEditor({ color, onChange }: { color: ColorFormValue; onChange: (patch: Partial<ColorFormValue>) => void }) {
+    const uid = useId()
     const base = toNum(color.basePrice)
     const pct = toNum(color.discount)
     const final = toNum(color.price)
@@ -557,8 +558,8 @@ function ColorPriceEditor({ color, onChange }: { color: ColorFormValue; onChange
         <div className="mt-3 pt-3 border-t border-dashed border-gray-200">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
-                    <label className={labelCls}>قیمت اصلی (تومان)</label>
-                    <input inputMode="numeric" dir="ltr" value={fmt(color.basePrice)} onChange={e => onBase(e.target.value)} placeholder="850,000" className={`${inputCls} text-left`} />
+                    <label htmlFor={`${uid}-base`} className={labelCls}>قیمت اصلی (تومان)</label>
+                    <input id={`${uid}-base`} inputMode="numeric" dir="ltr" value={fmt(color.basePrice)} onChange={e => onBase(e.target.value)} placeholder="850,000" className={`${inputCls} text-left`} />
                 </div>
                 <div>
                     <label className={labelCls}>درصد تخفیف</label>
@@ -575,8 +576,8 @@ function ColorPriceEditor({ color, onChange }: { color: ColorFormValue; onChange
                     </div>
                 </div>
                 <div>
-                    <label className={labelCls}>قیمت نهایی این رنگ *</label>
-                    <input
+                    <label htmlFor={`${uid}-final`} className={labelCls}>قیمت نهایی این رنگ *</label>
+                    <input id={`${uid}-final`}
                         inputMode="numeric"
                         dir="ltr"
                         value={fmt(color.price)}
@@ -653,8 +654,8 @@ function ColorsField() {
                                     </span>
 
                                     <div className="flex items-center gap-2">
-                                        <label className="text-xs text-zinc-500 shrink-0">موجودی *</label>
-                                        <input
+                                        <label htmlFor={`ProductForm-stock-${index}`} className="text-xs text-zinc-500 shrink-0">موجودی *</label>
+                                        <input id={`ProductForm-stock-${index}`}
                                             inputMode="numeric"
                                             value={color.stock}
                                             onChange={e => updateColor(index, { stock: digits(e.target.value) })}

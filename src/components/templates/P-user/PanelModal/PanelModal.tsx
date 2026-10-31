@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useId } from 'react'
+import { useId } from 'react'
 import type { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { PiXBold } from 'react-icons/pi'
+import { useDialog } from '@root/src/hooks/useDialog'
 
 export const panelFieldClasses =
     'w-full px-3.5 py-2.5 text-base sm:text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors'
@@ -24,7 +25,7 @@ type PanelModalProps = {
     title: ReactNode
     icon?: ReactNode
     size?: keyof typeof sizeClasses
-    busy?: boolean           
+    busy?: boolean
     onClose: () => void
     children: ReactNode
     footer?: ReactNode
@@ -33,20 +34,7 @@ type PanelModalProps = {
 export default function PanelModal({ title, icon, size = 'md', busy = false, onClose, children, footer }: PanelModalProps) {
     const titleId = useId()
 
-    useEffect(() => {
-        const previousOverflow = document.body.style.overflow
-        document.body.style.overflow = 'hidden'
-
-        const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape' && !busy) onClose()
-        }
-        document.addEventListener('keydown', onKeyDown)
-
-        return () => {
-            document.body.style.overflow = previousOverflow
-            document.removeEventListener('keydown', onKeyDown)
-        }
-    }, [onClose, busy])
+    const dialogRef = useDialog<HTMLDivElement>(onClose, busy)
 
     return createPortal(
         <div
@@ -56,10 +44,12 @@ export default function PanelModal({ title, icon, size = 'md', busy = false, onC
             }}
         >
             <div
+                ref={dialogRef}
+                tabIndex={-1}
                 role='dialog'
                 aria-modal='true'
                 aria-labelledby={titleId}
-                className={`flex flex-col w-full ${sizeClasses[size]} max-h-[92dvh] bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl`}
+                className={`flex flex-col w-full focus:outline-none ${sizeClasses[size]} max-h-[92dvh] bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl`}
             >
                 <div className='flex items-center justify-between gap-3 shrink-0 px-5 sm:px-6 py-4 border-b border-gray-100'>
                     <h2 id={titleId} className='flex items-center gap-2 min-w-0 font-IranYekanBold text-base sm:text-lg text-zinc-800'>

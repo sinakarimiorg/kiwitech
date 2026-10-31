@@ -11,7 +11,6 @@ import {
     PiHourglassLight,
     PiXCircleLight,
     PiUserCircleLight,
-    PiEyeLight,
     PiListMagnifyingGlassLight,
 } from "react-icons/pi"
 import type { IconType } from "react-icons"
@@ -147,9 +146,6 @@ export default function TransactionsList({ transactions }: TransactionsListProps
                                         {dateObj ? dateObj.toLocaleDateString('fa-IR') : '—'} <span className='text-zinc-300'>|</span> {dateObj ? dateObj.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' }) : ''}
                                     </td>
                                     <td className='px-3 py-3.5'>
-                                        <button className='flex-center w-8 h-8 text-zinc-500 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-colors cursor-pointer'>
-                                            <PiEyeLight className='w-4 h-4' />
-                                        </button>
                                     </td>
                                 </tr>
                             )

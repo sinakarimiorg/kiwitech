@@ -1,5 +1,7 @@
 "use client"
 
+import { useId } from 'react'
+import { useDialog } from '@root/src/hooks/useDialog'
 import { useState } from 'react'
 import { PiXBold } from 'react-icons/pi'
 import type { AdminDiscount, DiscountType, DiscountStatus } from '@root/src/types/adminDiscountType'
@@ -13,6 +15,8 @@ type DiscountModalProps = {
 }
 
 export default function DiscountModal({ initialData, onClose, onSave, isSaving }: DiscountModalProps) {
+    const titleId = useId()
+    const dialogRef = useDialog<HTMLDivElement>(onClose, isSaving)
     const [code, setCode] = useState(initialData?.code ?? '')
     const [type, setType] = useState<DiscountType>(initialData?.type ?? 'percent')
     const [value, setValue] = useState(initialData ? String(initialData.value) : '')
@@ -40,21 +44,21 @@ export default function DiscountModal({ initialData, onClose, onSave, isSaving }
 
     return (
         <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
-            <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className="w-full max-w-focus:outline-none lg bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
 
                 <div className="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
-                    <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">
+                    <h2 id={titleId} className="font-IranYekanBold text-base sm:text-lg text-zinc-800">
                         {initialData ? 'ویرایش کد تخفیف' : 'افزودن کد تخفیف جدید'}
                     </h2>
-                    <button onClick={onClose} className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                    <button type="button" onClick={onClose} aria-label="بستن" className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                         <PiXBold className="w-4 h-4" />
                     </button>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="sm:col-span-2">
-                        <label className="block mb-1.5 text-xs text-zinc-500">کد تخفیف</label>
-                        <input
+                        <label htmlFor="DiscountModal-1" className="block mb-1.5 text-xs text-zinc-500">کد تخفیف</label>
+                        <input id="DiscountModal-1"
                             value={code}
                             onChange={e => setCode(e.target.value)}
                             placeholder="مثال: SUMMER40"
@@ -63,8 +67,8 @@ export default function DiscountModal({ initialData, onClose, onSave, isSaving }
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">نوع تخفیف</label>
-                        <select
+                        <label htmlFor="DiscountModal-2" className="block mb-1.5 text-xs text-zinc-500">نوع تخفیف</label>
+                        <select id="DiscountModal-2"
                             value={type}
                             onChange={e => setType(e.target.value as DiscountType)}
                             className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"
@@ -75,10 +79,10 @@ export default function DiscountModal({ initialData, onClose, onSave, isSaving }
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">
+                        <label htmlFor="DiscountModal-3" className="block mb-1.5 text-xs text-zinc-500">
                             مقدار تخفیف {type === 'percent' ? '(٪)' : '(تومان)'}
                         </label>
-                        <input
+                        <input id="DiscountModal-3"
                             value={value ? Number(value).toLocaleString('en-US') : ''}
                             onChange={e => {
                                 const rawValue = e.target.value.replace(/\D/g, '');
@@ -91,8 +95,8 @@ export default function DiscountModal({ initialData, onClose, onSave, isSaving }
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">حداقل مبلغ خرید (تومان)</label>
-                        <input
+                        <label htmlFor="DiscountModal-4" className="block mb-1.5 text-xs text-zinc-500">حداقل مبلغ خرید (تومان)</label>
+                        <input id="DiscountModal-4"
                             value={minOrderAmount ? Number(minOrderAmount).toLocaleString('en-US') : ''}
                             onChange={e => {
                                 const rawValue = e.target.value.replace(/\D/g, '');
@@ -105,8 +109,8 @@ export default function DiscountModal({ initialData, onClose, onSave, isSaving }
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">سقف تعداد استفاده</label>
-                        <input
+                        <label htmlFor="DiscountModal-5" className="block mb-1.5 text-xs text-zinc-500">سقف تعداد استفاده</label>
+                        <input id="DiscountModal-5"
                             value={usageLimit}
                             onChange={e => setUsageLimit(e.target.value)}
                             type="number"
@@ -116,8 +120,8 @@ export default function DiscountModal({ initialData, onClose, onSave, isSaving }
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">تاریخ انقضا</label>
-                        <input
+                        <label htmlFor="DiscountModal-6" className="block mb-1.5 text-xs text-zinc-500">تاریخ انقضا</label>
+                        <input id="DiscountModal-6"
                             value={expiresAt}
                             onChange={e => {
                                 let val = e.target.value
@@ -144,8 +148,8 @@ export default function DiscountModal({ initialData, onClose, onSave, isSaving }
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">وضعیت</label>
-                        <select
+                        <label htmlFor="DiscountModal-7" className="block mb-1.5 text-xs text-zinc-500">وضعیت</label>
+                        <select id="DiscountModal-7"
                             value={status}
                             onChange={e => setStatus(e.target.value as DiscountStatus)}
                             className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"

@@ -1,5 +1,7 @@
 "use client"
 
+import { useId } from 'react'
+import { useDialog } from '@root/src/hooks/useDialog'
 import { useRef, useState } from 'react'
 import { PiXBold, PiUploadSimpleLight } from 'react-icons/pi'
 import type { AdminBanner, BannerPosition, BannerStatus } from '@root/src/types/adminBannerType'
@@ -19,6 +21,8 @@ const positionOptions: { value: BannerPosition; label: string }[] = [
 ]
 
 export default function BannerModal({ initialData, onClose, onSave, isSaving }: BannerModalProps) {
+    const titleId = useId()
+    const dialogRef = useDialog<HTMLDivElement>(onClose, isSaving)
     const [title, setTitle] = useState(initialData?.title ?? '')
     const [position, setPosition] = useState<BannerPosition>(initialData?.position ?? 'landing')
     const [imagePreview, setImagePreview] = useState(initialData?.image ?? '')
@@ -56,13 +60,13 @@ export default function BannerModal({ initialData, onClose, onSave, isSaving }: 
 
     return (
         <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
-            <div className="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className="w-full max-w-focus:outline-none lg bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
 
                 <div className="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
-                    <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">
+                    <h2 id={titleId} className="font-IranYekanBold text-base sm:text-lg text-zinc-800">
                         {initialData ? 'ویرایش بنر' : 'افزودن بنر جدید'}
                     </h2>
-                    <button onClick={onClose} className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                    <button type="button" onClick={onClose} aria-label="بستن" className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                         <PiXBold className="w-4 h-4" />
                     </button>
                 </div>
@@ -86,8 +90,8 @@ export default function BannerModal({ initialData, onClose, onSave, isSaving }: 
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">عنوان بنر</label>
-                        <input
+                        <label htmlFor="BannerModal-1" className="block mb-1.5 text-xs text-zinc-500">عنوان بنر</label>
+                        <input id="BannerModal-1"
                             value={title}
                             onChange={e => setTitle(e.target.value)}
                             placeholder="مثال: پرفروش‌ترین ساعت‌های هوشمند"
@@ -96,8 +100,8 @@ export default function BannerModal({ initialData, onClose, onSave, isSaving }: 
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">موقعیت نمایش</label>
-                        <select
+                        <label htmlFor="BannerModal-2" className="block mb-1.5 text-xs text-zinc-500">موقعیت نمایش</label>
+                        <select id="BannerModal-2"
                             value={position}
                             onChange={e => setPosition(e.target.value as BannerPosition)}
                             className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"
@@ -109,8 +113,8 @@ export default function BannerModal({ initialData, onClose, onSave, isSaving }: 
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">لینک مقصد</label>
-                        <input
+                        <label htmlFor="BannerModal-3" className="block mb-1.5 text-xs text-zinc-500">لینک مقصد</label>
+                        <input id="BannerModal-3"
                             value={linkUrl}
                             onChange={e => setLinkUrl(e.target.value)}
                             placeholder="/products/1"
@@ -119,8 +123,8 @@ export default function BannerModal({ initialData, onClose, onSave, isSaving }: 
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">وضعیت</label>
-                        <select
+                        <label htmlFor="BannerModal-4" className="block mb-1.5 text-xs text-zinc-500">وضعیت</label>
+                        <select id="BannerModal-4"
                             value={status}
                             onChange={e => setStatus(e.target.value as BannerStatus)}
                             className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"

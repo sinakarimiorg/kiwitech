@@ -1,5 +1,7 @@
 "use client"
 
+import { useId } from 'react'
+import { useDialog } from '@root/src/hooks/useDialog'
 import { PiPackageLight, PiXBold } from "react-icons/pi"
 import ProductForm from "./ProductForm"
 import type { AdminProduct } from "@root/src/types/adminProductType"
@@ -12,12 +14,14 @@ type EditProductModalProps = {
 }
 
 export default function EditProductModal({ product, onClose, categories }: EditProductModalProps) {
+    const titleId = useId()
+    const dialogRef = useDialog<HTMLDivElement>(onClose)
     return (
         <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
-            <div className="w-full max-w-4xl bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className="w-full max-w-focus:outline-none 4xl bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
 
                 <div className="flex items-center justify-between pb-4 mb-6 border-b border-gray-100">
-                    <h2 className="flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800">
+                    <h2 id={titleId} className="flex items-center gap-2 font-IranYekanBold text-base sm:text-lg text-zinc-800">
                         <PiPackageLight className="w-5 h-5 text-primary-500" />
                         ویرایش محصول
                     </h2>

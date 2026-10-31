@@ -1,5 +1,7 @@
 "use client"
 
+import { useId } from 'react'
+import { useDialog } from '@root/src/hooks/useDialog'
 import { useState } from 'react'
 import { PiXBold } from 'react-icons/pi'
 import type { UserType, UserRole, UserStatus } from '@root/src/types/userType'
@@ -13,6 +15,8 @@ type UserModalProps = {
 }
 
 export default function UserModal({ initialData, onClose, onSave, isSaving, isEdit }: UserModalProps) {
+    const titleId = useId()
+    const dialogRef = useDialog<HTMLDivElement>(onClose, isSaving)
     const [name, setName] = useState(initialData?.name ?? '')
     const [phone, setPhone] = useState(initialData?.phone ?? '')
     const [email, setEmail] = useState(initialData?.email ?? '')
@@ -30,21 +34,21 @@ export default function UserModal({ initialData, onClose, onSave, isSaving, isEd
 
     return (
         <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className="w-full max-w-focus:outline-none md bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
 
                 <div className="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
-                    <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">
+                    <h2 id={titleId} className="font-IranYekanBold text-base sm:text-lg text-zinc-800">
                         {initialData ? 'ویرایش مشتری' : 'افزودن مشتری جدید'}
                     </h2>
-                    <button onClick={onClose} className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                    <button type="button" onClick={onClose} aria-label="بستن" className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                         <PiXBold className="w-4 h-4" />
                     </button>
                 </div>
 
                 <div className="flex flex-col gap-4">
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">نام و نام خانوادگی</label>
-                        <input
+                        <label htmlFor="UserModal-1" className="block mb-1.5 text-xs text-zinc-500">نام و نام خانوادگی</label>
+                        <input id="UserModal-1"
                             value={name}
                             onChange={e => setName(e.target.value)}
                             placeholder="مثال: سینا کریمی"
@@ -53,8 +57,8 @@ export default function UserModal({ initialData, onClose, onSave, isSaving, isEd
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">شماره موبایل</label>
-                        <input
+                        <label htmlFor="UserModal-2" className="block mb-1.5 text-xs text-zinc-500">شماره موبایل</label>
+                        <input id="UserModal-2"
                             value={phone}
                             onChange={e => setPhone(e.target.value)}
                             placeholder="۰۹۱۲۳۴۵۶۷۸۹"
@@ -64,8 +68,8 @@ export default function UserModal({ initialData, onClose, onSave, isSaving, isEd
                     </div>
 
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">ایمیل (اختیاری)</label>
-                        <input
+                        <label htmlFor="UserModal-3" className="block mb-1.5 text-xs text-zinc-500">ایمیل (اختیاری)</label>
+                        <input id="UserModal-3"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
                             placeholder="example@mail.com"
@@ -77,8 +81,8 @@ export default function UserModal({ initialData, onClose, onSave, isSaving, isEd
                         isEdit
                         &&
                         <div>
-                            <label className="block mb-1.5 text-xs text-zinc-500">وضعیت</label>
-                            <select
+                            <label htmlFor="UserModal-4" className="block mb-1.5 text-xs text-zinc-500">نقش</label>
+                            <select id="UserModal-4"
                                 value={role}
                                 onChange={e => setRole(e.target.value as UserRole)}
                                 className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"
@@ -89,8 +93,8 @@ export default function UserModal({ initialData, onClose, onSave, isSaving, isEd
                         </div>
                     }
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">وضعیت</label>
-                        <select
+                        <label htmlFor="UserModal-5" className="block mb-1.5 text-xs text-zinc-500">وضعیت</label>
+                        <select id="UserModal-5"
                             value={status}
                             onChange={e => setStatus(e.target.value as UserStatus)}
                             className="w-full px-3.5 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl outline-none focus:border-primary-400 transition-colors"

@@ -1,5 +1,7 @@
 "use client"
 
+import { useId } from 'react'
+import { useDialog } from '@root/src/hooks/useDialog'
 import { useState } from 'react'
 import { PiXBold } from 'react-icons/pi'
 import { categoryIconOptions } from './categoryIcons'
@@ -13,6 +15,8 @@ type CategoryModalProps = {
 }
 
 export default function CategoryModal({ initialData, onClose, onSave, isSaving }: CategoryModalProps) {
+    const titleId = useId()
+    const dialogRef = useDialog<HTMLDivElement>(onClose, isSaving)
     const [title, setTitle] = useState(initialData?.title ?? '')
     const [icon, setIcon] = useState<string>(initialData?.icon ?? categoryIconOptions[0].key)
     const [active, setActive] = useState(initialData?.active ?? true)
@@ -28,21 +32,21 @@ export default function CategoryModal({ initialData, onClose, onSave, isSaving }
 
     return (
         <div className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto">
-            <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
+            <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className="w-full max-w-focus:outline-none md bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto">
 
                 <div className="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
-                    <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">
+                    <h2 id={titleId} className="font-IranYekanBold text-base sm:text-lg text-zinc-800">
                         {initialData ? 'ویرایش دسته اصلی' : 'افزودن دسته اصلی جدید'}
                     </h2>
-                    <button onClick={onClose} className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
+                    <button type="button" onClick={onClose} aria-label="بستن" className="flex-center w-8 h-8 text-zinc-400 hover:text-zinc-700 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer">
                         <PiXBold className="w-4 h-4" />
                     </button>
                 </div>
 
                 <div className="flex flex-col gap-4">
                     <div>
-                        <label className="block mb-1.5 text-xs text-zinc-500">عنوان دسته</label>
-                        <input
+                        <label htmlFor="CategoryModal-1" className="block mb-1.5 text-xs text-zinc-500">عنوان دسته</label>
+                        <input id="CategoryModal-1"
                             value={title}
                             onChange={e => setTitle(e.target.value)}
                             placeholder="مثال: لوازم جانبی موبایل"

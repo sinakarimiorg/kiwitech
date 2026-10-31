@@ -201,6 +201,7 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
                     <div className='flex items-center justify-between gap-2 w-full h-11 mt-4 px-1.5 border border-primary-200 bg-primary-50/50 rounded-lg'>
                         <button
                             type='button'
+                            aria-label='افزایش تعداد'
                             onClick={handleIncrementCart}
                             disabled={!!cartItem.stock && cartItem.count >= cartItem.stock}
                             className='flex-center w-9 h-9 text-primary-600 hover:bg-primary-100 rounded-md transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed'>
@@ -209,6 +210,7 @@ export default function FavoriteProductCard({ product }: FavoriteProductCardProp
                         <span className='font-IranYekanBold text-sm text-zinc-800'>{cartItem.count.toLocaleString('fa-IR')}</span>
                         <button
                             type='button'
+                            aria-label='کاهش تعداد'
                             onClick={handleDecrementCart}
                             className='flex-center w-9 h-9 text-zinc-500 hover:bg-gray-100 rounded-md transition-colors cursor-pointer'>
                             <PiMinusCircleLight className='w-5 h-5' />

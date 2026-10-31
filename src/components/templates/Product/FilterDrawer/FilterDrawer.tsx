@@ -1,9 +1,10 @@
 "use client"
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import type { MouseEvent, ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { PiSlidersHorizontalLight, PiXBold } from 'react-icons/pi'
+import { useDialog } from '@root/src/hooks/useDialog'
 
 type FilterDrawerProps = {
     activeCount?: number
@@ -11,25 +12,24 @@ type FilterDrawerProps = {
     children: ReactNode
 }
 
+function DrawerPanel({ label, onClose, children }: { label: string; onClose: () => void; children: ReactNode }) {
+    const ref = useDialog<HTMLDivElement>(onClose)
+    return (
+        <div
+            ref={ref}
+            tabIndex={-1}
+            role='dialog'
+            aria-modal='true'
+            aria-label={label}
+            className='flex flex-col w-full sm:max-w-md max-h-[85dvh] bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl focus:outline-none'
+        >
+            {children}
+        </div>
+    )
+}
+
 export default function FilterDrawer({ activeCount = 0, title = 'فیلترها', children }: FilterDrawerProps) {
     const [isOpen, setIsOpen] = useState(false)
-
-    useEffect(() => {
-        if (!isOpen) return
-
-        const previousOverflow = document.body.style.overflow
-        document.body.style.overflow = 'hidden'
-
-        const onKeyDown = (event: KeyboardEvent) => {
-            if (event.key === 'Escape') setIsOpen(false)
-        }
-        document.addEventListener('keydown', onKeyDown)
-
-        return () => {
-            document.body.style.overflow = previousOverflow
-            document.removeEventListener('keydown', onKeyDown)
-        }
-    }, [isOpen])
 
     const handleContentClick = (event: MouseEvent<HTMLDivElement>) => {
         if ((event.target as HTMLElement).closest('a')) setIsOpen(false)
@@ -58,12 +58,7 @@ export default function FilterDrawer({ activeCount = 0, title = 'فیلترها'
                         if (event.target === event.currentTarget) setIsOpen(false)
                     }}
                 >
-                    <div
-                        role='dialog'
-                        aria-modal='true'
-                        aria-label={title}
-                        className='flex flex-col w-full sm:max-w-md max-h-[85dvh] bg-white rounded-t-3xl sm:rounded-2xl shadow-2xl'
-                    >
+                    <DrawerPanel label={title} onClose={() => setIsOpen(false)}>
                         <div className='flex items-center justify-between shrink-0 px-5 py-4 border-b border-gray-100'>
                             <h2 className='flex items-center gap-2 font-IranYekanBold text-base text-zinc-800'>
                                 <PiSlidersHorizontalLight className='w-5 h-5 text-primary-500' />
@@ -92,7 +87,7 @@ export default function FilterDrawer({ activeCount = 0, title = 'فیلترها'
                                 مشاهده نتایج
                             </button>
                         </div>
-                    </div>
+                    </DrawerPanel>
                 </div>,
                 document.body
             )}

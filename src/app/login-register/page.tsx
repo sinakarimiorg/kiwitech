@@ -9,7 +9,6 @@ import { IoIosArrowBack, IoMdRefresh } from "react-icons/io";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { requestOtpAction, verifyOtpAction, completeProfileAction } from "@root/src/components/templates/Auth/action";
 
-
 const RESEND_SECONDS = 119
 
 const inputClass = (hasError: boolean) =>
@@ -192,13 +191,14 @@ const login_register = () => {
                                             <div className="relative">
                                                 <Field
                                                     name='phone'
+                                                    id="auth-phone"
                                                     type="tel"
                                                     inputMode="numeric"
                                                     autoComplete="tel"
                                                     placeholder=" "
                                                     className={inputClass(submitCount > 0 && !!errors.phone)}
                                                 />
-                                                <label className={labelClass}>
+                                                <label htmlFor="auth-phone" className={labelClass}>
                                                     شماره موبایل خود را وارد کنید
                                                 </label>
                                             </div>
@@ -249,6 +249,7 @@ const login_register = () => {
                                                     </div>
                                                     <Field
                                                         name='code'
+                                                        aria-label="کد تایید"
                                                         type="text"
                                                         inputMode="numeric"
                                                         autoComplete="one-time-code"
@@ -331,12 +332,13 @@ const login_register = () => {
                                                 <div className="relative">
                                                     <Field
                                                         name='fullName'
+                                                        id="auth-fullName"
                                                         type="text"
                                                         autoComplete="name"
                                                         placeholder=" "
                                                         className={inputClass(submitCount > 0 && !!errors.fullName)}
                                                     />
-                                                    <label className={labelClass}>
+                                                    <label htmlFor="auth-fullName" className={labelClass}>
                                                         نام و نام خانوادگی
                                                     </label>
                                                 </div>
@@ -345,13 +347,14 @@ const login_register = () => {
                                                 <div className="relative">
                                                     <Field
                                                         name='email'
+                                                        id="auth-email"
                                                         type="email"
                                                         autoComplete="email"
                                                         placeholder=" "
                                                         dir="ltr"
                                                         className={inputClass(submitCount > 0 && !!errors.email)}
                                                     />
-                                                    <label className={labelClass}>
+                                                    <label htmlFor="auth-email" className={labelClass}>
                                                         ایمیل (اختیاری)
                                                     </label>
                                                 </div>

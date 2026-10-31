@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState, useTransition } from "react"
-import type { FormEvent, ReactNode } from "react"
+import { cloneElement, useId, useState, useTransition } from "react"
+import { useDialog } from "@root/src/hooks/useDialog"
+import type { ComponentProps, ReactElement } from "react"
 import { PiXBold } from "react-icons/pi"
 import Swal from "sweetalert2"
 import type { UserProfile } from "@root/src/types/userType"
@@ -30,11 +31,12 @@ const inputClass = (hasError: boolean) =>
     `w-full px-3.5 py-2.5 text-sm bg-gray-50 border rounded-xl outline-none transition-colors
     ${hasError ? "border-red-400 focus:border-red-500" : "border-gray-200 focus:border-primary-400"}`
 
-function FieldBox({ label, error, hint, children }: { label: string; error?: string; hint?: string; children: ReactNode }) {
+function FieldBox({ label, error, hint, children }: { label: string; error?: string; hint?: string; children: ReactElement<{ id?: string; "aria-invalid"?: boolean }> }) {
+    const id = useId()
     return (
         <div>
-            <label className="block mb-1.5 text-xs text-zinc-500">{label}</label>
-            {children}
+            <label htmlFor={id} className="block mb-1.5 text-xs text-zinc-500">{label}</label>
+            {cloneElement(children, { id, "aria-invalid": error ? true : undefined })}
             {error
                 ? <p className="mt-1.5 text-[11px] text-danger">{error}</p>
                 : hint && <p className="mt-1.5 text-[11px] text-zinc-400">{hint}</p>}
@@ -59,13 +61,8 @@ export default function EditProfileModal({ user, onClose }: EditProfileModalProp
         key => values[key].trim() !== initialValues[key].trim()
     )
 
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (e.key === "Escape" && !isPending) onClose()
-        }
-        window.addEventListener("keydown", handleKeyDown)
-        return () => window.removeEventListener("keydown", handleKeyDown)
-    }, [isPending, onClose])
+    const dialogRef = useDialog<HTMLFormElement>(onClose, isPending)
+    const titleId = useId()
 
     const setField = (field: keyof FormValues, raw: string) => {
         let value = raw
@@ -77,7 +74,7 @@ export default function EditProfileModal({ user, onClose }: EditProfileModalProp
         setFormError("")
     }
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit: ComponentProps<"form">["onSubmit"] = async (e) => {
         e.preventDefault()
         if (isPending || !isDirty) return
 
@@ -112,12 +109,17 @@ export default function EditProfileModal({ user, onClose }: EditProfileModalProp
             className="fixed inset-0 flex items-start sm:items-center justify-center bg-black/40 z-50 px-3 sm:px-4 py-4 sm:py-6 overflow-y-auto"
         >
             <form
+                ref={dialogRef}
+                tabIndex={-1}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby={titleId}
                 onSubmit={handleSubmit}
                 noValidate
-                className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto"
+                className="w-full max-w-md focus:outline-none bg-white rounded-2xl shadow-2xl p-4 sm:p-6 max-h-[92vh] overflow-y-auto"
             >
                 <div className="flex items-center justify-between pb-4 mb-5 border-b border-gray-100">
-                    <h2 className="font-IranYekanBold text-base sm:text-lg text-zinc-800">ویرایش مشخصات فردی</h2>
+                    <h2 id={titleId} className="font-IranYekanBold text-base sm:text-lg text-zinc-800">ویرایش مشخصات فردی</h2>
                     <button
                         type="button"
                         onClick={onClose}

@@ -98,6 +98,7 @@ const Topbar = () => {
                             onKeyDown={event => enterInInput(event)}
                             onFocus={() => openSearchBox()}
                             type='text'
+                            aria-label='جستجو'
                             className='w-full text-sm md:text-base text-text text-center bg-transparent focus:outline-none placeholder-text-muted'
                             placeholder='جستجو در مـوبـولـــند' />
                     </div>

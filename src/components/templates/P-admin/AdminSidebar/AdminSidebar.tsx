@@ -97,6 +97,7 @@ export default function AdminSidebar({ badges }: AdminSidebarProps) {
             <div className="mt-auto px-3 py-4 border-t border-navbar-border">
                 <Link
                     href="/p-admin/settings"
+                    aria-label="تنظیمات"
                     className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-text-muted hover:bg-navbar-hover hover:text-text transition-colors"
                 >
                     <PiGearLight className="w-5 h-5 shrink-0" />
@@ -104,6 +105,7 @@ export default function AdminSidebar({ badges }: AdminSidebarProps) {
                 </Link>
                 <Link
                     href="/"
+                    aria-label="خروج به فروشگاه"
                     className="flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm text-danger/90 hover:bg-danger/10 transition-colors"
                 >
                     <PiSignOutLight className="w-5 h-5 shrink-0" />
