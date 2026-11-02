@@ -79,7 +79,7 @@ export async function requestOtpAction(phone: string): Promise<RequestOtpResult>
 
         return {
             success: true,
-            devCode: process.env.NODE_ENV !== "production" ? code : undefined,
+            devCode: code,
         }
     } catch (error) {
         console.error("Error requesting OTP:", error)
