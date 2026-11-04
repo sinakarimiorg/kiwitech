@@ -6,7 +6,7 @@ const ONE_MONTH = "public, max-age=2592000";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
-    formats: ["image/avif", "image/webp"],
+    unoptimized: true,
   },
   experimental: {
     serverActions: {
