@@ -30,7 +30,11 @@ const Layout = async ({ children }: LayoutProps) => {
             <div className='container px-3 xl:px-0 pb-11'>
                 <div className='flex flex-col lg:flex-row gap-4 lg:gap-6'>
 
-                    <ProfileSidebar userName={user.name} unreadMessagesCount={unreadMessagesCount} />
+                    <ProfileSidebar
+                    userName={user.name}
+                    unreadMessagesCount={unreadMessagesCount}
+                    isAdmin={user.role === 'ادمین'}
+                    />
                     {children}
                 </div>
             </div>

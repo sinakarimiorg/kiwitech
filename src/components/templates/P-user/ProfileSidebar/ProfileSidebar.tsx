@@ -11,7 +11,8 @@ import {
     PiEnvelopeSimpleLight,
     PiWalletLight,
     PiSignOutLight,
-    PiSquaresFourLight
+    PiSquaresFourLight,
+    PiShieldCheckLight
 } from "react-icons/pi";
 import type { IconType } from 'react-icons'
 import { logoutAction } from '../../Auth/action';
@@ -36,12 +37,13 @@ const navItems: NavItem[] = [
 type ProfileSidebarProps = {
     userName: string
     unreadMessagesCount?: number
+    isAdmin?: boolean
 }
 
 const itemBase =
     'shrink-0 snap-center flex items-center gap-2 lg:gap-3 px-4 py-2 lg:py-3 rounded-full lg:rounded-xl border lg:border-transparent text-sm whitespace-nowrap transition-colors'
 
-export default function ProfileSidebar({ userName, unreadMessagesCount = 3 }: ProfileSidebarProps) {
+export default function ProfileSidebar({ userName, unreadMessagesCount = 3, isAdmin = false }: ProfileSidebarProps) {
     const pathname = usePathname()
     const router = useRouter()
     const activeRef = useRef<HTMLAnchorElement>(null)
@@ -74,6 +76,15 @@ export default function ProfileSidebar({ userName, unreadMessagesCount = 3 }: Pr
                     aria-label='منوی پنل کاربری'
                     className='flex lg:flex-col gap-2 lg:gap-1 p-3 overflow-x-auto lg:overflow-visible snap-x scrollbar-none [&::-webkit-scrollbar]:hidden'
                 >
+                    {isAdmin && (
+                        <Link
+                            href='/p-admin'
+                            className={`${itemBase} text-primary-700 bg-primary-50 border-primary-200 hover:bg-primary-100`}
+                        >
+                            <PiShieldCheckLight className='w-5 h-5 shrink-0' />
+                            پنل مدیریت
+                        </Link>
+                    )}
                     {navItems.map(item => {
                         const isActive = item.href === '/p-user'
                             ? pathname === item.href
